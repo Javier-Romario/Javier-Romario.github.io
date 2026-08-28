@@ -246,11 +246,6 @@ body::after {
   text-align: center;
 }
 
-/* ticker: give the STACK label breathing room from the preceding item */
-.hero span[data-tone]:not([aria-hidden]) {
-  margin-left: 10px;
-}
-
 .hero__inner {
   display: flex;
   flex-direction: column;
