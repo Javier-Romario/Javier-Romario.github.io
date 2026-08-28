@@ -1,0 +1,48 @@
+---
+import '../neondeck/global-fonts.css';
+import '../neondeck/global.css';
+import '../styles/site.css';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = 'Deploy an Astro site styled with NEONDECK to GitHub Pages.' } = Astro.props;
+const base = import.meta.env.BASE_URL;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="site-header__brand" href={base}>NEONDECK<b>//</b>PAGES</a>
+      <nav class="site-header__links">
+        <a href="#overview">OVERVIEW</a>
+        <a href="#steps">STEPS</a>
+        <a href="#playground">PLAYGROUND</a>
+        <a href="#screenshots">SCREENSHOTS</a>
+      </nav>
+    </header>
+
+    <div class="site-shell">
+      <slot />
+    </div>
+
+    <footer class="site-footer site-shell">
+      <p>
+        Built with <a href="https://astro.build">Astro</a> +{' '}
+        <a href="https://github.com/Javier-Romario/neondeck">NEONDECK</a> — a cyberpunk React
+        component library (MIT). Screenshots pulled from the NEONDECK repo.{' '}
+        <a href="https://docs.astro.build/en/guides/deploy/github/">Astro GitHub Pages guide</a>.
+      </p>
+    </footer>
+  </body>
+</html>

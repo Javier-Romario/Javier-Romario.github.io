@@ -1,0 +1,346 @@
+/* ============================================================
+   NEONDECK Guide — site chrome (layout, gallery, nav, code)
+   Component theming lives in src/neondeck/global.css.
+   ============================================================ */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+}
+
+.site-shell {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 24px 96px;
+}
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 24px;
+  background: rgba(4, 7, 11, 0.82);
+  border-bottom: 1px solid var(--cp-border);
+  backdrop-filter: blur(10px) saturate(1.4);
+}
+
+.site-header__brand {
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--cp-text);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.site-header__brand b {
+  color: var(--neon-teal);
+}
+
+.site-header__links {
+  display: flex;
+  gap: 18px;
+}
+
+.site-header__links a {
+  color: var(--cp-muted);
+  text-decoration: none;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  transition: color 120ms ease;
+}
+
+.site-header__links a:hover {
+  color: var(--neon-teal);
+}
+
+/* ---- hero ---- */
+.hero {
+  position: relative;
+  margin: 32px 0 24px;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.hero__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.hero__inner {
+  position: relative;
+  z-index: 1;
+  padding: 48px 28px 40px;
+}
+
+.hero__title {
+  font-size: clamp(28px, 5vw, 56px);
+  line-height: 1.05;
+  letter-spacing: 0.02em;
+  color: var(--cp-text);
+  text-shadow: var(--cp-glow-teal);
+  margin: 0 0 12px;
+}
+
+.hero__title .accent {
+  color: var(--neon-magenta);
+  text-shadow: var(--cp-glow-magenta);
+}
+
+.hero__lede {
+  max-width: 64ch;
+  color: var(--cp-muted);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* ---- step navigation ---- */
+.stepnav {
+  position: sticky;
+  top: 57px;
+  z-index: 40;
+  display: flex;
+  gap: 8px;
+  padding: 12px 0;
+  margin: 0 0 8px;
+  overflow-x: auto;
+  background: linear-gradient(rgba(4, 7, 11, 0.96), rgba(4, 7, 11, 0.88));
+  border-bottom: 1px solid var(--cp-border);
+  -webkit-overflow-scrolling: touch;
+}
+
+.stepnav__item {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  background: transparent;
+  color: var(--cp-muted);
+  border: 1px solid var(--cp-border);
+  border-radius: 4px;
+  font-family: var(--font-family-mono);
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 120ms ease;
+}
+
+.stepnav__item:hover {
+  border-color: var(--neon-teal-dark);
+  color: var(--cp-text);
+}
+
+.stepnav__item.is-active {
+  border-color: var(--neon-teal);
+  color: var(--cp-text);
+  box-shadow: var(--cp-glow-teal);
+}
+
+.stepnav__num {
+  color: var(--neon-magenta);
+  font-weight: 700;
+}
+
+/* ---- sections / steps ---- */
+.step {
+  scroll-margin-top: 130px;
+  margin: 0 0 48px;
+}
+
+.step__head {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.step__num {
+  font-size: 14px;
+  color: var(--neon-magenta);
+  letter-spacing: 0.08em;
+}
+
+.step__title {
+  font-size: 22px;
+  color: var(--cp-text);
+  letter-spacing: 0.02em;
+}
+
+.prose {
+  color: var(--cp-muted);
+  font-size: 14.5px;
+  line-height: 1.7;
+  max-width: 76ch;
+}
+
+.prose strong {
+  color: var(--cp-text);
+}
+
+.prose code {
+  color: var(--neon-teal);
+  font-family: var(--font-family-mono);
+  font-size: 13px;
+}
+
+.prose a {
+  color: var(--neon-blue);
+}
+
+/* ---- code panel (React island) ---- */
+.code-panel {
+  margin: 16px 0;
+  border: 1px solid var(--cp-border);
+  border-radius: 6px;
+  background: rgba(4, 7, 11, 0.7);
+  overflow: hidden;
+}
+
+.code-panel__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: rgba(14, 22, 36, 0.85);
+  border-bottom: 1px solid var(--cp-border);
+}
+
+.code-panel__file {
+  color: var(--cp-muted);
+  font-size: 12px;
+  letter-spacing: 0.05em;
+}
+
+.code-panel__copy {
+  background: transparent;
+  color: var(--neon-teal);
+  border: 1px solid var(--neon-teal-dark);
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-family: var(--font-family-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: all 120ms ease;
+}
+
+.code-panel__copy:hover {
+  box-shadow: var(--cp-glow-teal);
+}
+
+.code-panel__copy.is-copied {
+  color: var(--neon-green);
+  border-color: var(--neon-green);
+}
+
+.code-panel__pre {
+  margin: 0;
+  padding: 16px;
+  overflow-x: auto;
+  color: #d7fff6;
+  font-family: var(--font-family-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  white-space: pre;
+}
+
+/* ---- gallery ---- */
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin: 20px 0;
+}
+
+.gallery figure {
+  margin: 0;
+  border: 1px solid var(--cp-border);
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(4, 7, 11, 0.6);
+}
+
+.gallery img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.gallery figcaption {
+  padding: 8px 12px;
+  color: var(--cp-muted);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+}
+
+.gallery__wide {
+  grid-column: 1 / -1;
+}
+
+/* ---- callout ---- */
+.callout {
+  margin: 20px 0;
+  padding: 14px 16px;
+  border-left: 3px solid var(--neon-yellow);
+  background: rgba(255, 230, 109, 0.06);
+  color: var(--cp-muted);
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+
+.callout--danger {
+  border-left-color: var(--neon-magenta);
+  background: rgba(255, 45, 120, 0.06);
+}
+
+/* ---- footer ---- */
+.site-footer {
+  margin-top: 64px;
+  padding: 24px 0 0;
+  border-top: 1px solid var(--cp-border);
+  color: var(--cp-muted);
+  font-size: 12.5px;
+  letter-spacing: 0.04em;
+  line-height: 1.8;
+}
+
+.site-footer a {
+  color: var(--neon-blue);
+}
+
+/* ---- layout helpers ---- */
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.flow {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 860px) {
+  .flow--2 {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.muted {
+  color: var(--cp-muted);
+}
+
+.nowrap {
+  white-space: nowrap;
+}

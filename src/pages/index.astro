@@ -1,0 +1,532 @@
+---
+import Layout from '../layouts/Layout.astro';
+import StepNav from '../components/StepNav';
+import CodePanel from '../components/CodePanel';
+import Playground from '../components/Playground';
+import MatrixRain from '@components/MatrixRain';
+import TickerBoard from '@components/TickerBoard';
+import Card from '@components/Card';
+import Window from '@components/Window';
+import Badge from '@components/Badge';
+import Text from '@components/Text';
+import Divider from '@components/Divider';
+import Table from '@components/Table';
+import TableRow from '@components/TableRow';
+import TableColumn from '@components/TableColumn';
+
+import heroImg from '../assets/screenshots/hero.png';
+import componentsImg from '../assets/screenshots/components.png';
+import mobileImg from '../assets/screenshots/mobile.png';
+import ladleImg from '../assets/screenshots/ladle.png';
+
+const steps = [
+  { id: 'step-create', label: 'SCAFFOLD' },
+  { id: 'step-react', label: 'ADD REACT' },
+  { id: 'step-vendor', label: 'VENDOR' },
+  { id: 'step-aliases', label: 'ALIASES' },
+  { id: 'step-theme', label: 'THEME CSS' },
+  { id: 'step-compose', label: 'COMPOSE' },
+  { id: 'step-verify', label: 'BUILD' },
+  { id: 'step-base', label: 'BASE PATH' },
+  { id: 'step-workflow', label: 'WORKFLOW' },
+  { id: 'step-enable', label: 'ENABLE' },
+  { id: 'step-ship', label: 'SHIP' },
+];
+
+const codeScaffold = `npm create astro@latest my-deck -- --template minimal --no-git --install --typescript strict
+cd my-deck
+npx astro add react`;
+
+const codeThree = `npm i three @react-three/fiber @react-three/drei`;
+
+const codeVendor = `git clone --depth 1 https://github.com/Javier-Romario/neondeck.git /tmp/neondeck
+mkdir -p src/neondeck
+cp -R /tmp/neondeck/components src/neondeck/
+cp -R /tmp/neondeck/common     src/neondeck/
+cp /tmp/neondeck/global.css        src/neondeck/
+cp /tmp/neondeck/global-fonts.css  src/neondeck/`;
+
+const codeTsconfig = `{
+  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      "@components/*": ["src/neondeck/components/*"],
+      "@common/*": ["src/neondeck/common/*"],
+      "@root/*": ["src/*"]
+    }
+  }
+}`;
+
+const codeAstroConfig = `import { defineConfig } from 'astro/config';
+import react from '@astrojs/react';
+import { fileURLToPath } from 'node:url';
+
+export default defineConfig({
+  site: 'https://Javier-Romario.github.io',
+  base: '/neondeck-guide',
+  integrations: [react()],
+  vite: {
+    resolve: {
+      alias: {
+        '@components': fileURLToPath(new URL('./src/neondeck/components', import.meta.url)),
+        '@common': fileURLToPath(new URL('./src/neondeck/common', import.meta.url)),
+        '@root': fileURLToPath(new URL('./src', import.meta.url)),
+      },
+    },
+  },
+});`;
+
+const codeLayoutCss = `---
+import '../neondeck/global-fonts.css';
+import '../neondeck/global.css';
+---`;
+
+const codeStatic = `---
+import TickerBoard from '@components/TickerBoard';
+import Card from '@components/Card';
+import Window from '@components/Window';
+import Badge from '@components/Badge';
+---
+
+<TickerBoard
+  message="SYS.UPLINK // NODE 0x1F"
+  messageTone="magenta"
+  tickerLabel="NEONDECK"
+  tickerItems={['UPLINK 34.2TB/S', 'ICE-BREAKER v2.1']}
+  tickerSpeed={28}
+  showBottomTicker
+>
+  <Card title="DECKS">
+    <Window>
+      <Badge>ONLINE</Badge>
+    </Window>
+  </Card>
+</TickerBoard>`;
+
+const codeClient = `<Button client:visible theme="PRIMARY">RUN ICE-BREAKER</Button>
+<Accordion client:load title="NETMAP" defaultValue>…</Accordion>
+<MatrixRain client:load height={320} color="#00ffd1" density={0.6} />`;
+
+const codeBase = `// project site  →  https://USERNAME.github.io/REPO/
+site: 'https://Javier-Romario.github.io',
+base: '/neondeck-guide',
+
+// user/org site (USERNAME.github.io repo)  →  base: '/'`;
+
+const codeWorkflow = `name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install, build, and upload
+        uses: withastro/action@v3
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: \${ steps.deployment.outputs.page_url }
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4`;
+---
+
+<Layout title="Astro × NEONDECK → GitHub Pages" description="Interactive guide: deploy an Astro site styled with the NEONDECK cyberpunk React component library to GitHub Pages.">
+  <!-- ============ OVERVIEW / HERO ============ -->
+  <section id="overview" class="hero">
+    <div class="hero__bg">
+      <MatrixRain client:load height={420} color="#00ffd1" density={0.5} />
+    </div>
+    <div class="hero__inner">
+      <TickerBoard
+        message="GUIDE // ASTRO × NEONDECK → GH PAGES"
+        messageTone="magenta"
+        tickerLabel="NEONDECK"
+        tickerItems={['ASTRO 7', 'REACT 19', 'CYBERPUNK UI', 'ZERO-JS STATIC', 'GITHUB ACTIONS']}
+        tickerSpeed={26}
+        showBottomTicker
+      >
+        <h1 class="hero__title">Astro <span class="accent">×</span> NEONDECK<br />→ GitHub Pages</h1>
+        <p class="hero__lede">
+          An interactive walkthrough for publishing a static Astro site styled with{' '}
+          <strong>NEONDECK</strong> — the cyberpunk React component library. Everything below is
+          rendered live with the library itself: the ticker, the glass cards, the scanline windows,
+          the neon table. Screenshots are pulled straight from the NEONDECK repo.
+        </p>
+      </TickerBoard>
+    </div>
+  </section>
+
+  <!-- ============ WHY VENDOR ============ -->
+  <section class="step" id="why">
+    <div class="step__head">
+      <span class="step__num">PRIMER</span>
+      <h2 class="step__title">This is a vendor guide, not an npm install</h2>
+    </div>
+    <div class="prose">
+      <p>
+        <strong>NEONDECK's</strong> <code>package.json</code> is marked <code>"private": true</code>{' '}
+        and ships no build output and no npm package. Its docs say every component is{' '}
+        <em>copy-pasteable</em> — one <code>.tsx</code> + one <code>.module.css</code>, themed
+        entirely through CSS custom properties (<code>--theme-*</code>, <code>--neon-*</code>,{' '}
+        <code>--cp-*</code>).
+      </p>
+      <p>
+        So instead of installing it, you <strong>vendor the source into your Astro project</strong>{' '}
+        and let Astro compile it. Astro renders React through <code>@astrojs/react</code>.
+      </p>
+    </div>
+    <div class="flow flow--2" style="margin-top: 16px">
+      <Window>
+        <div style="padding: 20px">
+          <Text><strong>Runtime deps NEONDECK needs</strong></Text>
+          <Divider />
+          <Table>
+            <TableRow>
+              <TableColumn><Badge>REQUIRED</Badge></TableColumn>
+              <TableColumn><code>react</code> + <code>react-dom</code></TableColumn>
+            </TableRow>
+            <TableRow>
+              <TableColumn><Badge>OPTIONAL</Badge></TableColumn>
+              <TableColumn><code>three</code> + <code>@react-three/*</code> — only <code>Hologram</code></TableColumn>
+            </TableRow>
+          </Table>
+        </div>
+      </Window>
+      <Window>
+        <div style="padding: 20px">
+          <Text><strong>Canvas effects need zero extra deps</strong></Text>
+          <Divider />
+          <p class="prose">
+            <code>MatrixRain</code>, <code>GridCanvas</code>, <code>Radar</code>,{' '}
+            <code>Waveform</code>, <code>NeuralField</code>, <code>GlitchText</code> — plain{' '}
+            <code>&lt;canvas&gt;</code> + <code>requestAnimationFrame</code>.
+          </p>
+        </div>
+      </Window>
+    </div>
+  </section>
+
+  <!-- ============ STEPS NAV ============ -->
+  <section id="steps" class="step">
+    <div class="step__head">
+      <span class="step__num">STEPS</span>
+      <h2 class="step__title">The pipeline</h2>
+    </div>
+  </section>
+
+  <StepNav steps={steps} client:load />
+
+  <!-- ============ 1 SCAFFOLD ============ -->
+  <section class="step" id="step-create">
+    <div class="step__head">
+      <span class="step__num">01</span>
+      <h2 class="step__title">Scaffold the Astro project</h2>
+    </div>
+    <p class="prose">
+      Create a minimal Astro project, then add the React integration in one shot.
+    </p>
+    <CodePanel client:visible code={codeScaffold} filename="terminal" />
+  </section>
+
+  <!-- ============ 2 ADD REACT ============ -->
+  <section class="step" id="step-react">
+    <div class="step__head">
+      <span class="step__num">02</span>
+      <h2 class="step__title">Add React (and 3D deps if needed)</h2>
+    </div>
+    <p class="prose">
+      <code>astro add react</code> (already run in step 1) wires <code>@astrojs/react</code>,{' '}
+      <code>react</code> and <code>react-dom</code> into <code>astro.config.mjs</code>. Install the
+      3D stack <strong>only</strong> if you plan to use the <code>Hologram</code> component.
+    </p>
+    <CodePanel client:visible code={codeThree} filename="terminal (optional)" />
+  </section>
+
+  <!-- ============ 3 VENDOR ============ -->
+  <section class="step" id="step-vendor">
+    <div class="step__head">
+      <span class="step__num">03</span>
+      <h2 class="step__title">Vendor NEONDECK into src/neondeck</h2>
+    </div>
+    <p class="prose">
+      Copy the <code>components/</code> + <code>common/</code> folders and the two global stylesheets
+      from the repo. You don't need <code>app/</code>, <code>stories/</code>, <code>docs/</code>, or
+      any Next.js config.
+    </p>
+    <CodePanel client:visible code={codeVendor} filename="terminal" />
+    <div class="callout">
+      <strong>Result:</strong>{' '}
+      <code>src/neondeck/components/</code>, <code>src/neondeck/common/</code>,{' '}
+      <code>src/neondeck/global.css</code>, <code>src/neondeck/global-fonts.css</code>.
+    </div>
+  </section>
+
+  <!-- ============ 4 ALIASES ============ -->
+  <section class="step" id="step-aliases">
+    <div class="step__head">
+      <span class="step__num">04</span>
+      <h2 class="step__title">Wire up @components / @common aliases</h2>
+    </div>
+    <p class="prose">
+      NEONDECK imports itself via <code>@components/*</code> and <code>@common/*</code>. Astro
+      bundles with Vite, so register the aliases <strong>twice</strong> — once for TypeScript, once
+      for Vite. Missing the Vite side is the #1 failure mode.
+    </p>
+    <CodePanel client:visible code={codeTsconfig} filename="tsconfig.json" />
+    <CodePanel client:visible code={codeAstroConfig} filename="astro.config.mjs" />
+  </section>
+
+  <!-- ============ 5 THEME CSS ============ -->
+  <section class="step" id="step-theme">
+    <div class="step__head">
+      <span class="step__num">05</span>
+      <h2 class="step__title">Load the theme CSS once</h2>
+    </div>
+    <p class="prose">
+      Import the token stylesheet in your root layout. Re-theme the whole site by overriding tokens
+      on <code>body</code> (ready-made tints: <code>.tint-magenta</code>, <code>.tint-yellow</code>,
+      <code>.tint-green</code>, <code>.tint-violet</code>, <code>.tint-orange</code>,{' '}
+      <code>.tint-red</code>, <code>.tint-blue</code>).
+    </p>
+    <CodePanel client:visible code={codeLayoutCss} filename="src/layouts/Layout.astro (frontmatter)" />
+  </section>
+
+  <!-- ============ 6 COMPOSE ============ -->
+  <section class="step" id="step-compose">
+    <div class="step__head">
+      <span class="step__num">06</span>
+      <h2 class="step__title">Compose components</h2>
+    </div>
+    <p class="prose">
+      <strong>Static components</strong> (no hooks, no <code>'use client'</code>) render at build
+      time with zero JS — use them with no directive. <strong>Interactive components</strong> (state,
+      effects, canvas) must carry a <code>client:*</code> directive. NEONDECK's <code>'use client'</code>{' '}
+      strings are a Next.js convention Astro ignores — the directive is Astro's job.
+    </p>
+    <CodePanel client:visible code={codeStatic} filename="src/pages/index.astro — static (zero JS)" />
+    <CodePanel client:visible code={codeClient} filename="interactive — needs a client:* directive" />
+
+    <div class="flow flow--2" style="margin-top: 16px">
+      <Window>
+        <div style="padding: 20px">
+          <Text><strong>Static-safe set</strong></Text>
+          <Divider />
+          <p class="prose">
+            <code>Card</code> · <code>CardDouble</code> · <code>Ticker</code> ·{' '}
+            <code>TickerBoard</code> · <code>Window</code> · <code>Text</code> · <code>Badge</code>{' '}
+            · <code>Divider</code> · <code>CodeBlock</code> · <code>Avatar</code> ·{' '}
+            <code>Breadcrumbs</code> · <code>Grid</code> · <code>Row</code> ·{' '}
+            <code>Table</code> · <code>ListItem</code> · <code>ActionButton</code> ·{' '}
+            <code>AlertBanner</code>.
+          </p>
+        </div>
+      </Window>
+      <Window>
+        <div style="padding: 20px">
+          <Text><strong>client:* directive cheat sheet</strong></Text>
+          <Divider />
+          <Table>
+            <TableRow>
+              <TableColumn><Badge>client:load</Badge></TableColumn>
+              <TableColumn>hydrate immediately — canvas effects, always-on UI</TableColumn>
+            </TableRow>
+            <TableRow>
+              <TableColumn><Badge>client:visible</Badge></TableColumn>
+              <TableColumn>lazy — hydrate when scrolled into view</TableColumn>
+            </TableRow>
+            <TableRow>
+              <TableColumn><Badge>client:idle</Badge></TableColumn>
+              <TableColumn>hydrate when the browser is idle</TableColumn>
+            </TableRow>
+            <TableRow>
+              <TableColumn><Badge>client:only="react"</Badge></TableColumn>
+              <TableColumn>skip server render entirely</TableColumn>
+            </TableRow>
+          </Table>
+        </div>
+      </Window>
+    </div>
+  </section>
+
+  <!-- ============ 7 BUILD ============ -->
+  <section class="step" id="step-verify">
+    <div class="step__head">
+      <span class="step__num">07</span>
+      <h2 class="step__title">Build locally to verify</h2>
+    </div>
+    <CodePanel client:visible code={'npm run build\nnpm run preview'} filename="terminal" />
+    <p class="prose">
+      Confirm tickers scroll, neon glows show, and interactive islands hydrate. If a module can't
+      resolve, the alias mapping (step 04) is missing one side — check both{' '}
+      <code>tsconfig.json</code> and <code>astro.config.mjs</code>.
+    </p>
+  </section>
+
+  <!-- ============ 8 BASE PATH ============ -->
+  <section class="step" id="step-base">
+    <div class="step__head">
+      <span class="step__num">08</span>
+      <h2 class="step__title">Configure the GitHub Pages base path</h2>
+    </div>
+    <p class="prose">
+      GitHub Pages serves project sites under a subpath (<code>/REPO/</code>). Every asset URL must
+      be prefixed or the site 404s. The <code>withastro/action</code> builder does <strong>not</strong>{' '}
+      auto-set <code>base</code> — it uploads <code>dist/</code> as-is.
+    </p>
+    <CodePanel client:visible code={codeBase} filename="astro.config.mjs" />
+  </section>
+
+  <!-- ============ 9 WORKFLOW ============ -->
+  <section class="step" id="step-workflow">
+    <div class="step__head">
+      <span class="step__num">09</span>
+      <h2 class="step__title">Add the deploy workflow</h2>
+    </div>
+    <p class="prose">
+      <code>withastro/action</code> auto-detects the package manager and runs{' '}
+      <code>npm run build</code>. No SSH keys, no <code>gh-pages</code> branch, no PAT.
+    </p>
+    <CodePanel client:visible code={codeWorkflow} filename=".github/workflows/deploy.yml" />
+  </section>
+
+  <!-- ============ 10 ENABLE ============ -->
+  <section class="step" id="step-enable">
+    <div class="step__head">
+      <span class="step__num">10</span>
+      <h2 class="step__title">Enable GitHub Pages</h2>
+    </div>
+    <div class="prose">
+      <p>
+        Repo → <strong>Settings → Pages → Build and deployment → Source</strong> → select{' '}
+        <strong>GitHub Actions</strong> (not "Deploy from a branch").
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ 11 SHIP ============ -->
+  <section class="step" id="step-ship">
+    <div class="step__head">
+      <span class="step__num">11</span>
+      <h2 class="step__title">Ship it</h2>
+    </div>
+    <CodePanel
+      client:visible
+      code={'git add .\ngit commit -m "Deploy Astro + NEONDECK to GitHub Pages"\ngit push origin main'}
+      filename="terminal"
+    />
+    <p class="prose">
+      First run appears under <strong>Actions</strong>. When green, the site is live at{' '}
+      <code>https://Javier-Romario.github.io/neondeck-guide/</code>.
+    </p>
+  </section>
+
+  <!-- ============ PLAYGROUND ============ -->
+  <section class="step" id="playground">
+    <div class="step__head">
+      <span class="step__num">LIVE</span>
+      <h2 class="step__title">Playground — the library, hydrated</h2>
+    </div>
+    <p class="prose">
+      This block is a React island (<code>client:load</code>) exercising NEONDECK's interactive
+      components inside Astro. Pick a tone, flip tabs, toggle checkboxes, ping the button.
+    </p>
+    <div style="margin-top: 16px">
+      <Playground client:load />
+    </div>
+  </section>
+
+  <!-- ============ SCREENSHOTS ============ -->
+  <section class="step" id="screenshots">
+    <div class="step__head">
+      <span class="step__num">INTEL</span>
+      <h2 class="step__title">Screenshots from the NEONDECK repo</h2>
+    </div>
+    <p class="prose">
+      Real captures of the library, pulled from{' '}
+      <code>github.com/Javier-Romario/neondeck/tree/main/docs/screenshots</code> and vendored into
+      this site so they ship with your deploy.
+    </p>
+    <div class="gallery">
+      <figure class="gallery__wide">
+        <img src={heroImg.src} alt="NEONDECK kitchen sink — ticker-board hero" loading="lazy" />
+        <figcaption>hero.png — the ticker-board treatment wrapping a Card</figcaption>
+      </figure>
+      <figure>
+        <img src={componentsImg.src} alt="NEONDECK component grid" loading="lazy" />
+        <figcaption>components.png — neon-cornered glass cards</figcaption>
+      </figure>
+      <figure>
+        <img src={mobileImg.src} alt="NEONDECK mobile view" loading="lazy" />
+        <figcaption>mobile.png — responsive layout</figcaption>
+      </figure>
+      <figure>
+        <img src={ladleImg.src} alt="NEONDECK Ladle playground" loading="lazy" />
+        <figcaption>ladle.png — the Ladle component playground</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ============ TROUBLESHOOTING ============ -->
+  <section class="step" id="troubleshooting">
+    <div class="step__head">
+      <span class="step__num">REPAIR</span>
+      <h2 class="step__title">Troubleshooting</h2>
+    </div>
+    <Window>
+      <div style="padding: 20px">
+        <Table>
+          <TableRow>
+            <TableColumn><Badge>SYMPTOM</Badge></TableColumn>
+            <TableColumn><Badge>FIX</Badge></TableColumn>
+          </TableRow>
+          <TableRow>
+            <TableColumn>Cannot find module '@components/…'</TableColumn>
+            <TableColumn>Alias missing on the Vite side — add <code>vite.resolve.alias</code></TableColumn>
+          </TableRow>
+          <TableRow>
+            <TableColumn>TS can't resolve @components/*</TableColumn>
+            <TableColumn>Alias missing on the TS side — add <code>compilerOptions.paths</code></TableColumn>
+          </TableRow>
+          <TableRow>
+            <TableColumn>Blank page, no CSS</TableColumn>
+            <TableColumn>Forgot to import <code>global.css</code> in the layout</TableColumn>
+          </TableRow>
+          <TableRow>
+            <TableColumn>404s on /REPO/_astro/…</TableColumn>
+            <TableColumn>Wrong <code>base</code> — use <code>'/neondeck-guide'</code> for project pages</TableColumn>
+          </TableRow>
+          <TableRow>
+            <TableColumn>Buttons/accordions dead</TableColumn>
+            <TableColumn>Interactive component used without a <code>client:*</code> directive</TableColumn>
+          </TableRow>
+          <TableRow>
+            <TableColumn>Build fails on three / @react-three</TableColumn>
+            <TableColumn><code>Hologram</code> is bundled — remove it or install the 3D deps</TableColumn>
+          </TableRow>
+          <TableRow>
+            <TableColumn>Hydration mismatch / flicker</TableColumn>
+            <TableColumn>Use <code>client:only="react"</code> for that component</TableColumn>
+          </TableRow>
+        </Table>
+      </div>
+    </Window>
+  </section>
+</Layout>
