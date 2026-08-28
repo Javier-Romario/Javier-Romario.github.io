@@ -12,7 +12,7 @@ const { title, slug = '', series = '' } = Astro.props;
 const s = seriesById(series);
 const list = postsInSeries(series);
 const { prev, next, index } = neighbors(series, slug);
-const posPct = list.length ? Math.round(((index + 1) / list.length) * 100) : 0;
+const posPct = index >= 0 && list.length ? Math.round(((index + 1) / list.length) * 100) : 0;
 const base = import.meta.env.BASE_URL;
 ---
 
@@ -25,7 +25,7 @@ const base = import.meta.env.BASE_URL;
 
     <header class="blog-series">
       {s && <div class="blog-series__title">{s.title}</div>}
-      {slug && list.length > 0 && (
+      {slug && index >= 0 && list.length > 0 && (
         <div class="blog-progress" title={`${index + 1} / ${list.length}`}>
           <div class="blog-progress__bar" style={`width: ${posPct}%`}></div>
         </div>

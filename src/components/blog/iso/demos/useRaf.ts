@@ -7,6 +7,13 @@ export function useRaf(cb: (dt: number, t: number) => void, running = true) {
 
   useEffect(() => {
     if (!running) return;
+
+    // Respect prefers-reduced-motion: draw a single static frame, don't loop.
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      ref.current(0, 0);
+      return;
+    }
+
     let raf = 0;
     let last = performance.now();
     const loop = (t: number) => {

@@ -9,12 +9,6 @@
   ],
   "compilerOptions": {
     "jsx": "react-jsx",
-    "jsxImportSource": "react",
-    "baseUrl": ".",
-    "paths": {
-      "@components/*": ["src/neondeck/components/*"],
-      "@common/*": ["src/neondeck/common/*"],
-      "@root/*": ["src/*"]
-    }
+    "jsxImportSource": "react"
   }
 }

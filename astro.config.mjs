@@ -16,5 +16,11 @@ export default defineConfig({
     resolve: {
       noExternal: ['@javierromario/neondeck'],
     },
+    build: {
+      // three.js (~660 kB minified) powers the 5 Blender 3D demos. It's
+      // lazily fetched via client:visible, so the default 500 kB warning is
+      // expected noise — keep a threshold high enough to catch real regressions.
+      chunkSizeWarningLimit: 900,
+    },
   },
 });

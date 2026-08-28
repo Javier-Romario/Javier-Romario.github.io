@@ -20,5 +20,8 @@ pnpm-debug.log*
 # macOS-specific files
 .DS_Store
 
+# local pi agent scratch (code review reports, etc.)
+.pi/
+
 # jetbrains setting folder
 .idea/

@@ -2,7 +2,7 @@ import Layout from '../../../layouts/BlogPost.astro';
 import Game from '../../../components/blog/iso/demos/Game.tsx';
 import Recap from '../../../components/blog/iso/Recap.astro';
 
-<Layout title="GRIDRUNNER" slug="game" series="neon-native" series="neon-native" series="neon-native" series="neon-native" series="neon-native" series="neon-native" series="iso-tactics">
+<Layout title="GRIDRUNNER" slug="game" series="iso-tactics">
 
 <div class="page-tag">STEP 11 — THE WHOLE GAME</div>
 <h1 class="page-title">GRIDRUNNER</h1>
@@ -54,7 +54,7 @@ Win = all drones dead. Lose = all runners dead.
 ```
 
 ```js
-// s../../../components/blog/iso/demos/Game.tsx — every concept, labelled
+// src/components/blog/iso/demos/Game.tsx — every concept, labelled
 // (1) projection
 function toScreen(x, y, ox, oy) {
   return { x: ox + (x - y) * 32, y: oy + (x + y) * 16 };
