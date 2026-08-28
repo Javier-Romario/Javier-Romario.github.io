@@ -629,6 +629,81 @@ html[data-theme='light'] .astro-code span {
   max-width: 100%;
 }
 
+/* ---- click-to-activate demo gate ---- */
+.demo-activate {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 180px;
+  padding: 24px;
+  border: none;
+  background: transparent;
+  color: var(--theme-text);
+  font-size: 15px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: color 120ms ease, background 120ms ease;
+}
+
+.demo-activate:hover {
+  color: var(--theme-focused-foreground);
+  background: var(--neo-surface);
+}
+
+.demo-activate__glyph {
+  display: inline-grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--theme-border);
+  color: var(--theme-focused-foreground);
+  font-size: 13px;
+}
+
+.demo-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  min-height: 180px;
+  color: var(--theme-muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.demo-loading__bar {
+  position: relative;
+  width: 140px;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--theme-border);
+  overflow: hidden;
+}
+
+.demo-loading__bar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  width: 40%;
+  border-radius: 999px;
+  background: var(--theme-focused-foreground);
+  animation: demo-loading-slide 1s ease-in-out infinite;
+}
+
+@keyframes demo-loading-slide {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(350%);
+  }
+}
+
 .demo-body {
   padding: 16px;
 }
