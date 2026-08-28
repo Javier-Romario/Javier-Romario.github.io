@@ -125,7 +125,21 @@ const base = import.meta.env.BASE_URL;
             } catch (err) {}
             paint();
           });
-          document.addEventListener('astro:page-load', paint);
+          var reapply = function () {
+            // Astro's view-transition swap wipes <html> attributes (incl.
+            // data-theme), so re-apply the saved preference after each nav.
+            try {
+              var t = localStorage.getItem('theme');
+              if (t === 'light' || t === 'dark') {
+                document.documentElement.dataset.theme = t;
+              } else {
+                delete document.documentElement.dataset.theme;
+              }
+            } catch (err) {}
+            paint();
+          };
+          document.addEventListener('astro:after-swap', reapply);
+          document.addEventListener('astro:page-load', reapply);
         }
         paint();
       })();
