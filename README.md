@@ -14,7 +14,7 @@ An interactive guide for deploying an Astro site styled with the [NEONDECK](http
 
 ```sh
 npm install
-npm run dev        # http://localhost:4321/neondeck-guide/
+npm run dev        # http://localhost:4321/
 npm run build      # static output → dist/
 npm run preview
 ```
@@ -25,4 +25,4 @@ npm run preview
 2. Repo → **Settings → Pages → Source → GitHub Actions**.
 3. The workflow at `.github/workflows/deploy.yml` builds with `withastro/action` and publishes via `actions/deploy-pages`.
 
-Project pages live at `https://Javier-Romario.github.io/neondeck-guide/`. The `site`/`base` pair is configured in `astro.config.mjs` — change `base` to `/` for a user/org site.
+This user/org site lives at `https://Javier-Romario.github.io/`. The `site`/`base` pair is configured in `astro.config.mjs` — change `base` to `/REPO/` for a project site.

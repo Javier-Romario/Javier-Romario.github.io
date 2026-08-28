@@ -65,7 +65,7 @@ import { fileURLToPath } from 'node:url';
 
 export default defineConfig({
   site: 'https://Javier-Romario.github.io',
-  base: '/neondeck-guide',
+  base: '/',
   integrations: [react()],
   vite: {
     resolve: {
@@ -109,11 +109,11 @@ const codeClient = `<Button client:visible theme="PRIMARY">RUN ICE-BREAKER</Butt
 <Accordion client:load title="NETMAP" defaultValue>…</Accordion>
 <MatrixRain client:load height={320} color="#00ffd1" density={0.6} />`;
 
-const codeBase = `// project site  →  https://USERNAME.github.io/REPO/
+const codeBase = `// user/org site (USERNAME.github.io repo)  →  base: '/'
 site: 'https://Javier-Romario.github.io',
-base: '/neondeck-guide',
+base: '/',
 
-// user/org site (USERNAME.github.io repo)  →  base: '/'`;
+// project site  →  https://USERNAME.github.io/REPO/  →  base: '/REPO/'`;
 
 const codeWorkflow = `name: Deploy to GitHub Pages
 
@@ -387,9 +387,10 @@ jobs:
       <h2 class="step__title">Configure the GitHub Pages base path</h2>
     </div>
     <p class="prose">
-      GitHub Pages serves project sites under a subpath (<code>/REPO/</code>). Every asset URL must
-      be prefixed or the site 404s. The <code>withastro/action</code> builder does <strong>not</strong>{' '}
-      auto-set <code>base</code> — it uploads <code>dist/</code> as-is.
+      GitHub Pages serves project sites under a subpath (<code>/REPO/</code>); a user/org site
+      (<code>USERNAME.github.io</code> repo) serves from the root (<code>/</code>). Every asset URL
+      must match <code>base</code> or the site 404s. The <code>withastro/action</code> builder does{' '}
+      <strong>not</strong> auto-set <code>base</code> — it uploads <code>dist/</code> as-is.
     </p>
     <CodePanel client:visible code={codeBase} filename="astro.config.mjs" />
   </section>
@@ -434,7 +435,7 @@ jobs:
     />
     <p class="prose">
       First run appears under <strong>Actions</strong>. When green, the site is live at{' '}
-      <code>https://Javier-Romario.github.io/neondeck-guide/</code>.
+      <code>https://Javier-Romario.github.io/</code>.
     </p>
   </section>
 
@@ -511,7 +512,7 @@ jobs:
           </TableRow>
           <TableRow>
             <TableColumn>404s on /REPO/_astro/…</TableColumn>
-            <TableColumn>Wrong <code>base</code> — use <code>'/neondeck-guide'</code> for project pages</TableColumn>
+            <TableColumn>Wrong <code>base</code> — use <code>'/'</code> for user sites, <code>'/REPO/'</code> for project pages</TableColumn>
           </TableRow>
           <TableRow>
             <TableColumn>Buttons/accordions dead</TableColumn>
