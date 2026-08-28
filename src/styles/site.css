@@ -120,6 +120,15 @@ html[data-astro-transition-fallback='new'] {
   animation: 320ms cubic-bezier(0.7, 0, 0.3, 1) both nd-glitch-in;
 }
 
+/* A hash-target nav (e.g. blog -> /#experience) makes Astro's fallback path
+   reassign location.href to force a scroll-to-fragment while this attribute
+   is still set — that scroll would otherwise inherit html's scroll-behavior:
+   smooth and animate at the same time as the transform/clip-path above,
+   fighting over the same element and freezing the page on Firefox. */
+html[data-astro-transition-fallback] {
+  scroll-behavior: auto;
+}
+
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-old(root),
   ::view-transition-new(root),
