@@ -55,6 +55,7 @@ section {
   --cp-glow-magenta: 0 0 8px rgba(255, 45, 120, 0.55), 0 0 24px rgba(255, 45, 120, 0.22);
 
   --font-family-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-family-code: 'Berkeley Mono', var(--font-family-mono);
   --theme-line-height-base: 1.25;
   --font-size: 15px;
 
@@ -190,7 +191,7 @@ code {
   background: var(--theme-panel-2);
   padding: 1px 5px;
   border-radius: 3px;
-  font-family: var(--font-family-mono);
+  font-family: var(--font-family-code);
   font-size: 0.9em;
   color: var(--theme-focused-foreground);
   border: 1px solid var(--theme-border);

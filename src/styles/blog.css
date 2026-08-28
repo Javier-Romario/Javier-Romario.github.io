@@ -275,6 +275,7 @@
   background: var(--neo-surface);
   box-shadow: var(--neo-pressed);
   overflow-x: auto;
+  font-family: var(--font-family-code);
 }
 
 .blog-body pre code {
@@ -283,6 +284,7 @@
   box-shadow: none;
   color: var(--theme-text);
   font-size: 13.5px;
+  font-family: inherit;
 }
 
 .blog-body blockquote {

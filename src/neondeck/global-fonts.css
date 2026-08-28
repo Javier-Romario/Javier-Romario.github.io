@@ -1,11 +1,10 @@
 /*
 NEONDECK fonts.
-Primary display/mono face is JetBrains Mono (system fallback unless bundled).
-To ship a custom cut (e.g. Berkeley Mono), drop your .woff2 into public/fonts
-and uncomment the block below, then point --font-family-mono in global.css at it.
+- UI / body: JetBrains Mono (self-hosted via @fontsource, imported in Layout.astro).
+- Code: Berkeley Mono (self-hosted .woff2 in public/fonts).
 */
 
-/*
+/* Berkeley Mono — code face */
 @font-face {
   font-family: 'Berkeley Mono';
   src: url('/fonts/BerkeleyMono-Regular.woff2') format('woff2');
@@ -13,4 +12,27 @@ and uncomment the block below, then point --font-family-mono in global.css at it
   font-style: normal;
   font-display: swap;
 }
-*/
+
+@font-face {
+  font-family: 'Berkeley Mono';
+  src: url('/fonts/BerkeleyMono-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Berkeley Mono';
+  src: url('/fonts/BerkeleyMono-Italic.woff2') format('woff2');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Berkeley Mono';
+  src: url('/fonts/BerkeleyMono-BoldItalic.woff2') format('woff2');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}

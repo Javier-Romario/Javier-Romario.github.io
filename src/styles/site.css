@@ -13,12 +13,8 @@ body {
   min-height: 100vh;
 }
 
-/* use the system sans stack everywhere (Neo components read
-   --font-family-mono, so remap it once rather than per component) */
-:root {
-  --font-family-mono: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto,
-    'Helvetica Neue', Arial, sans-serif;
-}
+/* Fonts: JetBrains Mono (UI/body) + Berkeley Mono (code) are defined in
+   src/neondeck/global.css + global-fonts.css. */
 
 /* ---- neutralize the cyberpunk page backdrop (grid + aurora + scanlines) ----
    the hex canvas below replaces it as the site's background motif */

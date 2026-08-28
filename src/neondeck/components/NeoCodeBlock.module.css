@@ -6,7 +6,7 @@
   background: var(--neo-surface);
   border-radius: 12px;
   box-shadow: var(--neo-well), inset 3px 0 0 0 var(--tone, var(--theme-focused-foreground));
-  font-family: var(--font-family-mono);
+  font-family: var(--font-family-code);
   font-size: 13px;
   line-height: calc(var(--theme-line-height-base) * 1rem);
   overflow-x: auto;
