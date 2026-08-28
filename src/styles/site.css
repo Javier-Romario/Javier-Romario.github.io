@@ -225,7 +225,7 @@ body::after {
 
 .site-header__links a.is-active {
   color: var(--theme-focused-foreground);
-  box-shadow: var(--neo-pressed);
+  box-shadow: var(--neo-pressed), inset 0 -2px 0 var(--theme-focused-foreground);
 }
 
 /* ---- hero ---- */

@@ -401,6 +401,7 @@
 
 .blog-body code {
   padding: 2px 6px;
+  border: 0;
   border-radius: 5px;
   background: var(--neo-surface);
   box-shadow: var(--neo-pressed);
@@ -411,6 +412,7 @@
 .blog-body pre {
   margin: 0 0 18px;
   padding: 16px;
+  border: 0;
   border-radius: 12px;
   background: var(--neo-surface);
   box-shadow: var(--neo-pressed);
@@ -420,6 +422,7 @@
 
 .blog-body pre code {
   padding: 0;
+  border: 0;
   background: transparent;
   box-shadow: none;
   color: var(--theme-text);

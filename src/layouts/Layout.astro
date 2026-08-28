@@ -161,15 +161,28 @@ const base = import.meta.env.BASE_URL;
             setActive('blog');
             return;
           }
+          var ids = ['experience', 'skills', 'contact'];
+          var sections = ids
+            .map(function (id) { return document.getElementById(id); })
+            .filter(Boolean);
+          if (!sections.length) {
+            setActive(null);
+            return;
+          }
           var marker = window.innerHeight * 0.3;
           var active = null;
-          ['experience', 'skills', 'contact'].forEach(function (id) {
-            if (active) return;
-            var sec = document.getElementById(id);
-            if (!sec) return;
-            var r = sec.getBoundingClientRect();
-            if (r.top <= marker && r.bottom > marker) active = id;
-          });
+          for (var i = 0; i < sections.length; i++) {
+            var r = sections[i].getBoundingClientRect();
+            if (r.top <= marker && r.bottom > marker) {
+              active = sections[i].id;
+              break;
+            }
+          }
+          // at the bottom the last section can't reach the marker — force it
+          var doc = document.documentElement;
+          if (window.innerHeight + window.scrollY >= doc.scrollHeight - 4) {
+            active = sections[sections.length - 1].id;
+          }
           setActive(active);
         }
         if (!window.__ndNavBound) {
