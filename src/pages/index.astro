@@ -2,9 +2,10 @@
 import Layout from '../layouts/Layout.astro';
 import NeoCard from '@components/NeoCard';
 import NeoAccordion from '@components/NeoAccordion';
-import NeoTable from '@components/NeoTable';
-import NeoTableRow from '@components/NeoTableRow';
-import NeoTableColumn from '@components/NeoTableColumn';
+import Badge from '@components/Badge';
+import Divider from '@components/Divider';
+import RowSpaceBetween from '@components/RowSpaceBetween';
+import Text from '@components/Text';
 
 const skills = [
   'TypeScript',
@@ -169,20 +170,21 @@ const education = [
       {experience.map((job) => (
         <NeoCard title={job.company} tone={job.tone}>
           <div class="job">
-            <dl class="job__meta">
-              <div class="job__meta-row">
-                <dt>Role</dt>
-                <dd>{job.role}</dd>
-              </div>
-              <div class="job__meta-row">
-                <dt>Period</dt>
-                <dd>{job.period}</dd>
-              </div>
-              <div class="job__meta-row">
-                <dt>Location</dt>
-                <dd>{job.location}</dd>
-              </div>
-            </dl>
+            <RowSpaceBetween style={{ flexWrap: 'wrap' }}>
+              <Badge>ROLE</Badge>
+              <Text>{job.role}</Text>
+            </RowSpaceBetween>
+            <Divider />
+            <RowSpaceBetween style={{ flexWrap: 'wrap' }}>
+              <Badge>PERIOD</Badge>
+              <Text>{job.period}</Text>
+            </RowSpaceBetween>
+            <Divider />
+            <RowSpaceBetween style={{ flexWrap: 'wrap' }}>
+              <Badge>LOCATION</Badge>
+              <Text>{job.location}</Text>
+            </RowSpaceBetween>
+            <Divider />
 
             <p class="job__summary">{job.summary}</p>
 
@@ -236,16 +238,16 @@ const education = [
       {education.map((ed) => (
         <NeoCard title={ed.school} tone="teal">
           <div class="job">
-            <NeoTable tone="teal">
-              <NeoTableRow>
-                <NeoTableColumn>QUALIFICATION</NeoTableColumn>
-                <NeoTableColumn>{ed.qualification}</NeoTableColumn>
-              </NeoTableRow>
-              <NeoTableRow>
-                <NeoTableColumn>PERIOD</NeoTableColumn>
-                <NeoTableColumn>{ed.period}</NeoTableColumn>
-              </NeoTableRow>
-            </NeoTable>
+            <RowSpaceBetween style={{ flexWrap: 'wrap' }}>
+              <Badge>QUALIFICATION</Badge>
+              <Text>{ed.qualification}</Text>
+            </RowSpaceBetween>
+            <Divider />
+            <RowSpaceBetween style={{ flexWrap: 'wrap' }}>
+              <Badge>PERIOD</Badge>
+              <Text>{ed.period}</Text>
+            </RowSpaceBetween>
+            <Divider />
 
             <ul class="edu__modules">
               {ed.modules.map((m) => (
@@ -282,20 +284,22 @@ const education = [
     </div>
 
     <NeoCard title="REACH ME" tone="magenta">
-      <NeoTable tone="magenta">
-        <NeoTableRow>
-          <NeoTableColumn>EMAIL</NeoTableColumn>
-          <NeoTableColumn><a class="contact-link" href="mailto:javierharford@gmail.com">javierharford@gmail.com</a></NeoTableColumn>
-        </NeoTableRow>
-        <NeoTableRow>
-          <NeoTableColumn>GITHUB</NeoTableColumn>
-          <NeoTableColumn><a class="contact-link" href="https://github.com/Javier-Romario" target="_blank" rel="noopener">github.com/Javier-Romario</a></NeoTableColumn>
-        </NeoTableRow>
-        <NeoTableRow>
-          <NeoTableColumn>LINKEDIN</NeoTableColumn>
-          <NeoTableColumn><a class="contact-link" href="https://www.linkedin.com/in/javier-romario-0a64727b" target="_blank" rel="noopener">linkedin.com/in/javier-romario-0a64727b</a></NeoTableColumn>
-        </NeoTableRow>
-      </NeoTable>
+      <div class="job">
+        <RowSpaceBetween style={{ flexWrap: 'wrap' }}>
+          <Badge>EMAIL</Badge>
+          <a class="contact-link" href="mailto:javierharford@gmail.com">javierharford@gmail.com</a>
+        </RowSpaceBetween>
+        <Divider />
+        <RowSpaceBetween style={{ flexWrap: 'wrap' }}>
+          <Badge>GITHUB</Badge>
+          <a class="contact-link" href="https://github.com/Javier-Romario" target="_blank" rel="noopener">github.com/Javier-Romario</a>
+        </RowSpaceBetween>
+        <Divider />
+        <RowSpaceBetween style={{ flexWrap: 'wrap' }}>
+          <Badge>LINKEDIN</Badge>
+          <a class="contact-link" href="https://www.linkedin.com/in/javier-romario-0a64727b" target="_blank" rel="noopener">linkedin.com/in/javier-romario-0a64727b</a>
+        </RowSpaceBetween>
+      </div>
     </NeoCard>
   </section>
 </Layout>
