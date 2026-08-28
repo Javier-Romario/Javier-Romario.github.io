@@ -86,7 +86,7 @@ export default function DemoTiles() {
         </button>
         <label>
           select cube
-          <select value={sel} onChange={(e) => setSel(Number(e.target.value))} style={{ background: '#0e1624', color: '#00ffd1', border: '1px solid #1d5a63', borderRadius: 6, fontFamily: 'inherit' }}>
+          <select value={sel} onChange={(e) => setSel(Number(e.target.value))} style={{ background: 'var(--neo-surface)', color: 'var(--theme-focused-foreground)', border: '1px solid var(--theme-border-bright)', borderRadius: 6, fontFamily: 'inherit' }}>
             {CUBES.map((c, i) => (
               <option key={i} value={i}>cube {i + 1} ({c.x},{c.y})</option>
             ))}

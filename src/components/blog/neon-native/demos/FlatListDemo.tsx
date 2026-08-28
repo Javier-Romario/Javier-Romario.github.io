@@ -31,7 +31,7 @@ export default function FlatListDemo() {
           right: 0,
           height: ITEM_H,
           padding: '12px 16px',
-          borderBottom: '1px solid #12313a',
+          borderBottom: '1px solid var(--theme-border)',
           display: 'flex',
           alignItems: 'center',
           gap: 12,
@@ -39,7 +39,7 @@ export default function FlatListDemo() {
         }}
       >
         <span style={{ color: '#00a896', fontSize: 11, minWidth: 34 }}>#{i}</span>
-        <span style={{ color: '#d7fff6', fontSize: 13 }}>
+        <span style={{ color: 'var(--theme-text)', fontSize: 13 }}>
           item {i} {i === 0 ? '· the only thing here at the top' : ''}
         </span>
       </div>
@@ -51,7 +51,7 @@ export default function FlatListDemo() {
       <div
         ref={scrollerRef}
         onScroll={() => setScrollTop(scrollerRef.current?.scrollTop ?? 0)}
-        style={{ position: 'relative', height: VIEW_H, overflowY: 'auto', background: '#04070b' }}
+        style={{ position: 'relative', height: VIEW_H, overflowY: 'auto', background: 'var(--neo-surface)' }}
       >
         <div style={{ height: TOTAL * ITEM_H, position: 'relative' }}>{rows}</div>
       </div>
@@ -65,7 +65,7 @@ export default function FlatListDemo() {
             value={windowSize}
             onChange={(e) => setWindowSize(Number(e.target.value))}
           />
-          <span style={{ color: '#5f8f88', fontSize: 12 }}>{windowSize} rows beyond viewport</span>
+          <span style={{ color: 'var(--theme-muted)', fontSize: 12 }}>{windowSize} rows beyond viewport</span>
         </label>
         <span className="demo-readout">
           mounts {start}–{end} · {end - start} of {TOTAL}

@@ -35,7 +35,7 @@ export default function DemoGltf() {
       <div style={{ padding: 18, display: 'flex', flexDirection: 'column', gap: 12 }}>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
           <Badge>glTF EXPORT</Badge>
-          <span style={{ color: '#5f8f88', fontSize: 12 }}>File → Export → glTF 2.0</span>
+          <span style={{ color: 'var(--theme-muted)', fontSize: 12 }}>File → Export → glTF 2.0</span>
         </div>
         {START.map((o) => (
           <Checkbox

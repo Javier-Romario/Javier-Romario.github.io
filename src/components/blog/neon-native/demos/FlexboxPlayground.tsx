@@ -39,7 +39,7 @@ export default function FlexboxPlayground() {
           style={{
             ...style,
             height: 280,
-            border: '1px dashed #1d5a63',
+            border: '1px dashed var(--theme-border-bright)',
             borderRadius: 8,
             background: 'rgba(0,255,209,0.03)',
             overflow: 'auto',
@@ -110,7 +110,7 @@ export default function FlexboxPlayground() {
           />
         </label>
       </div>
-      <pre style={{ margin: 0, borderTop: '1px solid #12313a', borderRadius: 0 }}>
+      <pre style={{ margin: 0, borderTop: '1px solid var(--theme-border)', borderRadius: 0 }}>
         <code>{code}</code>
       </pre>
     </div>

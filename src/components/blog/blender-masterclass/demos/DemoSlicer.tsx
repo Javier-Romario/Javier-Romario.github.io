@@ -17,11 +17,11 @@ export default function DemoSlicer() {
       <div style={{ padding: 18, display: 'flex', flexDirection: 'column', gap: 14 }}>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
           <Badge>SLICER PREVIEW</Badge>
-          <span style={{ color: '#5f8f88', fontSize: 12 }}>FDM · PLA · 0.4mm nozzle</span>
+          <span style={{ color: 'var(--theme-muted)', fontSize: 12 }}>FDM · PLA · 0.4mm nozzle</span>
         </div>
 
         <div>
-          <div style={{ fontSize: 12, color: '#5f8f88', marginBottom: 6 }}>LAYER HEIGHT — {layer.toFixed(2)} mm</div>
+          <div style={{ fontSize: 12, color: 'var(--theme-muted)', marginBottom: 6 }}>LAYER HEIGHT — {layer.toFixed(2)} mm</div>
           <input
             type="range"
             min={0.08}
@@ -31,13 +31,13 @@ export default function DemoSlicer() {
             onChange={(e) => setLayer(Number(e.target.value))}
             style={{ width: '100%', accentColor: '#00ffd1' }}
           />
-          <div style={{ fontSize: 11, color: '#5f8f88', marginTop: 2 }}>
+          <div style={{ fontSize: 11, color: 'var(--theme-muted)', marginTop: 2 }}>
             0.08 = fine detail · 0.28 = fast draft
           </div>
         </div>
 
         <div>
-          <div style={{ fontSize: 12, color: '#5f8f88', marginBottom: 6 }}>INFILL — {infill}%</div>
+          <div style={{ fontSize: 12, color: 'var(--theme-muted)', marginBottom: 6 }}>INFILL — {infill}%</div>
           <input
             type="range"
             min={0}
@@ -49,7 +49,7 @@ export default function DemoSlicer() {
           />
         </div>
 
-        <div style={{ fontSize: 12, color: '#5f8f88' }}>
+        <div style={{ fontSize: 12, color: 'var(--theme-muted)' }}>
           ORIENTATION
           <Select
             name="orient"
@@ -63,9 +63,9 @@ export default function DemoSlicer() {
         </div>
 
         <div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: '#5f8f88', marginBottom: 6 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--theme-muted)', marginBottom: 6 }}>
             <span>PRINT TIME</span>
-            <span style={{ color: '#00ffd1' }}>{timeLabel}</span>
+            <span style={{ color: 'var(--theme-focused-foreground)' }}>{timeLabel}</span>
           </div>
           <BarLoader progress={Math.min(timeMin / 200, 1)} />
         </div>

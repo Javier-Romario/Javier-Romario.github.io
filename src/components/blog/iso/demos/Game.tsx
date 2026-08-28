@@ -496,9 +496,9 @@ export default function Game() {
   const enemyAlive = units.filter((u) => u.team === 'e' && u.hp > 0).length;
 
   const selectStyle: React.CSSProperties = {
-    background: '#0e1624',
-    color: '#00ffd1',
-    border: '1px solid #1d5a63',
+    background: 'var(--neo-surface)',
+    color: 'var(--theme-focused-foreground)',
+    border: '1px solid var(--theme-border-bright)',
     borderRadius: 6,
     fontFamily: 'inherit',
     fontSize: 13,

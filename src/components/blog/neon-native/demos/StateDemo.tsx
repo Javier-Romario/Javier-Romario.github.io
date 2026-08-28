@@ -31,7 +31,7 @@ export default function StateDemo() {
             padding: 18,
             borderRadius: 10,
             border: `2px solid ${COLOR[status]}`,
-            background: 'rgba(10,17,28,0.9)',
+            background: 'var(--neo-surface)',
             color: COLOR[status],
             textAlign: 'center',
             fontFamily: 'Berkeley Mono, JetBrains Mono, monospace',
@@ -44,7 +44,7 @@ export default function StateDemo() {
         >
           {status.toUpperCase()}
         </div>
-        <div style={{ marginTop: 12, color: '#5f8f88', fontSize: 12.5 }}>
+        <div style={{ marginTop: 12, color: 'var(--theme-muted)', fontSize: 12.5 }}>
           type Status = 'idle' | 'loading' | 'success' | 'error'
         </div>
       </div>

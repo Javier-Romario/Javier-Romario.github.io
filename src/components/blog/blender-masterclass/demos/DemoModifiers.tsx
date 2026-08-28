@@ -28,8 +28,8 @@ export default function DemoModifiers() {
       <div style={{ padding: 18, display: 'flex', flexDirection: 'column', gap: 10 }}>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
           <Badge>MODIFIER STACK</Badge>
-          <span style={{ color: '#5f8f88', fontSize: 12 }}>
-            {onCount}/{mods.length} active · mesh is <b style={{ color: '#00ffd1' }}>never edited</b>
+          <span style={{ color: 'var(--theme-muted)', fontSize: 12 }}>
+            {onCount}/{mods.length} active · mesh is <b style={{ color: 'var(--theme-focused-foreground)' }}>never edited</b>
           </span>
         </div>
         {mods.map((m, i) => (

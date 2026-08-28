@@ -28,26 +28,26 @@ export default function DemoTurns() {
 
   return (
     <div className="demo-box">
-      <div style={{ padding: 16, background: '#04070b' }}>
+      <div style={{ padding: 16, background: 'transparent' }}>
         <div style={{ display: 'flex', gap: 10, justifyContent: 'center', marginBottom: 18, fontFamily: 'inherit' }}>
           <div
             style={{
               padding: '10px 18px', border: '1px solid', borderRadius: 8,
-              borderColor: state === 'PLAYER' ? '#00ffd1' : '#12313a',
-              color: state === 'PLAYER' ? '#00ffd1' : '#5f8f88',
-              background: state === 'PLAYER' ? '#0e2f2f' : 'transparent',
+              borderColor: state === 'PLAYER' ? 'var(--theme-focused-foreground)' : 'var(--theme-border)',
+              color: state === 'PLAYER' ? 'var(--theme-focused-foreground)' : 'var(--theme-muted)',
+              background: state === 'PLAYER' ? 'var(--neo-surface)' : 'transparent',
               textShadow: state === 'PLAYER' ? '0 0 8px rgba(0,255,209,.5)' : 'none',
             }}
           >
             PLAYER
           </div>
-          <div style={{ color: '#5f8f88', alignSelf: 'center' }}>⇄</div>
+          <div style={{ color: 'var(--theme-muted)', alignSelf: 'center' }}>⇄</div>
           <div
             style={{
               padding: '10px 18px', border: '1px solid', borderRadius: 8,
-              borderColor: state === 'ENEMY' ? '#ff2d78' : '#12313a',
-              color: state === 'ENEMY' ? '#ff2d78' : '#5f8f88',
-              background: state === 'ENEMY' ? '#2a0f1a' : 'transparent',
+              borderColor: state === 'ENEMY' ? 'var(--theme-accent)' : 'var(--theme-border)',
+              color: state === 'ENEMY' ? 'var(--theme-accent)' : 'var(--theme-muted)',
+              background: state === 'ENEMY' ? 'var(--neo-surface)' : 'transparent',
               textShadow: state === 'ENEMY' ? '0 0 8px rgba(255,45,120,.5)' : 'none',
             }}
           >
@@ -56,7 +56,7 @@ export default function DemoTurns() {
         </div>
 
         <div className="demo-controls" style={{ borderTop: 'none', paddingTop: 0, justifyContent: 'center' }}>
-          <span className="pill" style={{ padding: '4px 14px', border: '1px solid #00ffd1', borderRadius: 999, color: '#00ffd1' }}>
+          <span className="pill" style={{ padding: '4px 14px', border: '1px solid var(--theme-focused-foreground)', borderRadius: 999, color: 'var(--theme-focused-foreground)' }}>
             AP {ap}
           </span>
           <button className="btn" onClick={() => act(1, 'move')} disabled={state !== 'PLAYER' || ap < 1}>
@@ -70,9 +70,9 @@ export default function DemoTurns() {
           </button>
         </div>
 
-        <div style={{ marginTop: 14, fontSize: 12.5, color: '#5f8f88', lineHeight: 1.7, minHeight: 100 }}>
+        <div style={{ marginTop: 14, fontSize: 12.5, color: 'var(--theme-muted)', lineHeight: 1.7, minHeight: 100 }}>
           {log.map((l, i) => (
-            <div key={i} style={{ color: i === 0 ? '#00ffd1' : '#5f8f88' }}>{l}</div>
+            <div key={i} style={{ color: i === 0 ? 'var(--theme-focused-foreground)' : 'var(--theme-muted)' }}>{l}</div>
           ))}
         </div>
       </div>

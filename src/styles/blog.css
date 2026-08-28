@@ -613,23 +613,15 @@ html[data-theme='light'] .astro-code span {
 }
 
 /* ---- demo components (React islands) ---- */
-/* Demos are fixed dark "terminals" — they don't follow the page theme, so the
-   hardcoded dark palette in the canvases/inline styles always sits on dark. */
+/* Demo-box chrome follows the page theme; the canvas/3D "screen" inside
+   stays dark on purpose (a game or viewport is dark even in light UIs). */
 .demo-box {
-  color-scheme: dark;
   margin: 18px 0;
   border-radius: 14px;
-  background: #070c13;
+  border: 1px solid var(--theme-border);
+  background: var(--neo-surface);
   box-shadow: var(--neo-raised);
   overflow: hidden;
-
-  --theme-text: #d7fff6;
-  --theme-muted: #5f8f88;
-  --theme-focused-foreground: #00ffd1;
-  --theme-focused-foreground-subdued: rgba(0, 255, 209, 0.5);
-  --neo-surface: rgba(10, 17, 28, 0.9);
-  --neo-raised: 6px 6px 14px rgba(0, 0, 0, 0.55), -6px -6px 14px rgba(255, 255, 255, 0.04);
-  --neo-pressed: inset 4px 4px 10px rgba(0, 0, 0, 0.6), inset -4px -4px 10px rgba(255, 255, 255, 0.035);
 }
 
 .demo-box canvas {
@@ -647,7 +639,7 @@ html[data-theme='light'] .astro-code span {
   align-items: center;
   gap: 10px;
   padding: 12px 16px;
-  border-top: 1px solid var(--neo-surface);
+  border-top: 1px solid var(--theme-border);
 }
 
 .demo-readout {

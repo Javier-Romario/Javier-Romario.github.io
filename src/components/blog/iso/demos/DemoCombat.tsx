@@ -3,7 +3,7 @@ import { useState } from 'react';
 function HPBar({ hp, max, color }: { hp: number; max: number; color: string }) {
   const pct = (hp / max) * 100;
   return (
-    <div style={{ height: 10, background: '#0a111c', border: '1px solid #12313a', borderRadius: 4, overflow: 'hidden', width: 180 }}>
+    <div style={{ height: 10, background: 'var(--neo-surface)', border: '1px solid var(--theme-border)', borderRadius: 4, overflow: 'hidden', width: 180 }}>
       <div
         style={{
           width: `${pct}%`, height: '100%', background: color,
@@ -30,15 +30,15 @@ export default function DemoCombat() {
 
   return (
     <div className="demo-box">
-      <div style={{ padding: 18, background: '#04070b', display: 'flex', flexDirection: 'column', gap: 14 }}>
+      <div style={{ padding: 18, background: 'var(--neo-surface)', display: 'flex', flexDirection: 'column', gap: 14 }}>
         <div style={{ display: 'flex', gap: 30, alignItems: 'center', flexWrap: 'wrap' }}>
           <div>
-            <div style={{ color: '#00ffd1', fontSize: 13, marginBottom: 6 }}>▲ ATTACKER · atk 3</div>
+            <div style={{ color: 'var(--theme-focused-foreground)', fontSize: 13, marginBottom: 6 }}>▲ ATTACKER · atk 3</div>
             <HPBar hp={20} max={20} color="#00ffd1" />
           </div>
-          <div style={{ color: '#ff2d78', fontSize: 20, fontFamily: 'inherit' }}>▶</div>
+          <div style={{ color: 'var(--theme-accent)', fontSize: 20, fontFamily: 'inherit' }}>▶</div>
           <div>
-            <div style={{ color: '#ff2d78', fontSize: 13, marginBottom: 6 }}>▼ DEFENDER · hp {dHp}/20</div>
+            <div style={{ color: 'var(--theme-accent)', fontSize: 13, marginBottom: 6 }}>▼ DEFENDER · hp {dHp}/20</div>
             <HPBar hp={dHp} max={20} color="#ff2d78" />
           </div>
         </div>
