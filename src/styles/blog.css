@@ -187,6 +187,12 @@
   list-style: none;
   margin: 0;
   padding: 8px 0;
+  text-indent: 0;
+}
+
+/* kill the global ol counter — the number lives in __tag */
+.article-pages li::before {
+  content: none;
 }
 
 .article-pages li + li {
