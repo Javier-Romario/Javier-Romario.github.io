@@ -1,0 +1,47 @@
+import Layout from '../../../layouts/BlogPost.astro';
+import DemoCombat from '../../../components/blog/iso/demos/DemoCombat.tsx';
+import Formula from '../../../components/blog/iso/Formula.astro';
+import Recap from '../../../components/blog/iso/Recap.astro';
+
+<Layout title="Combat Dice" slug="combat" series="neon-native" series="neon-native" series="neon-native" series="neon-native" series="neon-native" series="neon-native" series="iso-tactics">
+
+<div class="page-tag">STEP 10 — NUMBERS GO DOWN</div>
+<h1 class="page-title">Combat Dice</h1>
+<p class="lede">
+  Combat is just math: roll a die, subtract cover, subtract HP. Keep it small and legible —
+  three numbers the player can read in one glance.
+</p>
+
+## The damage formula
+
+<Formula math="dmg = base + roll − cover" note="base = attacker's attack stat. roll = random (a d6 or a range). cover = defender's bonus. Clamp at 1 minimum." />
+
+```js
+function attack(attacker, defender) {
+  const roll = 1 + Math.floor(Math.random() * 6);   // d6
+  const dmg = Math.max(1, attacker.atk + roll - defender.cover);
+  defender.hp -= dmg;
+  if (defender.hp <= 0) defender.dead = true;
+}
+```
+
+## The design rules
+
+- **Randomness small.** A d6 swing of 1–6 on top of an atk of 5 means results are predictable
+  but not solved. Too much randomness feels unfair; too little feels like arithmetic.
+- **Cover is subtraction, not a %.** Players understand "−2" instantly. A "40% miss chance"
+  feels like the game lied to them.
+- **Always show the roll.** The dice readout builds trust — when you die, you see *why*.
+
+<div class="poke">Hit attack a few times. Then raise cover to 2 and watch the damage shrink.</div>
+
+<DemoCombat client:load />
+
+## In GRIDRUNNER
+
+Each unit has `atk` (5–6) and a small random bonus (0–2). No cover in the final game — but the
+formula is the same, and adding cover later is one `− cover` line.
+
+<Recap points={['dmg = base + roll − cover, clamp ≥ 1', 'small randomness + visible roll = trust', 'HP hits 0 → unit dead → win condition']} />
+
+</Layout>

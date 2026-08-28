@@ -1,0 +1,62 @@
+import Layout from '../../../layouts/BlogPost.astro';
+import Formula from '../../../components/blog/blender-masterclass/Formula.astro';
+import Recap from '../../../components/blog/blender-masterclass/Recap.astro';
+import DemoSlicer from '../../../components/blog/blender-masterclass/demos/DemoSlicer.tsx';
+
+<Layout title="Slice It Right" slug="slicer" series="blender-masterclass">
+
+<div class="page-tag">LESSON 04 — THE SLICER IS HALF THE ART</div>
+<h1 class="page-title">Slice It Right</h1>
+
+<div class="timebox">~4 min</div>
+
+<p class="lede">You modeled a watertight mesh. Now the <b>slicer</b> (Cura, PrusaSlicer, Lychee)
+turns it into toolpaths. Layer height, shells, infill, supports, orientation — these four dials
+decide strength, time, and whether the print survives at all.</p>
+
+<div class="whycare">Two people can print the same STL and get a trophy or a hairball. The
+difference is 100% slicer settings.</div>
+
+## The rule
+
+<Formula math="Shell the thin, support the overhang" note="Walls give strength, infill gives weight, supports give overhangs somewhere to start." />
+
+## The four dials
+
+```text
+LAYER HEIGHT   0.08mm fine  →  0.28mm draft     (detail vs time)
+WALLS/SHELLS   2–4 perimeters                     (strength + watertightness)
+INFILL         15% functional  →  100% solid      (weight vs strength)
+SUPPORTS       on for anything over ~45° overhang  (cleanup cost)
+```
+
+## Orientation is a cheat code
+
+Rotate the part **before** slicing. The right orientation:
+
+- **Minimizes supports** — print overhangs upward-facing.
+- **Puts layer lines perpendicular to load** — layers shear apart along the Z axis.
+- **Hides layer lines** on the face people see.
+
+<div class="poke">Drag LAYER HEIGHT and INFILL, then switch ORIENTATION. Watch the print-time readout
+move. Thinner layers = more passes = more time; more infill = more plastic = more time.</div>
+
+<DemoSlicer client:load />
+
+## FDM vs SLA at a glance
+
+| | FDM | SLA |
+|---|---|---|
+| Cost | cheap | pricier resin |
+| Detail | layer lines visible | near-invisible layers |
+| Best for | functional parts, big prints | miniatures, jewelry |
+| Supports | easier to remove | trickier, more cleanup |
+
+<Recap points={[
+  'Four dials: layer height, shells, infill, supports',
+  'Orient to minimize supports + hide layer lines',
+  'Layer lines are weakest along Z — orient accordingly',
+  'FDM for parts, SLA for detail',
+]} />
+
+</Layout>

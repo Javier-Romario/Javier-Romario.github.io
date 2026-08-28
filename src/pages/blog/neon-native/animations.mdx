@@ -1,0 +1,105 @@
+import Layout from '../../../layouts/BlogPost.astro';
+import Tldr from '../../../components/blog/neon-native/Tldr.astro';
+import Takeaway from '../../../components/blog/neon-native/Takeaway.astro';
+import Pitfall from '../../../components/blog/neon-native/Pitfall.astro';
+import Recap from '../../../components/blog/neon-native/Recap.astro';
+
+<Layout title="Animations" slug="animations" series="neon-native">
+
+<h1 class="page-title">Animations</h1>
+
+<Tldr tldr="Animations must run on the UI thread, not the JS thread. Use Reanimated for anything that moves. Never animate with setState — every setState re-renders and janks." />
+
+<p class="lede">
+  A smooth 60fps animation means every frame renders in ~16ms. If your animation crosses the
+  JS thread, it competes with your logic and drops frames. The fix: keep motion on the
+  **UI thread** with **Reanimated**.
+</p>
+
+## The golden rule
+
+```tsx
+// ❌ janky — animating via state re-renders every frame
+const [x, setX] = useState(0);
+useEffect(() => {
+  const id = setInterval(() => setX((v) => v + 1), 16);  // 60 setStates/sec
+  return () => clearInterval(id);
+}, []);
+
+// ✅ smooth — Reanimated runs on the UI thread
+const x = useSharedValue(0);
+```
+
+`setState` on every frame forces a React re-render every 16ms. Reanimated's shared values
+update on the **UI thread** — the JS thread isn't involved, so it can't drop a frame.
+
+<Takeaway math="animate on the UI thread, not JS" note="Reanimated shared values update natively. setState-based animation re-renders and janks." />
+
+## Reanimated in one example
+
+```tsx
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+} from 'react-native-reanimated';
+
+function BouncyBox() {
+  const scale = useSharedValue(1);
+
+  const style = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  return (
+    <Animated.View
+      style={[style, { width: 100, height: 100, backgroundColor: '#00ffd1' }]}
+      onTouchStart={() => (scale.value = withSpring(2))}
+      onTouchEnd={() => (scale.value = withSpring(1))}
+    />
+  );
+}
+```
+
+Key ideas:
+
+- `useSharedValue` — a value that lives on the UI thread.
+- `useAnimatedStyle` — styles derived from shared values, updated natively.
+- `withSpring` / `withTiming` — animation curves.
+
+## Layout animations
+
+For enter/exit animations when items mount or reorder, Reanimated v3+ has `Layout`:
+
+```tsx
+import { LinearTransition } from 'react-native-reanimated';
+
+<Animated.View layout={LinearTransition} />
+```
+
+## When you can use the Animated API
+
+RN's built-in `Animated` runs on the JS thread by default and is fine for simple, non-critical
+fades. For anything interactive or perf-sensitive, use Reanimated. Most apps standardize on
+Reanimated from day one.
+
+## The 60fps budget
+
+60fps = 16.6ms per frame. In that budget you must render **and** animate. Any JS-thread work —
+a heavy `map`, a re-render, a JSON parse — steals from that budget and drops a frame. That's
+the entire reason "run it on the UI thread" exists.
+
+<Pitfall title="Don't animate layout props via state">
+  Animating <code>width</code>/<code>height</code>/<code>top</code> via <code>setState</code> is
+  the worst case: layout recalculation + re-render every frame. Use <code>transform</code>
+  (translate/scale/rotate) — it's cheap and GPU-friendly — and a UI-thread animation lib.
+</Pitfall>
+
+<Recap points={[
+  '60fps = 16.6ms per frame; keep motion off the JS thread',
+  'Reanimated shared values live on the UI thread',
+  'Never animate with setState',
+  'Prefer transform over layout-property animation',
+]} />
+
+</Layout>

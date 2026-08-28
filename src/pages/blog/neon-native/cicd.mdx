@@ -1,0 +1,125 @@
+import Layout from '../../../layouts/BlogPost.astro';
+import Tldr from '../../../components/blog/neon-native/Tldr.astro';
+import Takeaway from '../../../components/blog/neon-native/Takeaway.astro';
+import Pitfall from '../../../components/blog/neon-native/Pitfall.astro';
+import Recap from '../../../components/blog/neon-native/Recap.astro';
+
+<Layout title="CI/CD" slug="cicd" series="neon-native">
+
+<h1 class="page-title">CI/CD</h1>
+
+<Tldr tldr="EAS Build compiles your app in the cloud — no Xcode/Gradle on your machine. Version in app.json, keep secrets in EAS environment variables, build on every merge." />
+
+<p class="lede">
+  Building for iOS needs a Mac; building for Android needs the SDK. **EAS Build** does both in
+  the cloud, reproducibly. Your laptop just pushes code.
+</p>
+
+## Configure EAS
+
+```bash
+npm install -g eas-cli
+eas login
+eas build:configure
+```
+
+This creates `eas.json` with build profiles. A typical setup:
+
+```json
+{
+  "cli": { "version": ">= 5.0.0" },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal"
+    },
+    "preview": {
+      "distribution": "internal"
+    },
+    "production": {
+      "autoIncrement": true
+    }
+  }
+}
+```
+
+- **development** — a dev build with the dev client (step 02).
+- **preview** — a real build for testers, installed via a link.
+- **production** — the store-ready build.
+
+<Takeaway math="EAS Build in the cloud, not your laptop" note="eas build --profile production → signed .ipa/.aab in the cloud. No local toolchain." />
+
+## Run a build
+
+```bash
+eas build --platform ios --profile production
+eas build --platform android --profile production
+eas build --platform all          # both
+```
+
+EAS uploads your code, compiles it, and gives you a link to the artifact. iOS signing is
+handled by EAS (it can manage your certificates — `eas credentials`).
+
+## Versioning
+
+Two numbers matter:
+
+- **`version`** in `app.json` — the human version (`1.2.3`). Must increment for store uploads.
+- **`buildNumber`** (iOS) / **`versionCode`** (Android) — the integer the stores actually compare.
+
+Use `"autoIncrement": true` in the production profile so EAS bumps the build number for you.
+Bump `version` yourself in `app.json` for each release.
+
+## Secrets in EAS environment variables
+
+Never commit API keys. Store them in EAS:
+
+```bash
+eas secret:create --name API_KEY --value "sk-..."
+eas secret:create --name SENTRY_DSN --value "https://..."
+```
+
+They're injected at build time and available via `process.env.API_KEY` (in `app.config.ts`
+you read them to write into your app config).
+
+## GitHub Actions
+
+Wire builds to your repo so every push to `main` builds automatically:
+
+```yaml
+# .github/workflows/build.yml
+name: EAS Build
+on:
+  push:
+    branches: [main]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: npm ci
+      - run: npm i -g eas-cli
+      - run: eas build --platform all --non-interactive
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+```
+
+`EXPO_TOKEN` is a personal access token from expo.dev/settings/access-tokens.
+
+<Pitfall title="Committed secrets">
+  If an API key ever touches git, it's compromised forever — assume it leaked, rotate it, and
+  move it to <code>eas secret:create</code>. Add <code>.env*</code> to <code>.gitignore</code>.
+  For client-visible keys (maps, analytics), you can't hide them — restrict them by bundle ID
+  instead.
+</Pitfall>
+
+<Recap points={[
+  'EAS Build compiles in the cloud, no local toolchain',
+  'Three profiles: development / preview / production',
+  'version + buildNumber both matter; autoIncrement helps',
+  'Secrets live in EAS env vars, never in git',
+]} />
+
+</Layout>

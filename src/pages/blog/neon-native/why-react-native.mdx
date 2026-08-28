@@ -1,0 +1,78 @@
+import Layout from '../../../layouts/BlogPost.astro';
+import Tldr from '../../../components/blog/neon-native/Tldr.astro';
+import Takeaway from '../../../components/blog/neon-native/Takeaway.astro';
+import Pitfall from '../../../components/blog/neon-native/Pitfall.astro';
+import Recap from '../../../components/blog/neon-native/Recap.astro';
+
+<Layout title="What Is React Native?" slug="why-react-native" series="neon-native">
+
+<h1 class="page-title">What Is React Native?</h1>
+
+<Tldr tldr="React Native renders real native UI from JavaScript. One JS thread talks to a native thread. You write React, the phone draws native views." />
+
+<p class="lede">
+  React Native is <b>not a webview</b>. There's no HTML, no CSS, no DOM. You write React
+  components, and they turn into <b>real native widgets</b> — <code>UIView</code> on iOS,
+  <code>android.view.View</code> on Android.
+</p>
+
+## The mental model: two worlds
+
+Every RN app is two threads passing messages:
+
+- **JS thread** — runs your React code, your logic, your <code>setState</code>.
+- **Native (UI) thread** — draws pixels, handles touch, runs animations.
+
+Your JS says <i>"render a red box here"</i>. The native thread says <i>"done"</i>. They talk
+over a **bridge** (old architecture) or through **JSI** (new architecture — direct C++
+function calls, no async JSON queue).
+
+<Takeaway math="JS thread → native thread → pixels" note="Write once in React, render native on both platforms. The bridge/JSI is the phone line." />
+
+## Why it's not a webview
+
+A webview wraps a browser in an app — you get web speed, web bugs, web feel. React Native
+compiles (or interprets) JS but the <b>views are native</b>. Scrolling, touch, and 60fps
+animations happen on the native side. That's why an RN app feels like an app, not a website.
+
+## Hermes: the engine
+
+JS needs an engine. React Native ships **Hermes**, a JS engine built for mobile:
+
+- Small memory footprint
+- Fast startup
+- AOT bytecode compilation on Android
+
+You never touch it. It's the default and it just works.
+
+## The new architecture (2024+)
+
+As of Expo SDK 52+, the **new architecture** is the default:
+
+- **Fabric** — new renderer, sync UI updates on the UI thread.
+- **TurboModules** — native modules loaded lazily, called directly via JSI.
+- **Bridgeless** — no more JSON-serialization bridge.
+
+Why you care: fewer dropped frames, faster startup. Most of the time you write the exact same
+code and it's just faster.
+
+<Pitfall title="React Native ≠ React DOM">
+  React is the shared brain. <code>react-dom</code> renders to a browser. <code>react-native</code>
+  renders to native views. Same hooks (<code>useState</code>, <code>useEffect</code>), totally
+  different rendering target. Don't import <code>document</code>, <code>window</code>, or CSS —
+  they don't exist here.
+</Pitfall>
+
+## What you can and can't do
+
+- **Can:** touch, camera, GPS, notifications, biometrics, payments, push — the full device.
+- **Can't:** use DOM APIs, HTML, CSS files. Layout is Flexbox (step 06). Styling is JS objects (step 10).
+
+<Recap points={[
+  'RN = React + native views, not a webview',
+  'Two threads: JS and native, connected by bridge/JSI',
+  'Hermes is the JS engine; new architecture is default since SDK 52',
+  'Same React hooks, no DOM/CSS/HTML',
+]} />
+
+</Layout>

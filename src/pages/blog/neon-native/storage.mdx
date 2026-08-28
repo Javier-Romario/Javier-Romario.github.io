@@ -1,0 +1,103 @@
+import Layout from '../../../layouts/BlogPost.astro';
+import Tldr from '../../../components/blog/neon-native/Tldr.astro';
+import Takeaway from '../../../components/blog/neon-native/Takeaway.astro';
+import Pitfall from '../../../components/blog/neon-native/Pitfall.astro';
+import Recap from '../../../components/blog/neon-native/Recap.astro';
+
+<Layout title="Storage" slug="storage" series="neon-native">
+
+<h1 class="page-title">Storage</h1>
+
+<Tldr tldr="AsyncStorage for simple key-value. MMKV for speed. SecureStore (or Keychain) for secrets. Never put tokens or passwords in plain AsyncStorage." />
+
+<p class="lede">
+  You need three kinds of persistence: fast key-value, structured data, and secrets. Different
+  tools for each. The one rule that matters: <b>secrets go in secure storage</b>.
+</p>
+
+## AsyncStorage: simple key-value
+
+Good for preferences, theme choice, last-opened screen. Async, string-only.
+
+```tsx
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+await AsyncStorage.setItem('theme', 'dark');
+const theme = await AsyncStorage.getItem('theme');
+await AsyncStorage.removeItem('theme');
+```
+
+Wrap it so JSON is automatic:
+
+```ts
+const store = {
+  set: async (key: string, value: unknown) =>
+    AsyncStorage.setItem(key, JSON.stringify(value)),
+  get: async <T>(key: string): Promise<T | null> => {
+    const raw = await AsyncStorage.getItem(key);
+    return raw ? (JSON.parse(raw) as T) : null;
+  },
+};
+```
+
+<Takeaway math="SecureStore for secrets, not AsyncStorage" note="AsyncStorage = plaintext on disk. Tokens, keys, credentials → expo-secure-store." />
+
+## SecureStore: secrets
+
+Encrypted via the OS keychain/keystore. For auth tokens, API keys, anything sensitive.
+
+```tsx
+import * as SecureStore from 'expo-secure-store';
+
+await SecureStore.setItemAsync('authToken', token);
+const token = await SecureStore.getItemAsync('authToken');
+await SecureStore.deleteItemAsync('authToken');
+```
+
+## MMKV: when speed matters
+
+`react-native-mmkv` is a synchronous, C++ key-value store — much faster than AsyncStorage for
+hot paths. Use it when you read values every render.
+
+```tsx
+import { MMKV } from 'react-native-mmkv';
+const storage = new MMKV();
+storage.set('user.name', 'Ada');
+const name = storage.getString('user.name');
+```
+
+## SQLite: structured data
+
+For real relational data (records, logs, offline tables), use `expo-sqlite`:
+
+```tsx
+import * as SQLite from 'expo-sqlite';
+const db = await SQLite.openDatabaseAsync('app.db');
+await db.execAsync('CREATE TABLE IF NOT EXISTS notes (id INTEGER PRIMARY KEY, text TEXT)');
+await db.runAsync('INSERT INTO notes (text) VALUES (?)', 'hello');
+```
+
+<Pitfall title="AsyncStorage is not encrypted">
+  AsyncStorage writes plaintext to disk. Anyone with a rooted device (or a backup) can read it.
+  Passwords, tokens, and keys belong in <code>expo-secure-store</code>. Prefer storing a token
+  and refreshing it, never a raw password.
+</Pitfall>
+
+## Choosing the tool
+
+| Need | Tool |
+|---|---|
+| Small prefs (theme, flags) | AsyncStorage |
+| Secrets / tokens | expo-secure-store |
+| Fast, frequent reads | MMKV |
+| Relational / offline data | expo-sqlite |
+| Large blobs / files | expo-file-system |
+
+<Recap points={[
+  'AsyncStorage = string key-value, fine for prefs',
+  'expo-secure-store = keychain/keystore for secrets',
+  'MMKV = fast synchronous reads',
+  'SQLite for structured offline data',
+]} />
+
+</Layout>

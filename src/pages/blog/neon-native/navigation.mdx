@@ -1,0 +1,125 @@
+import Layout from '../../../layouts/BlogPost.astro';
+import Tldr from '../../../components/blog/neon-native/Tldr.astro';
+import Takeaway from '../../../components/blog/neon-native/Takeaway.astro';
+import Pitfall from '../../../components/blog/neon-native/Pitfall.astro';
+import Recap from '../../../components/blog/neon-native/Recap.astro';
+
+<Layout title="Navigation" slug="navigation" series="neon-native">
+
+<h1 class="page-title">Navigation</h1>
+
+<Tldr tldr="expo-router turns folders into screens. Stack = push/pop. Tabs = bottom bar. [id].tsx = dynamic route. Deep links work for free." />
+
+<p class="lede">
+  Navigation is the skeleton of your app. With **expo-router**, it's the file system again:
+  create a folder, you created a screen. Three navigators cover 95% of apps: **Stack**,
+  **Tabs**, and **dynamic routes**.
+</p>
+
+## Stack: push and pop
+
+A stack keeps a history — push a screen on top, pop to go back. Your root `_layout.tsx` sets
+it up:
+
+```tsx
+// app/_layout.tsx
+import { Stack } from 'expo-router';
+
+export default function Layout() {
+  return (
+    <Stack>
+      <Stack.Screen name="index" options={{ title: 'Home' }} />
+      <Stack.Screen name="profile" options={{ title: 'Profile' }} />
+    </Stack>
+  );
+}
+```
+
+Navigate with the router:
+
+```tsx
+import { router, Link } from 'expo-router';
+
+<Link href="/profile">Go to profile</Link>
+// or programmatically:
+router.push('/profile');
+router.back();          // pop
+router.replace('/home'); // swap, no back entry
+```
+
+<Takeaway math="expo-router: folders = screens" note="Stack = history. Tabs = bottom bar. Dynamic [id] = parameters. All from file paths." />
+
+## Tabs: the bottom bar
+
+Create a `(tabs)` group folder with its own `_layout.tsx`:
+
+```
+app/
+  (tabs)/
+    _layout.tsx    ← the Tabs navigator
+    index.tsx      ← tab 1
+    profile.tsx    ← tab 2
+```
+
+```tsx
+// app/(tabs)/_layout.tsx
+import { Tabs } from 'expo-router';
+
+export default function TabLayout() {
+  return (
+    <Tabs>
+      <Tabs.Screen name="index" options={{ title: 'Home' }} />
+      <Tabs.Screen name="profile" options={{ title: 'Profile' }} />
+    </Tabs>
+  );
+}
+```
+
+The `(tabs)` parentheses mean the folder **doesn't appear in the URL** — it's a layout group.
+`(tabs)/profile` is still just `/profile`.
+
+## Dynamic routes
+
+`[id].tsx` captures a URL parameter:
+
+```
+app/
+  user/
+    [id].tsx    ← /user/123 → id = "123"
+```
+
+```tsx
+import { useLocalSearchParams } from 'expo-router';
+
+export default function UserScreen() {
+  const { id } = useLocalSearchParams<{ id: string }>();
+  return <Text>User {id}</Text>;
+}
+```
+
+## Passing parameters
+
+```tsx
+router.push({ pathname: '/user/[id]', params: { id: '123', name: 'Ada' } });
+// read them with useLocalSearchParams
+```
+
+<Pitfall title="Deep links are already wired">
+  Because routes are real file paths, every screen has a URL. That means <b>deep links,
+  share links, and universal links are free</b> — you just declare the scheme in
+  <code>app.json</code>. Don't rebuild navigation logic manually.
+</Pitfall>
+
+## The pattern that covers most apps
+
+Stack (root) → Tabs (main screens) → Stack (detail screens). Detail screens push on top of
+tabs; tabs stay mounted underneath so their state survives.
+
+<Recap points={[
+  'Folders = screens; file path = URL',
+  'Stack = push/pop history; Tabs = bottom bar',
+  '[id].tsx captures URL params via useLocalSearchParams',
+  'Deep links come free because routes are URLs',
+]} />
+
+</Layout>

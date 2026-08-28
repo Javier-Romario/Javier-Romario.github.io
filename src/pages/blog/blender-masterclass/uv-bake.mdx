@@ -1,0 +1,72 @@
+import Layout from '../../../layouts/BlogPost.astro';
+import Formula from '../../../components/blog/blender-masterclass/Formula.astro';
+import Recap from '../../../components/blog/blender-masterclass/Recap.astro';
+import DemoBake from '../../../components/blog/blender-masterclass/demos/DemoBake.tsx';
+
+<Layout title="UV Unwrap & Bake" slug="uv-bake" series="blender-masterclass">
+
+<div class="page-tag">LESSON 06 — DETAIL LIVES IN TEXTURES</div>
+<h1 class="page-title">UV Unwrap & Bake</h1>
+
+<div class="timebox">~4 min</div>
+
+<p class="lede">You have a high-poly sculpt with a million triangles, and a low-poly mesh with a
+thousand. The trick is <b>baking</b>: projecting all that high-res detail into <b>textures</b> that
+the low mesh wears like a costume. Detail moves from geometry into images.</p>
+
+<div class="whycare">A texture costs almost nothing at runtime. Geometry costs everything. Baking is
+how pros get "next-gen" detail on a budget mesh.</div>
+
+## The rule
+
+<Formula math="Bake the detail, not the geometry" note="Normal maps, AO, and color live in textures. The GPU samples them instead of drawing triangles." />
+
+## UV unwrap: flatten the mesh
+
+UVs are the 2D coordinates that tell a texture where to stick. Unwrap with seams:
+
+```text
+Edit Mode  →  select edges where the mesh should "cut"  →  Ctrl+E → Mark Seam
+U  →  Unwrap        (then pack islands in the UV editor)
+```
+
+Think of seams as the cuts you'd make to flatten a cardboard box. Hide them in creases and
+undersides.
+
+## High → low baking
+
+1. Line up your **high-poly** and **low-poly** meshes (same position).
+2. Select the low mesh, then shift-select the high mesh.
+3. **Render Properties → Bake** → pick **Normal** (or AO, or Combined).
+4. Set the bake target to your low mesh's UV map, hit **Bake**.
+
+Out comes a **normal map** — purple/blue image that fakes every sculpted bump on the flat low
+mesh. The **ambient occlusion** map darkens crevices. The **color** map carries the paint.
+
+<div class="poke">Toggle BAKE HIGH→LOW. The box never gains a single triangle — but the texture
+switches on, carrying checker pattern AND fake edge-darkening (AO). Same geometry, way more detail.</div>
+
+<DemoBake client:load />
+
+## The PBR stack
+
+Games use **PBR** (physically-based rendering). Four maps do most of the work:
+
+```text
+base color   → what color it is
+normal       → which way "bumps" face
+roughness    → shiny or matte
+metallic     → metal or not
+```
+
+Blender's **Principled BSDF** shader has a slot for every one. Whatever you bake here exports
+cleanly to glTF next lesson.
+
+<Recap points={[
+  'UVs are 2D coordinates for textures',
+  'Mark seams where the mesh should cut, unwrap with U',
+  'Bake high-poly detail into normal/AO/color maps',
+  'Textures are cheap; geometry is expensive',
+]} />
+
+</Layout>

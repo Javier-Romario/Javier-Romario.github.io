@@ -1,0 +1,93 @@
+import Layout from '../../../layouts/BlogPost.astro';
+import Tldr from '../../../components/blog/neon-native/Tldr.astro';
+import Takeaway from '../../../components/blog/neon-native/Takeaway.astro';
+import Pitfall from '../../../components/blog/neon-native/Pitfall.astro';
+import Recap from '../../../components/blog/neon-native/Recap.astro';
+
+<Layout title="Performance" slug="performance" series="neon-native">
+
+<h1 class="page-title">Performance</h1>
+
+<Tldr tldr="Measure before you optimize. The top wins: FlatList keys, memo for expensive children, keep heavy work off the JS thread, and watch your bundle size." />
+
+<p class="lede">
+  Premature optimization wastes time. But a few structural choices — made early — keep your
+  app smooth without heroic effort. Then **measure** to find the real bottlenecks.
+</p>
+
+## The four real bottlenecks
+
+1. **Re-rendering too much** — every state change re-rendering the whole tree.
+2. **Long lists** — rendering rows that aren't visible (fix: FlatList, step 08).
+3. **JS-thread work** — JSON parse, image decode, heavy loops, `console.log`.
+4. **Bundle size** — shipping every dependency and asset.
+
+<Takeaway math="measure before you memoize" note="React DevTools 'highlight updates' shows what re-renders. Optimize the hot spots, not guesses." />
+
+## Find re-renders first
+
+Open React DevTools → "Highlight updates". Interact with your app and watch what flashes.
+If a parent re-renders and drags 50 children with it, that's your target. Don't memoize
+blindly.
+
+## React.memo for expensive children
+
+```tsx
+const ListItem = React.memo(function ListItem({ item }: { item: Item }) {
+  return <Text>{item.name}</Text>;
+});
+```
+
+`memo` skips re-rendering a component when its **props haven't changed** (shallow compare).
+Wrap the leaf components that re-render a lot but change rarely. Don't memo everything — the
+comparison itself has a cost.
+
+## useMemo / useCallback
+
+```tsx
+const sorted = useMemo(() => expensiveSort(list), [list]);
+const onPress = useCallback(() => handle(id), [id]);
+```
+
+- `useMemo` — cache an expensive **computed value**.
+- `useCallback` — keep a **function identity stable** so memo'd children don't re-render.
+
+Only reach for these when the DevTools highlight shows a real problem. Default: don't.
+
+## Keep the JS thread light
+
+- Move heavy loops to `useMemo` or off the main flow.
+- Use `InteractionManager.runAfterInteractions` to defer work until after animations finish.
+- Decode/compress images server-side or via `expo-image` (it handles this well).
+- No `console.log` in hot paths (step 17).
+
+## Bundle size
+
+```bash
+npx expo-optimize        # optimize images
+npx expo export          # see your bundle output
+```
+
+- Remove unused deps (check `package.json`).
+- Lazy-load heavy screens: `const Map = lazy(() => import('./Map'))`.
+- Load images at the size you display them, not full resolution.
+
+## The release build is faster
+
+Debug mode runs everything interpreted with dev checks. **Always benchmark on a release
+build** — numbers from `expo start` (dev) are meaningless for perf work.
+
+<Pitfall title="Measuring in dev mode">
+  Dev mode has Hermes dev flags, no bytecode, and slower everything. A component that "feels
+  fine in dev" might still jank in release — and vice versa. Profile release builds
+  (<code>eas build --profile preview</code>) or at least <code>expo start --no-dev</code>.
+</Pitfall>
+
+<Recap points={[
+  'Measure first: DevTools highlight updates',
+  'memo for expensive leaves, not everything',
+  'Keep heavy work off the JS thread',
+  'Benchmark release builds, never dev mode',
+]} />
+
+</Layout>

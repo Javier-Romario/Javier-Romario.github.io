@@ -1,0 +1,137 @@
+import Layout from '../../../layouts/BlogPost.astro';
+import Tldr from '../../../components/blog/neon-native/Tldr.astro';
+import Takeaway from '../../../components/blog/neon-native/Takeaway.astro';
+import Pitfall from '../../../components/blog/neon-native/Pitfall.astro';
+import Recap from '../../../components/blog/neon-native/Recap.astro';
+
+<Layout title="Native APIs" slug="native-apis" series="neon-native">
+
+<h1 class="page-title">Native APIs</h1>
+
+<Tldr tldr="Camera, location, notifications, biometrics — all via expo-* modules. Every one is gated by a runtime permission. Request, handle denial, degrade gracefully." />
+
+<p class="lede">
+  This is why you're building native instead of a website: the device's sensors and services.
+  Expo wraps them all in clean modules. The universal rule: <b>permissions first, then use,
+  then handle "no".</b>
+</p>
+
+## The permission pattern
+
+Every device API follows the same shape:
+
+```tsx
+import * as Location from 'expo-location';
+
+async function getLocation() {
+  const { status } = await Location.requestForegroundPermissionsAsync();
+  if (status !== 'granted') {
+    // degrade: show a message, skip the feature
+    return;
+  }
+  const loc = await Location.getCurrentPositionAsync({});
+  console.log(loc.coords.latitude, loc.coords.longitude);
+}
+```
+
+Request → check → use or degrade. Always. Never assume granted.
+
+<Takeaway math="permissions gate every device API" note="Request → grant? → use : degrade. Handle the 'no' path like a first-class citizen." />
+
+## Camera (expo-camera)
+
+```tsx
+import { CameraView, useCameraPermissions } from 'expo-camera';
+
+const [permission, requestPermission] = useCameraPermissions();
+
+if (!permission) return <View />;          // loading
+if (!permission.granted) {
+  return <Pressable onPress={requestPermission}><Text>Allow camera</Text></Pressable>;
+}
+
+<CameraView style={{ flex: 1 }} facing="back" />
+```
+
+## Notifications (expo-notifications)
+
+Two kinds: **local** (scheduled by your app) and **push** (sent from your server via Expo's
+push service or FCM/APNs directly).
+
+```tsx
+import * as Notifications from 'expo-notifications';
+
+const { status } = await Notifications.requestPermissionsAsync();
+if (status === 'granted') {
+  await Notifications.scheduleNotificationAsync({
+    content: { title: 'Reminder', body: 'Time to review!' },
+    trigger: { seconds: 60 },
+  });
+}
+```
+
+Push tokens (for server-sent pushes) come from `getExpoPushTokenAsync()`. Note: **push
+notifications don't work in Expo Go** — you need a dev build (and they're unreliable on iOS
+simulators).
+
+## Biometrics (expo-local-authentication)
+
+```tsx
+import * as LocalAuthentication from 'expo-local-authentication';
+
+const has = await LocalAuthentication.hasHardwareAsync();
+const result = await LocalAuthentication.authenticateAsync({
+  promptMessage: 'Unlock your vault',
+});
+// result.success === true → unlocked
+```
+
+## Declare permissions in app.json
+
+iOS requires a usage description string for most permissions:
+
+```json
+{
+  "expo": {
+    "ios": {
+      "infoPlist": {
+        "NSCameraUsageDescription": "Used to scan receipts",
+        "NSLocationWhenInUseUsageDescription": "Used to find nearby stores"
+      }
+    },
+    "android": {
+      "permissions": ["CAMERA", "ACCESS_FINE_LOCATION"]
+    }
+  }
+}
+```
+
+Without the iOS description string, the app **crashes** the moment you request the permission.
+
+<Pitfall title="Missing iOS usage description = crash">
+  You request camera → app dies instantly. Apple requires a human-readable reason for every
+  permission in <code>infoPlist</code>. Add it in <code>app.json</code> before you write any
+  camera/location/notification code.
+</Pitfall>
+
+## The module cheat sheet
+
+| Want | Module |
+|---|---|
+| Camera / scanner | `expo-camera` |
+| Location | `expo-location` |
+| Notifications | `expo-notifications` |
+| Biometrics | `expo-local-authentication` |
+| Haptics | `expo-haptics` |
+| Clipboard | `expo-clipboard` |
+| Sharing | `expo-sharing` |
+| Pick image | `expo-image-picker` |
+
+<Recap points={[
+  'Every device API is permission-gated',
+  'Request → grant? → use : degrade',
+  'iOS needs usage descriptions in app.json or it crashes',
+  'Push notifications require a dev build, not Expo Go',
+]} />
+
+</Layout>

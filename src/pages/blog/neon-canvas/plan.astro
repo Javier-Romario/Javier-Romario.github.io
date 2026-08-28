@@ -1,0 +1,128 @@
+---
+import Layout from '../../../layouts/BlogPost.astro';
+
+const nodeModel = `enum NodeKind {
+    Topic,      // user-seeded subject (root of a branch)
+    Question,   // user-typed query
+    Answer,     // DeepSeek response
+    Subtopic,   // DeepSeek-generated expansion
+    Insight,    // synthesis node (later)
+    Note,       // free text, no AI
+}
+
+struct Node {
+    id: u64,
+    pos: Pos2,           // world coords
+    size: Vec2,
+    text: String,
+    kind: NodeKind,
+    // --- provenance (memory spine) ---
+    created_by: Author,       // User | Model("deepseek-chat")
+    parent: Option<u64>,      // which node spawned this
+    prompt: Option<String>,   // exact prompt that produced this node
+    model: Option<String>,
+    created_at: i64,
+    vector: Option<Vec<f32>>, // embedding of text (memory layer)
+}
+
+struct Edge {
+    id: u64,
+    from: u64,   // parent
+    to: u64,     // child
+    label: Option<String>,
+    kind: EdgeKind, // Thread | Resonance | Manual
+}`;
+
+const promptBlock = `You are an assistant embedded in a spatial knowledge graph.
+The user is building a mindmap. You help expand topics and answer questions.
+
+Context you are given:
+<ancestors> the chain of nodes this thought belongs to
+<related> similar existing nodes from elsewhere on the map
+<query> the current question/topic
+
+Rules:
+- Answer in plain text for "ask".
+- For "expand", return STRICT JSON: {"subtopics":[{"text":...,"why":...}]}.
+- Stay consistent with <related> and <ancestors> — build on what exists.
+- Do not restate ancestors; add NEW branches.`;
+---
+
+<Layout title="Neon Canvas" slug="plan" series="neon-canvas">
+
+  <div class="page-tag">PROJECT — AI MINDMAP</div>
+  <h1 class="page-title">Neon Canvas</h1>
+  <p class="lede">
+    A mindmapping app that grows itself. An infinite canvas where every box is a
+    thought, every thread is a prompt→response, and the AI <strong>reads your
+    existing map</strong> before generating anything new. Spatial knowledge
+    graph meets persistent memory.
+  </p>
+
+  <h2>The vision</h2>
+  <ul>
+    <li>Drop a <strong>topic</strong> on the canvas.</li>
+    <li>Type a <strong>question</strong> into a box.</li>
+    <li>DeepSeek answers — the answer materializes as a <strong>new box</strong>, connected by a glowing thread.</li>
+    <li>Expand any box → DeepSeek generates child subtopics.</li>
+    <li>The map is <strong>persistent memory</strong>: every node remembers where it came from.</li>
+  </ul>
+
+  <h2>Data model: a directed graph, not a list</h2>
+  <p>
+    Provenance is the memory spine. Every node stores <code>parent</code>,
+    <code>prompt</code>, and <code>model</code> — the graph is fully replayable.
+    You can re-derive any node, trace any thread back to its question, and audit
+    every AI-generated claim.
+  </p>
+  <pre><code>{nodeModel}</code></pre>
+
+  <h2>The core loop</h2>
+  <ol>
+    <li>Focus a box, type <code>explain monads</code>.</li>
+    <li><code>Cmd+Enter</code> → box becomes a <code>Question</code>, spinner on.</li>
+    <li>Backend streams DeepSeek tokens over SSE.</li>
+    <li>Answer node spawns to the right, text fills in as tokens arrive.</li>
+    <li>Edge <code>Question → Answer</code> drawn as a neon thread.</li>
+    <li>Answer offers "expand" → subtopic children fan out.</li>
+  </ol>
+  <p>
+    DeepSeek also returns <strong>3 suggested follow-ups</strong> — rendered as
+    ghost boxes (dashed border, faint edge). Click a ghost → it becomes a real
+    question and fires. The map proposes its own next moves.
+  </p>
+
+  <h2>The memory layer</h2>
+  <p>Four ideas, layered — this is what makes it more than a drawing:</p>
+  <ul>
+    <li><strong>Memory tiers</strong> — working (visible branch), short-term (session graph), long-term (SQLite), external (DeepSeek recompute).</li>
+    <li><strong>Vector recall</strong> — every node's text is embedded. Before answering, the backend injects top-5 similar nodes + the ancestor chain into the prompt. The AI reads your map.</li>
+    <li><strong>Hierarchical compaction</strong> — a branch past ~15 nodes gets a digest node; children fold under it. Infinite depth without infinite context.</li>
+    <li><strong>Resonance edges</strong> — node pairs with high cosine similarity get suggested (dashed) edges. The map finds connections you didn't draw.</li>
+  </ul>
+
+  <h2>Prompting strategy</h2>
+  <pre><code>{promptBlock}</code></pre>
+
+  <h2>Architecture</h2>
+  <p>Three crates: <code>neon-core</code> (shared types), <code>neon-backend</code>
+  (axum + SQLite + DeepSeek client + embedder), <code>neon-app</code> (egui).
+  The client never talks to DeepSeek directly — it says "expand node 42" and the
+  backend does embeddings + prompt + streaming.</p>
+  <p>
+    Streaming into immediate-mode egui is bridged with an <code>mpsc</code>
+    channel polled each frame — never block the UI thread on network.
+  </p>
+
+  <h2>Roadmap</h2>
+  <ul>
+    <li><strong>Phase 0</strong> — infinite canvas (done).</li>
+    <li><strong>Phase 1</strong> — nodes &amp; edges, inline editing.</li>
+    <li><strong>Phase 2</strong> — DeepSeek direct: ask → stream → answer box.</li>
+    <li><strong>Phase 3</strong> — expand, auto-layout, digest compaction.</li>
+    <li><strong>Phase 4</strong> — backend: axum, SQLite, JSON API.</li>
+    <li><strong>Phase 5</strong> — memory: embeddings, vector recall, resonance.</li>
+    <li><strong>Phase 6</strong> — search, export, undo/redo, themes.</li>
+  </ul>
+
+</Layout>

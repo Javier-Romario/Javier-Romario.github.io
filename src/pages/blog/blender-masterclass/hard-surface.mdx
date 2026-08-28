@@ -1,0 +1,68 @@
+import Layout from '../../../layouts/BlogPost.astro';
+import Formula from '../../../components/blog/blender-masterclass/Formula.astro';
+import Recap from '../../../components/blog/blender-masterclass/Recap.astro';
+import DemoBevel from '../../../components/blog/blender-masterclass/demos/DemoBevel.tsx';
+
+<Layout title="Hard-Surface Modeling" slug="hard-surface" series="blender-masterclass">
+
+<div class="page-tag">LESSON 02 — BEVELS, BOOLEANS, TOPOLOGY</div>
+<h1 class="page-title">Hard-Surface Modeling</h1>
+
+<div class="timebox">~4 min</div>
+
+<p class="lede">Hard-surface = machines, guns, robots, gadgets. Things with crisp edges and
+mechanical parts. You model them with <b>bevels</b> and <b>booleans</b>, then clean up the
+topology so both printers and GPUs stay happy.</p>
+
+<div class="whycare">A 3D print without bevels looks flat and plastic. A game asset with sloppy
+topology tanks the frame rate. Bevels and booleans are the difference between amateur and pro.</div>
+
+## The rule
+
+<Formula math="Bevel everything, boolean the rest" note="Real objects have no perfectly sharp 90° edges — a bevel is what makes light catch the silhouette." />
+
+## Bevel = the light-catcher
+
+No real object has a mathematically sharp edge. A **bevel** (or chamfer) rounds or flats that
+edge so light glints off it. In Blender: add a **Bevel** modifier, or select an edge loop and
+press `Ctrl+B`.
+
+```text
+Ctrl+B          bevel selected edges (drag, then scroll for segments)
+Ctrl+Shift+B    vertex bevel
+```
+
+<div class="poke">Drag the BEVEL RADIUS slider. 0 = razor edge, 0.5 = soft chamfer. Flip WIREFRAME
+to see how a bevel is just extra geometry along the edge.</div>
+
+<DemoBevel client:load />
+
+## Boolean = union & subtract
+
+A **boolean** is the CAD-style operation: union two parts, or cut a hole with one. In Blender 4.x
+it's just a modifier — keep it **non-destructive** and you can slide the cutting shape around.
+
+```text
+Add a Boolean modifier  →  choose Union / Difference / Intersect
+Pick the Object to cut with  →  move it live, watch the cut follow
+```
+
+Booleans leave messy topology behind. Fix it with **Ctrl+J** joins, **M** merge-by-distance, and
+a pass of **limited dissolve** (`X` → Limited Dissolve) to kill junk vertices.
+
+## Clean topology = the rule of quads
+
+A **quad** is a 4-sided face. Quads subdivide and deform predictably. Triangles are fine at the
+end, but model in quads, let Blender convert to triangles at export.
+
+<div class="whycare">A printer only cares that the mesh is watertight. A GPU cares how MANY
+triangles you feed it. Quads let you control both.</div>
+
+<Recap points={[
+  'Bevel edges so light catches them (Ctrl+B)',
+  'Booleans are modifiers — keep them live',
+  'Clean up boolean junk with merge + limited dissolve',
+  'Model in quads, convert to triangles at export',
+]} />
+
+</Layout>

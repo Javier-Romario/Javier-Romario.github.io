@@ -1,0 +1,52 @@
+import Layout from '../../../layouts/BlogPost.astro';
+import ShortcutExplorer from '../../../components/blog/blender-masterclass/ShortcutExplorer.tsx';
+
+<Layout title="Shortcut Explorer" slug="shortcuts" series="blender-masterclass">
+
+<div class="page-tag">REFERENCE — HOTKEY DEX</div>
+<h1 class="page-title">Blender Keyboard Shortcut Explorer</h1>
+
+<div class="timebox">~130 defaults</div>
+
+<p class="lede">Every shortcut below ships with a <b>fresh Blender 4.x install</b> — the default
+<b>Blender</b> keymap, untouched. Type to search, click a category, or hit <b>CAPTURE KEY</b> and
+press any key to see every binding that uses it.</p>
+
+<div class="whycare">You don't memorize hotkeys — you build muscle memory by <b>using</b> them. This
+dex is for looking things up fast when a shortcut slips.</div>
+
+<div class="poke">Click <b>CAPTURE KEY</b>, then press <b>G</b>. Watch Grab, Alt+G, Shift+G, Ctrl+G,
+and G G all light up at once.</div>
+
+<ShortcutExplorer client:load />
+
+## Defaults, and how to change them
+
+The <b>default keymap</b> is "Blender" in
+<b>Edit → Preferences → Keymap</b>. Switch it to <b>Industry Compatible</b> and most of these
+change — that mode mimics Maya/Max conventions.
+
+- <b>macOS:</b> Blender remaps <code>Ctrl</code> → <code>Cmd</code> automatically. <code>Ctrl+R</code>
+  (loop cut) is <code>Cmd+R</code> on a Mac.
+- <b>No numpad?</b> Enable <b>Preferences → Input → Emulate Numpad</b> so the top-row number keys
+  act as Numpad 1/3/7 for views.
+- <b>Customize:</b> right-click any menu item → <b>Assign Shortcut</b>, or edit directly in the
+  Keymap preferences and <b>Export</b> your keymap to back it up.
+
+## The 10 that matter most
+
+```text
+G / R / S      move / rotate / scale       ← 80% of modeling
+Tab            object ⇄ edit mode
+Ctrl+R         loop cut                    ← your best friend
+Ctrl+B         bevel
+E              extrude
+Shift+A        add mesh
+Ctrl+Z         undo (but don't live here)
+Z              shading pie
+Numpad .       frame selected
+Shift+D        duplicate
+```
+
+If you only learn ten, learn those ten.
+</Layout>

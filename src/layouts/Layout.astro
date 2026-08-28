@@ -2,6 +2,7 @@
 import '../neondeck/global-fonts.css';
 import '../neondeck/global.css';
 import '../styles/site.css';
+import '../styles/blog.css';
 import HexBackground from '../components/HexBackground';
 
 interface Props {
@@ -30,7 +31,7 @@ const base = import.meta.env.BASE_URL;
       <nav class="site-header__links">
         <a href="#experience">EXPERIENCE</a>
         <a href="#skills">SKILLS</a>
-        <a href="#education">EDUCATION</a>
+        <a href={`${base}blog/`}>BLOG</a>
         <a href="#contact">CONTACT</a>
       </nav>
     </header>

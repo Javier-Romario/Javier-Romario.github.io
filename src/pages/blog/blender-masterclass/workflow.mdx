@@ -1,0 +1,64 @@
+import Layout from '../../../layouts/BlogPost.astro';
+import Formula from '../../../components/blog/blender-masterclass/Formula.astro';
+import Recap from '../../../components/blog/blender-masterclass/Recap.astro';
+import DemoModifiers from '../../../components/blog/blender-masterclass/demos/DemoModifiers.tsx';
+
+<Layout title="Non-Destructive Workflow" slug="workflow" series="blender-masterclass">
+
+<div class="page-tag">LESSON 01 — MODEL LIKE A PROGRAMMER</div>
+<h1 class="page-title">Non-Destructive Workflow</h1>
+
+<div class="timebox">~4 min</div>
+
+<p class="lede">Blender is not a painting app. It's a <b>pipeline</b>. The fastest artists never
+sculpt geometry by hand and hope — they stack <b>modifiers</b> that can be re-ordered, toggled,
+and torn down at any moment.</p>
+
+<div class="whycare">If your workflow is "undo until it works," you have no workflow. Modifiers turn
+guessing into a reversible program.</div>
+
+## The rule
+
+<Formula math="Model with modifiers, keep every step editable" note="A modifier is a non-destructive operation. The base mesh stays untouched — you edit the recipe, not the clay." />
+
+## The modifier stack
+
+In the **Modifiers** tab (wrench icon), each modifier sits in a stack. Blender evaluates them
+**top to bottom** every frame. Change one, and everything below it recomputes live.
+
+The three you'll live inside:
+
+- **Bevel** — rounds edges so they catch light (and print cleanly).
+- **Solidify** — gives a flat surface real wall thickness (non-negotiable for printing).
+- **Subdivision Surface** — smooths the mesh without adding permanent geometry.
+
+<div class="poke">In the demo, toggle modifiers on/off. Notice the mesh is <b>never edited</b> —
+only the recipe changes. That's the whole point.</div>
+
+<DemoModifiers client:load />
+
+## The hotkeys that matter
+
+```text
+TAB          edit / object mode        G  R  S      grab / rotate / scale
+Ctrl+Z       undo (but don't live here)  Shift+A    add mesh
+Ctrl+A       APPLY a modifier (bake it in) — do this LAST
+Ctrl+1/2/3   add subdivision (level 1/2/3)
+```
+
+Only apply a modifier when you're truly done with it — usually right before export.
+
+## Why this matters for print AND game
+
+A **3D printer** needs your Solidify applied (it reads real walls). A **game engine** needs your
+Subdivision collapsed to a sane triangle count. Because you modeled non-destructively, you can
+apply different settings for each target from the **same base mesh**.
+
+<Recap points={[
+  'Modifiers are a reversible recipe — the base mesh stays intact',
+  'The stack evaluates top to bottom, live',
+  'Bevel + Solidify + Subdivision Surface are your daily drivers',
+  'Apply (Ctrl+A) only at export, per target',
+]} />
+
+</Layout>

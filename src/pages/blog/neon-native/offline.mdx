@@ -1,0 +1,120 @@
+import Layout from '../../../layouts/BlogPost.astro';
+import Tldr from '../../../components/blog/neon-native/Tldr.astro';
+import Takeaway from '../../../components/blog/neon-native/Takeaway.astro';
+import Pitfall from '../../../components/blog/neon-native/Pitfall.astro';
+import Recap from '../../../components/blog/neon-native/Recap.astro';
+
+<Layout title="Offline & Sync" slug="offline" series="neon-native">
+
+<h1 class="page-title">Offline & Sync</h1>
+
+<Tldr tldr="Mobile is offline-first: cache reads, queue writes, sync when back online. Optimistic UI makes it feel instant; retry with backoff makes it robust." />
+
+<p class="lede">
+  Phones drop connection constantly — elevators, tunnels, dead zones. A good app doesn't
+  freeze or lose data when the network vanishes. Three tools: <b>cache</b>, <b>queue</b>,
+  <b>retry</b>.
+</p>
+
+## Detect connectivity with NetInfo
+
+```tsx
+import NetInfo from '@react-native-community/netinfo';
+import { useEffect, useState } from 'react';
+
+const [online, setOnline] = useState(true);
+
+useEffect(() => {
+  return NetInfo.addEventListener((state) => {
+    setOnline(state.isConnected ?? true);
+  });
+}, []);
+```
+
+Show a small banner when offline, but **don't block the app** — let users keep reading cached
+data.
+
+## Cache-first reads
+
+Read from local storage instantly, then refresh from network in the background:
+
+```tsx
+const { data } = useQuery({
+  queryKey: ['feed'],
+  queryFn: fetchFeed,
+  staleTime: 60_000,      // cache is "fresh" for 1 min
+  // TanStack Query caches automatically; on offline it serves stale data
+});
+```
+
+TanStack Query's cache is already offline-friendly: serve stale data, refetch in background,
+retry failures.
+
+<Takeaway math="optimistic UI + retry, never a spinner of doom" note="Show the result now, sync later. On failure, retry with backoff." />
+
+## Optimistic UI
+
+When the user hits "like", update the UI **immediately**, then reconcile with the server:
+
+```tsx
+async function like(postId: string) {
+  setPosts(prev => prev.map(p => p.id === postId
+    ? { ...p, liked: true }      // optimistic
+    : p));
+  try {
+    await api.like(postId);
+  } catch {
+    setPosts(prev => prev.map(p => p.id === postId
+      ? { ...p, liked: false })); // roll back
+  }
+}
+```
+
+The user sees the like instantly. If the request fails, roll back. This is the difference
+between an app that "feels native" and one that feels like a webpage.
+
+## Queue writes when offline
+
+For mutations (create, update), queue them locally and flush when online:
+
+```tsx
+async function createNote(text: string) {
+  await db.runAsync('INSERT INTO notes (text, synced) VALUES (?, 0)', text);
+  sync();  // tries to push all synced=0 rows, marks them 1 on success
+}
+```
+
+The simplest robust version: SQLite table with a `synced` flag, a `sync()` that pushes
+unsynced rows, and a retry loop that runs on reconnect.
+
+## Retry with exponential backoff
+
+Don't hammer a dead server. Retry with increasing delays:
+
+```ts
+async function withRetry(fn: () => Promise<void>, attempts = 5) {
+  for (let i = 0; i < attempts; i++) {
+    try {
+      return await fn();
+    } catch (e) {
+      if (i === attempts - 1) throw e;
+      await new Promise((r) => setTimeout(r, 2 ** i * 1000));  // 1s, 2s, 4s, 8s
+    }
+  }
+}
+```
+
+<Pitfall title="Offline banner that lies">
+  `NetInfo.isConnected` means "has a network interface", <b>not</b> "the internet works". The
+  Wi-Fi can be connected but firewalled. Treat the <b>failed fetch</b> as the real signal of
+  "offline", and use NetInfo only for the banner.
+</Pitfall>
+
+<Recap points={[
+  'Offline-first: cache reads, queue writes',
+  'Serve stale cache, refetch in background',
+  'Optimistic UI + rollback on failure',
+  'Exponential backoff for retries',
+]} />
+
+</Layout>

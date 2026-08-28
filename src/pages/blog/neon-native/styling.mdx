@@ -1,0 +1,109 @@
+import Layout from '../../../layouts/BlogPost.astro';
+import Tldr from '../../../components/blog/neon-native/Tldr.astro';
+import Takeaway from '../../../components/blog/neon-native/Takeaway.astro';
+import Pitfall from '../../../components/blog/neon-native/Pitfall.astro';
+import Recap from '../../../components/blog/neon-native/Recap.astro';
+
+<Layout title="Styling & Theming" slug="styling" series="neon-native">
+
+<h1 class="page-title">Styling & Theming</h1>
+
+<Tldr tldr="Define design tokens (colors, spacing, type) once in a constants file, then reference them everywhere. Never hardcode a raw hex in a component." />
+
+<p class="lede">
+  RN styles are plain JS objects. That's power — you can compute, spread, and theme them like
+  code, because they <b>are</b> code. The discipline: keep raw values out of components.
+</p>
+
+## StyleSheet.create
+
+```tsx
+import { StyleSheet } from 'react-native';
+
+const styles = StyleSheet.create({
+  card: { padding: 16, borderRadius: 12, backgroundColor: '#0a111c' },
+  title: { fontSize: 18, fontWeight: '700', color: '#d7fff6' },
+});
+
+<View style={styles.card}>
+  <Text style={styles.title}>Title</Text>
+</View>
+```
+
+`StyleSheet.create` is mostly ergonomics + a tiny perf win (styles get registered once).
+
+## Design tokens first
+
+Create a `constants/theme.ts`:
+
+```ts
+// constants/theme.ts
+export const colors = {
+  bg: '#04070b',
+  panel: '#0a111c',
+  accent: '#00ffd1',
+  danger: '#ff4d5e',
+  text: '#d7fff6',
+  muted: '#5f8f88',
+};
+
+export const spacing = { xs: 4, sm: 8, md: 16, lg: 24, xl: 32 };
+
+export const type = {
+  title: { fontSize: 24, fontWeight: '700' as const },
+  body: { fontSize: 15, lineHeight: 22 },
+  caption: { fontSize: 12, color: colors.muted },
+};
+```
+
+<Takeaway math="tokens in one place, never raw hex" note="Change one value in theme.ts, the whole app updates. Raw hex in components = theme debt." />
+
+## Dark mode with useColorScheme
+
+```tsx
+import { useColorScheme } from 'react-native';
+
+const scheme = useColorScheme(); // 'light' | 'dark' | null
+
+const theme = scheme === 'dark' ? darkColors : lightColors;
+
+<View style={{ backgroundColor: theme.bg }} />
+```
+
+Define `lightColors` and `darkColors` as two token sets, switch on the scheme. Store the
+**user's override** (light/dark/system) in state, not the actual colors.
+
+## Inline vs StyleSheet
+
+- **Inline** (`style={{...}}`) for one-off, dynamic, or computed values.
+- **StyleSheet** for static styles that don't change.
+
+Arrays merge styles (later wins):
+
+```tsx
+<View style={[styles.card, isActive && styles.active]} />
+// false is ignored — great for conditional styles
+```
+
+## Scaling text for accessibility
+
+Use `PixelRatio` sparingly, but prefer letting the OS scale: don't hardcode `fontSize` in ways
+that break with large text. Test with iOS Dynamic Type / Android font scale.
+
+<Pitfall title="Style objects are re-created every render">
+  ```tsx
+  <View style={{ padding: 16 }} />   // new object each render
+  ```
+  For a <b>hot</b> component rendered many times, inline objects cost a bit. Move static
+  styles to <code>StyleSheet.create</code>. For one-off screens it doesn't matter. Don't
+  obsess — measure (step 19).
+</Pitfall>
+
+<Recap points={[
+  'Design tokens in constants/theme.ts',
+  'Two token sets for light/dark, switch on useColorScheme',
+  'StyleSheet for static, inline for dynamic',
+  'Arrays merge styles; false entries are ignored',
+]} />
+
+</Layout>

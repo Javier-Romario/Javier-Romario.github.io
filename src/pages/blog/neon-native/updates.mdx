@@ -1,0 +1,98 @@
+import Layout from '../../../layouts/BlogPost.astro';
+import Tldr from '../../../components/blog/neon-native/Tldr.astro';
+import Takeaway from '../../../components/blog/neon-native/Takeaway.astro';
+import Pitfall from '../../../components/blog/neon-native/Pitfall.astro';
+import Recap from '../../../components/blog/neon-native/Recap.astro';
+
+<Layout title="OTA Updates" slug="updates" series="neon-native">
+
+<h1 class="page-title">OTA Updates</h1>
+
+<Tldr tldr="expo-updates ships your JavaScript bundle over the air — fix bugs in minutes, no store review. But native changes (new modules, SDK upgrades) still need a new build." />
+
+<p class="lede">
+  The most underrated Expo feature. Your app's **JavaScript** can be updated instantly, without
+  App Store review. A typo fix or a logic bug ships to every user in minutes.
+</p>
+
+## What can go over the air
+
+- ✅ Any **JavaScript** change — logic, UI, styling, bug fixes
+- ✅ Assets (images) with some setup
+- ❌ **Native** changes — new native modules, SDK upgrades, permission changes
+
+The line is simple: if it only touches your JS/TS/JSX, it's OTA-able. If it touches
+`package.json`'s native deps or `app.json`'s native config, it needs a build.
+
+<Takeaway math="JS ships over the air; native still needs a build" note="expo publish → users update on next launch. Native changes → new EAS build." />
+
+## Enable updates
+
+In `app.json`:
+
+```json
+{
+  "expo": {
+    "updates": {
+      "enabled": true,
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/YOUR_PROJECT_ID"
+    },
+    "runtimeVersion": "1.0.0"
+  }
+}
+```
+
+`runtimeVersion` pins which native build an update is compatible with. If you change native
+code, bump the runtime version so old updates don't load on new builds.
+
+## Publish an update
+
+```bash
+eas update --branch production --message "fix: crash on empty feed"
+```
+
+Every installed app checks for an update on launch and downloads it in the background. Next
+launch = new JS.
+
+## Branches and environments
+
+Use branches to separate risk:
+
+- `production` — what users get.
+- `staging` — your testers (dev builds pointed at it).
+- `preview` — PR previews.
+
+Roll out a fix to `staging`, verify, then promote to `production`:
+
+```bash
+eas update --branch staging --message "fix"
+# verify...
+eas channel:rollout production staging   # promote
+```
+
+## Native → build; JS → update
+
+Keep this decision in your release muscle:
+
+| Change | Ship via |
+|---|---|
+| Typo, logic bug, UI tweak | `eas update` |
+| New native module | `eas build` + submit |
+| SDK upgrade | `eas build` + submit |
+| New permission | `eas build` + submit (and review) |
+
+<Pitfall title="Updates are not a review bypass">
+  OTA updates must not change the app's purpose, add undeclared permissions, or introduce
+  features that would need review. Apple and Google both prohibit using updates to dodge
+  review. Bug fixes and content changes are fine; a new in-app-purchase flow is not.
+</Pitfall>
+
+<Recap points={[
+  'eas update ships JS instantly, no review',
+  'Native changes still require a build',
+  'runtimeVersion pins update compatibility',
+  'Use branches: staging → production',
+]} />
+
+</Layout>

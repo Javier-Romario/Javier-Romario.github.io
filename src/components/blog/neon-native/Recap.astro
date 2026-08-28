@@ -1,0 +1,14 @@
+---
+interface Props {
+  title?: string;
+  points: string[];
+}
+const { title = 'YOU GOT THIS', points } = Astro.props;
+---
+
+<div class="recap">
+  <div class="head">✓ {title}</div>
+  <ul>
+    {points.map((p) => <li>{p}</li>)}
+  </ul>
+</div>

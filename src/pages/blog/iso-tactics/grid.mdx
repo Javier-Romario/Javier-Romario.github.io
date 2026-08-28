@@ -1,0 +1,36 @@
+import Layout from '../../../layouts/BlogPost.astro';
+import DemoGrid from '../../../components/blog/iso/demos/DemoGrid.tsx';
+import Formula from '../../../components/blog/iso/Formula.astro';
+import Recap from '../../../components/blog/iso/Recap.astro';
+
+<Layout title="Grid Math" slug="grid" series="neon-native" series="neon-native" series="neon-native" series="neon-native" series="neon-native" series="iso-tactics">
+
+<div class="page-tag">STEP 02 — FOUNDATION</div>
+<h1 class="page-title">Grid Math</h1>
+<p class="lede">
+  Tactics games live on a grid. Before it looks 3D, it's just numbers: each tile is a
+  coordinate <code>(x, y)</code>. Everything else is distance between coordinates.
+</p>
+
+## Manhattan distance
+
+Movement on a grid is not a straight line — you walk tile to tile. The distance between two
+tiles is how many steps you take, moving up/down/left/right only. That's **Manhattan distance**
+(named after city blocks — no diagonals through buildings).
+
+<Formula math="d = |x₁−x₂| + |y₁−y₂|" note="Add the x-difference and y-difference. That's the step count." />
+
+<div class="poke">Hover any cell. Readout shows its distance from the pink origin (0,0). Click to pin it.</div>
+
+<DemoGrid client:load />
+
+## Why this matters
+
+Later you'll use this same number for:
+- **Move range** — "which tiles are within 3 steps?"
+- **Attack range** — "is the enemy 1 step away?"
+- **A\*** — the pathfinding heuristic (step 07).
+
+<Recap points={['tile = coordinate (x, y)', 'Manhattan distance = steps on a grid', 'distance powers movement, range, and pathfinding']} />
+
+</Layout>

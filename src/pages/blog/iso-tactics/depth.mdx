@@ -1,0 +1,42 @@
+import Layout from '../../../layouts/BlogPost.astro';
+import DemoDepth from '../../../components/blog/iso/demos/DemoDepth.tsx';
+import Formula from '../../../components/blog/iso/Formula.astro';
+import Recap from '../../../components/blog/iso/Recap.astro';
+
+<Layout title="Depth Sort" slug="depth" series="neon-native" series="neon-native" series="neon-native" series="neon-native" series="neon-native" series="neon-native" series="iso-tactics">
+
+<div class="page-tag">STEP 05 — NO CLIPPING</div>
+<h1 class="page-title">Depth Sort</h1>
+<p class="lede">
+  Canvas draws in order: last thing painted sits on top. So overlapping cubes must be drawn
+  <b>back to front</b>, or the wrong one covers the other. That ordering is one sort.
+</p>
+
+## The key: x + y
+
+On an iso grid, a tile with a bigger `x + y` is <b>closer to the camera</b> (lower on screen).
+So draw everything in increasing `x + y` order — far stuff first, near stuff last.
+
+<Formula math="sort entities by (x + y) ascending" note="Back tile = small sum, drawn first. Front tile = big sum, drawn last." />
+
+```js
+// painter's algorithm
+entities.sort((a, b) => (a.x + a.y) - (b.x + b.y));
+entities.forEach(e => draw(e));
+```
+
+## See the bug, then the fix
+
+<div class="poke">Toggle "y-sort: OFF". The pink cube (front) is drawn first, so the teal cube (behind) paints over it. Wrong. Toggle ON — correct.</div>
+
+<DemoDepth client:load />
+
+## The catch
+
+This works while nothing shares the same `x + y` AND nothing is taller than one tile. For real
+3D or very tall walls you'd need proper depth buffers (that's what React Three Fiber gives you
+for free). For a 2D canvas tactics game, `x + y` is all you need.
+
+<Recap points={['bigger x + y = closer to camera', 'draw ascending, back to front', 'R3F replaces this with a real depth buffer later']} />
+
+</Layout>

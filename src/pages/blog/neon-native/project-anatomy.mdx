@@ -1,0 +1,105 @@
+import Layout from '../../../layouts/BlogPost.astro';
+import Tldr from '../../../components/blog/neon-native/Tldr.astro';
+import Takeaway from '../../../components/blog/neon-native/Takeaway.astro';
+import Pitfall from '../../../components/blog/neon-native/Pitfall.astro';
+import Recap from '../../../components/blog/neon-native/Recap.astro';
+
+<Layout title="Project Anatomy" slug="project-anatomy" series="neon-native">
+
+<h1 class="page-title">Project Anatomy</h1>
+
+<Tldr tldr="The app/ directory IS your router. A file at app/settings.tsx is the /settings screen. app.json is your app's config." />
+
+<p class="lede">
+  Expo uses <b>expo-router</b> for navigation. The rule is brutal and simple: <b>the file
+  system is the route table</b>. If the file exists, the route exists. No router config file.
+</p>
+
+## The folders that matter
+
+```
+my-app/
+  app/            ← routes (every file here = a screen)
+    _layout.tsx   ← wraps the whole app
+    index.tsx     ← the / screen
+    settings.tsx  ← the /settings screen
+  components/     ← reusable UI (not routes)
+  constants/      ← theme tokens, colors
+  hooks/          ← custom hooks
+  assets/         ← images, icons, fonts
+  app.json        ← app config (name, icon, permissions)
+  package.json    ← deps + scripts
+  tsconfig.json   ← TypeScript config
+```
+
+## app.json — the single source of truth
+
+Every app-level setting lives here: name, slug, version, icon, splash screen, permissions,
+orientation, and the `expo` SDK version. The stores read this file.
+
+```json
+{
+  "expo": {
+    "name": "My App",
+    "slug": "my-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "ios": { "bundleIdentifier": "com.example.myapp" },
+    "android": { "package": "com.example.myapp" }
+  }
+}
+```
+
+<Takeaway math="file path = route" note="app/index.tsx → /, app/settings.tsx → /settings. Delete a file, delete a route." />
+
+## The _layout.tsx files
+
+Files named `_layout.tsx` don't become routes — they become **layout wrappers**. The root
+`app/_layout.tsx` is your app shell (nav stack, providers, theme). A `_layout.tsx` inside a
+folder wraps only that folder's screens.
+
+```tsx
+// app/_layout.tsx
+import { Stack } from 'expo-router';
+
+export default function RootLayout() {
+  return (
+    <Stack>
+      <Stack.Screen name="index" options={{ title: 'Home' }} />
+      <Stack.Screen name="settings" options={{ title: 'Settings' }} />
+    </Stack>
+  );
+}
+```
+
+## Special file names
+
+- `index.tsx` — the default screen for a folder (`/` or `/settings/`)
+- `_layout.tsx` — a layout, not a screen
+- `[id].tsx` — a **dynamic route** (`/user/123` → `id = "123"`)
+- `(tabs)` — a group folder with parentheses, affects layout only, not the URL
+
+<Pitfall title="Don't put non-routes in app/">
+  Everything in <code>app/</code> becomes a screen. Put shared components in
+  <code>components/</code>, not <code>app/</code>. A stray <code>app/button.tsx</code> becomes
+  a <code>/button</code> screen you never wanted.
+</Pitfall>
+
+## Where everything else goes
+
+- **components/** — dumb UI, one component per file
+- **constants/** — colors, spacing, the design tokens from step 10
+- **hooks/** — reusable logic (`useAuth`, `useDebounce`)
+- **lib/** — pure functions, API clients, no React
+- **assets/** — images, fonts, sounds
+
+<Recap points={[
+  'app/ directory = the router; file path = route',
+  'app.json = app config (name, icon, permissions)',
+  '_layout.tsx wraps screens; [id].tsx = dynamic route',
+  'Keep non-routes out of app/',
+]} />
+
+</Layout>

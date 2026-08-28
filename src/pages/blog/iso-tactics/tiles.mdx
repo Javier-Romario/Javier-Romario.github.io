@@ -1,0 +1,41 @@
+import Layout from '../../../layouts/BlogPost.astro';
+import DemoTiles from '../../../components/blog/iso/demos/DemoTiles.tsx';
+import Formula from '../../../components/blog/iso/Formula.astro';
+import Recap from '../../../components/blog/iso/Recap.astro';
+
+<Layout title="Iso Cubes" slug="tiles" series="neon-native" series="neon-native" series="neon-native" series="neon-native" series="neon-native" series="neon-native" series="iso-tactics">
+
+<div class="page-tag">STEP 06 — FAKE 3D</div>
+<h1 class="page-title">Iso Cubes</h1>
+<p class="lede">
+  A flat diamond is a tile. Give it <b>height</b> and it becomes a block. A cube is just two
+  diamonds (top and bottom) connected by two faces.
+</p>
+
+## The cube recipe
+
+The top face is the same diamond, but shifted <b>up</b> by the height. Then draw three visible
+faces: left (dark), right (mid), top (bright). Light comes from the top — that shading is what
+tricks your brain into seeing 3D.
+
+<Formula math="topY = (x + y) × H/2 − height" note="Same diamond, lifted up by the block height." />
+
+```js
+// three faces, in order:
+// 1. left face  (darkest)  — connects left edge of top + bottom diamonds
+// 2. right face (middle)   — connects right edge
+// 3. top face   (bright)   — the lifted diamond
+```
+
+<div class="poke">Pick a cube, drag its height from 0 to 120. Toggle wireframe to see the skeleton underneath.</div>
+
+<DemoTiles client:load />
+
+## Why this matters
+
+Units, walls, buildings — in a 2D iso game they're all just cubes (or boxes) with a height.
+Draw them with `x + y` depth sort (step 05) and you have a scene.
+
+<Recap points={['cube = top diamond + left face + right face', 'height just shifts the top diamond up', 'shading (dark/mid/bright) sells the 3D']} />
+
+</Layout>

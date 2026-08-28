@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
+import mdx from '@astrojs/mdx';
 import { fileURLToPath } from 'node:url';
 
 // GitHub Pages: user/org site (Javier-Romario.github.io repo) -> base: '/'
@@ -11,7 +12,7 @@ const BASE = '/';
 export default defineConfig({
   site: SITE,
   base: BASE,
-  integrations: [react()],
+  integrations: [react(), mdx()],
   vite: {
     resolve: {
       alias: {

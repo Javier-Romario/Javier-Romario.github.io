@@ -1,0 +1,63 @@
+import Layout from '../../../layouts/BlogPost.astro';
+import Formula from '../../../components/blog/blender-masterclass/Formula.astro';
+import Recap from '../../../components/blog/blender-masterclass/Recap.astro';
+import DemoLowPoly from '../../../components/blog/blender-masterclass/demos/DemoLowPoly.tsx';
+
+<Layout title="Game-Ready Low-Poly" slug="game-ready" series="blender-masterclass">
+
+<div class="page-tag">LESSON 05 — TRIS COST GPU</div>
+<h1 class="page-title">Game-Ready Low-Poly</h1>
+
+<div class="timebox">~4 min</div>
+
+<p class="lede">A print wants detail. A game wants <b>speed</b>. The GPU draws every triangle
+you hand it, every frame, 60+ times a second. Your job: keep the silhouette, kill the triangles.
+That means <b>retopology</b> and honest triangle budgets.</p>
+
+<div class="whycare">A 100k-triangle prop is fine on a shelf, a slideshow in a scene with fifty
+of them. Games run on triangle budgets.</div>
+
+## The rule
+
+<Formula math="Tris cost GPU, quads keep you sane" note="Model in quads (they subdivide and deform cleanly), let the engine convert to triangles at load." />
+
+## Triangle budgets, by the numbers
+
+```text
+prop / pickup           < 1,000  tris
+character               < 30,000 tris
+hero character          50k–100k (head + body)
+whole scene             keep it as low as looks right
+```
+
+Every time you subdivide, you **×4** the triangles.
+
+<div class="poke">Bump SUBDIVISIONS from 0 to 4. The triangle count jumps 20 → 320 → 1,280 →
+5,120 → 20,480. Same silhouette, wildly different GPU cost. That's the whole budget game.</div>
+
+<DemoLowPoly client:load />
+
+## Retopology: rebuild it clean
+
+After sculpting or boolean chaos, you **retopologize** — draw a fresh, low, all-quad mesh over
+the high-res shape. In Blender: enable the **Bsurfaces** or use the built-in **Poly Build** tool
+(`Ctrl` + click to place quads) with snapping turned on.
+
+```text
+Shift+Tab         snap toggle → set to "Face" to stick new quads to the high-res surface
+```
+
+## Normals: the free detail
+
+A **normal** is the direction a face points. Smooth shading (`Shade Auto Smooth`) fakes roundness
+on a low mesh — the renderer blends normals instead of adding geometry. Same triangles, looks
+rounder. Free detail is the entire art of the low-poly model.
+
+<Recap points={[
+  'The GPU pays per triangle, every frame',
+  'Prop < 1k tris, character < 30k tris',
+  'Subdivision ×4s the triangle count',
+  'Smooth shading fakes roundness for free',
+]} />
+
+</Layout>

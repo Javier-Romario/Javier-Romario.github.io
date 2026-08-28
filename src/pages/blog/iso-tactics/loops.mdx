@@ -1,0 +1,48 @@
+import Layout from '../../../layouts/BlogPost.astro';
+import DemoLoops from '../../../components/blog/iso/demos/DemoLoops.tsx';
+import Formula from '../../../components/blog/iso/Formula.astro';
+import Recap from '../../../components/blog/iso/Recap.astro';
+
+<Layout title="The Loop" slug="loops" series="neon-native" series="neon-native" series="neon-native" series="neon-native" series="neon-native" series="neon-native" series="iso-tactics">
+
+<div class="page-tag">STEP 01 — FOUNDATION</div>
+<h1 class="page-title">The Loop</h1>
+<p class="lede">
+  Every game is one big loop: <b>update</b> (move things) then <b>render</b> (draw things),
+  forever. The secret sauce is <code>delta time</code>.
+</p>
+
+## Why delta time
+
+Frames are not equal length. A fast screen draws 144 frames per second, a slow one 30. Move the
+ball 5px **per frame** and it flies on the fast screen, crawls on the slow one. Fix: move per
+**second**, multiply by how long the last frame actually took.
+
+<Formula math="position += speed × dt" note="dt = seconds since last frame. Speed is per second, so every screen sees the same motion." />
+
+<div class="poke">Drag the speed slider. Hit pause — the loop stops, nothing crashes. That's the point.</div>
+
+<DemoLoops client:load />
+
+## The skeleton
+
+Every game you build has this exact shape. Memorise it once.
+
+```js
+let last = performance.now();
+function loop(now) {
+  const dt = Math.min((now - last) / 1000, 0.1); // seconds
+  last = now;
+  update(dt);   // move things
+  render();     // draw things
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+```
+
+The <code>Math.min(…, 0.1)</code> caps dt. If the tab sleeps and comes back, dt could be 5
+seconds and your ball teleports off-screen. Cap it.
+
+<Recap points={['update + render, forever', 'dt = seconds since last frame', 'speed × dt = frame-rate-proof motion']} />
+
+</Layout>

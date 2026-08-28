@@ -1,0 +1,85 @@
+import Layout from '../../../layouts/BlogPost.astro';
+import Tldr from '../../../components/blog/neon-native/Tldr.astro';
+import Takeaway from '../../../components/blog/neon-native/Takeaway.astro';
+import Pitfall from '../../../components/blog/neon-native/Pitfall.astro';
+import Recap from '../../../components/blog/neon-native/Recap.astro';
+
+<Layout title="Setup" slug="setup" series="neon-native">
+
+<h1 class="page-title">Setup</h1>
+
+<Tldr tldr="Install Node, run npx create-expo-app, scan the QR code with Expo Go. You're on a phone in 5 minutes." />
+
+<p class="lede">
+  The fastest way to a running app you'll ever see. No Xcode. No Android Studio. Just Node,
+  a phone, and one command.
+</p>
+
+## What you need
+
+- **Node 18+** (LTS is fine) — check with `node -v`
+- **A phone** with **Expo Go** installed (App Store / Play Store)
+- Your phone and computer on the **same Wi-Fi**
+
+Optional, only when you graduate to dev builds:
+
+- **Xcode** + simulator (macOS only, for iOS builds)
+- **Android Studio** + emulator (for Android builds)
+
+## Create the app
+
+```bash
+npx create-expo-app@latest my-app
+cd my-app
+npx expo start
+```
+
+`create-expo-app` scaffolds the default template with **expo-router** already wired up. When
+`expo start` runs, it prints a **QR code**.
+
+## Run it on your phone
+
+1. Open **Expo Go** on your phone.
+2. Scan the QR code.
+3. Watch it load.
+
+Save a file — the app **reloads instantly** (Fast Refresh). That loop — edit, save, see — is
+your entire development cycle.
+
+<Takeaway math="npx create-expo-app + scan the QR" note="Edit → save → Fast Refresh. No build step in the loop." />
+
+## The useful commands
+
+| Command | What it does |
+|---|---|
+| `npx expo start` | dev server + QR code |
+| `npx expo start --tunnel` | when Wi-Fi is blocked/firewalled |
+| `npx expo start --ios` / `--android` | open a simulator/emulator |
+| `a` / `i` / `r` / `m` | press in terminal: Android / iOS / reload / menu |
+| `npx expo install <pkg>` | install a lib with the SDK-compatible version |
+
+## Pick an editor
+
+Any editor works, but the sweet spot is **VS Code** + the official **Expo Tools** extension
+(debugging, IntelliSense for config) or a fast editor with TypeScript support. TypeScript is
+the default — keep it.
+
+<Pitfall title="QR won't load? Check Wi-Fi">
+  Phone and computer must be on the <b>same network</b>. Corporate/guest Wi-Fi often blocks
+  the port. Fix: <code>npx expo start --tunnel</code>, or plug the phone in via USB.
+</Pitfall>
+
+## What you just did
+
+You didn't "build" an app — Expo Go already contains the native runtime. Your JS is served to
+it over the network. That's why it's instant. A **dev build** (step 20) bakes your own native
+runtime when you need modules Expo Go doesn't ship.
+
+<Recap points={[
+  'Node 18+ + Expo Go on your phone',
+  'npx create-expo-app → npx expo start → scan QR',
+  'Fast Refresh = edit, save, see instantly',
+  'expo start --tunnel when Wi-Fi blocks you',
+]} />
+
+</Layout>

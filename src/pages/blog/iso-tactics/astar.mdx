@@ -1,0 +1,54 @@
+import Layout from '../../../layouts/BlogPost.astro';
+import DemoAStar from '../../../components/blog/iso/demos/DemoAStar.tsx';
+import Formula from '../../../components/blog/iso/Formula.astro';
+import Recap from '../../../components/blog/iso/Recap.astro';
+
+<Layout title="A* Pathfinding" slug="astar" series="neon-native" series="neon-native" series="neon-native" series="neon-native" series="neon-native" series="neon-native" series="iso-tactics">
+
+<div class="page-tag">STEP 07 — THE BRAIN</div>
+<h1 class="page-title">A* Pathfinding</h1>
+<p class="lede">
+  A\* finds the shortest path around walls. It's a smarter version of "try every direction":
+  a search that always explores the <b>most promising</b> tile first.
+</p>
+
+## The score: f = g + h
+
+Each tile gets a score. The search always expands the tile with the lowest score.
+
+<Formula math="f = g + h" note="g = steps already taken (known). h = Manhattan distance to the goal (guess). f = best guess of total cost." />
+
+- `g` — real cost so far. Start tile = 0, each step +1.
+- `h` — **heuristic**: the Manhattan distance to the goal. Never overestimates, so A* stays optimal.
+- `f` — lower is better. The search greedily heads toward the goal but won't cheat through walls (it backtracks when `g` proves a detour is needed).
+
+```js
+// the whole idea, compressed
+while (open has tiles) {
+  cur = tile in open with lowest f;
+  if (cur === goal) return reconstructPath();
+  for (each neighbour not blocked) {
+    g2 = g(cur) + 1;
+    if (g2 < g(neighbour)) {   // found a cheaper route
+      neighbour.cameFrom = cur;
+      g(neighbour) = g2;
+      f(neighbour) = g2 + manhattan(neighbour, goal);
+      open.add(neighbour);
+    }
+  }
+}
+```
+
+<div class="poke">Click cells to build walls. Hit "run A*" and watch it snake from A to B around your walls.</div>
+
+<DemoAStar client:load />
+
+## Where it fits in GRIDRUNNER
+
+The enemy AI uses A* to walk toward your nearest unit. Step 08 (move range) uses a simpler
+flood fill for *your* moves — because you don't need a target, you need "everything within N
+steps".
+
+<Recap points={['f = g + h: cost + guess', 'h = Manhattan distance, never overestimates', 'A* = greedy search that backtracks around walls']} />
+
+</Layout>

@@ -1,0 +1,105 @@
+import Layout from '../../../layouts/BlogPost.astro';
+import Tldr from '../../../components/blog/neon-native/Tldr.astro';
+import Takeaway from '../../../components/blog/neon-native/Takeaway.astro';
+import Pitfall from '../../../components/blog/neon-native/Pitfall.astro';
+import Recap from '../../../components/blog/neon-native/Recap.astro';
+
+<Layout title="Debug & Errors" slug="debugging" series="neon-native">
+
+<h1 class="page-title">Debug & Errors</h1>
+
+<Tldr tldr="Catch render errors with an ErrorBoundary, read LogBox for warnings, inspect with React DevTools, and ship Sentry so you see crashes before users report them." />
+
+<p class="lede">
+  Crashes will happen. The question is whether you find out from your tooling or from a
+  one-star review. Four layers: <b>LogBox</b> (dev warnings), <b>DevTools</b> (inspecting),
+  <b>ErrorBoundary</b> (catching), <b>Sentry</b> (reporting in production).
+</p>
+
+## LogBox: the yellow/red boxes
+
+In development, errors and warnings appear as red/yellow overlays. Read them — they're usually
+accurate and point at the exact line.
+
+- **Red** = error (usually crashes the render).
+- **Yellow** = warning (won't crash now, might later — e.g. deprecated prop).
+
+Dismiss a warning with the `X`, or ignore the whole box for the session. Don't ship with
+warnings — fix them or add a justified `// eslint-disable`.
+
+## React DevTools
+
+Open the in-app dev menu (shake the phone or press `m` in the terminal), tap "Open React
+DevTools". Inspect the component tree, see props/state, and — critically — see **what
+re-renders** (highlight updates). This is your #1 tool for finding unnecessary renders.
+
+## ErrorBoundary: catch render crashes
+
+A render error unmounts the whole tree — white screen. An ErrorBoundary catches it and shows
+a fallback:
+
+```tsx
+import React from 'react';
+
+class ErrorBoundary extends React.Component {
+  state = { hasError: false };
+  static getDerivedStateFromError() { return { hasError: true }; }
+  componentDidCatch(error: Error, info: React.ErrorInfo) {
+    console.error(error, info);
+    // also: Sentry.captureException(error)
+  }
+  render() {
+    if (this.state.hasError) {
+      return <FallbackScreen onRetry={() => this.setState({ hasError: false })} />;
+    }
+    return this.props.children;
+  }
+}
+```
+
+Wrap your app's root — and wrap **individual feature screens** so one broken screen doesn't
+white-out the whole app.
+
+<Takeaway math="ErrorBoundary + Sentry = you see crashes first" note="Boundary catches and shows a fallback; Sentry ships the stack trace to your dashboard." />
+
+## Sentry: production crash reporting
+
+Expo has a first-party Sentry integration:
+
+```bash
+npx expo install @sentry/react-native
+npx expo install expo-dev-client   # Sentry needs a dev build
+```
+
+```tsx
+import * as Sentry from '@sentry/react-native';
+
+Sentry.init({
+  dsn: 'https://...@...ingest.sentry.io/...',
+  tracesSampleRate: 0.2,
+});
+```
+
+Now every uncaught error and native crash reports to your Sentry dashboard with stack trace,
+device, OS version, and breadcrumbs. You'll know about crashes before your users do.
+
+## console.log vs the debugger
+
+- `console.log` — quick, fine for one-off checks. Remove before shipping (it leaks data and slows the JS thread).
+- **Breakpoints** in VS Code (Expo Tools) — pause and inspect, far more powerful.
+- `react-native-logs` — structured logging with levels, better than scattered `console.log`.
+
+<Pitfall title="console.log in production">
+  Every log line is a synchronous JS-thread call in production too. A hot path full of
+  <code>console.log</code> visibly drops frames, and it can leak PII into device logs. Strip
+  or gate logs behind <code>__DEV__</code>.
+</Pitfall>
+
+<Recap points={[
+  'LogBox: red = crash, yellow = warning — read them',
+  'React DevTools highlights re-renders',
+  'ErrorBoundary catches render crashes, shows fallback',
+  'Sentry reports production crashes with stack traces',
+]} />
+
+</Layout>

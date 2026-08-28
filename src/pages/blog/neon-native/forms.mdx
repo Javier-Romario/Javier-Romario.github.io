@@ -1,0 +1,123 @@
+import Layout from '../../../layouts/BlogPost.astro';
+import Tldr from '../../../components/blog/neon-native/Tldr.astro';
+import Takeaway from '../../../components/blog/neon-native/Takeaway.astro';
+import Pitfall from '../../../components/blog/neon-native/Pitfall.astro';
+import Recap from '../../../components/blog/neon-native/Recap.astro';
+
+<Layout title="Forms & Input" slug="forms" series="neon-native">
+
+<h1 class="page-title">Forms & Input</h1>
+
+<Tldr tldr="Controlled inputs: TextInput value = state, onChangeText = setState. Validate on submit, show errors under fields, disable the button while submitting." />
+
+<p class="lede">
+  Forms are where apps feel broken or solid. The pattern is always the same: <b>controlled
+  inputs</b>, <b>validate on submit</b>, <b>one error per field</b>.
+</p>
+
+## Controlled TextInput
+
+A controlled input's value comes from state, and every keystroke writes back to state:
+
+```tsx
+const [email, setEmail] = useState('');
+
+<TextInput
+  value={email}
+  onChangeText={setEmail}
+  placeholder="you@example.com"
+  keyboardType="email-address"
+  autoCapitalize="none"
+  autoCorrect={false}
+/>
+```
+
+`value` = single source of truth. `onChangeText` = update it. Because state drives the input,
+you can validate, clear, or format it from anywhere.
+
+<Takeaway math="controlled TextInput = value + onChangeText" note="State is the source of truth. The input displays state and writes back to it." />
+
+## The useful TextInput props
+
+| Prop | Why |
+|---|---|
+| `keyboardType` | number pad, email, phone |
+| `autoCapitalize="none"` | emails/usernames |
+| `autoCorrect={false}` | no autocorrect on names/codes |
+| `secureTextEntry` | passwords |
+| `returnKeyType` | "next" / "done" on the keyboard |
+| `multiline` | long text |
+| `maxLength` | hard cap |
+
+## Validation on submit
+
+Don't validate on every keystroke (annoying). Validate when the user hits submit:
+
+```tsx
+const [errors, setErrors] = useState<{ email?: string }>({});
+
+function submit() {
+  const next: typeof errors = {};
+  if (!email.includes('@')) next.email = 'Enter a valid email';
+  setErrors(next);
+  if (Object.keys(next).length === 0) {
+    doSubmit(email);
+  }
+}
+
+<TextInput value={email} onChangeText={setEmail} />
+{errors.email && <Text style={{ color: '#ff4d5e' }}>{errors.email}</Text>}
+```
+
+## The submit state
+
+Submitting is a three-state machine too (step 11's union, applied to a button):
+
+```tsx
+const [saving, setSaving] = useState(false);
+
+<Pressable onPress={submit} disabled={saving}>
+  <Text>{saving ? 'Saving…' : 'Save'}</Text>
+</Pressable>
+```
+
+Disable the button while saving — prevents double-submits.
+
+## KeyboardAvoidingView
+
+On iOS the keyboard covers the input. Wrap forms:
+
+```tsx
+import { KeyboardAvoidingView, Platform } from 'react-native';
+
+<KeyboardAvoidingView
+  behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+  style={{ flex: 1 }}
+>
+  {/* form */}
+</KeyboardAvoidingView>
+```
+
+## Form libraries
+
+When forms grow (multi-step, complex validation), use **react-hook-form** + **zod** for
+schema validation. For most apps, the manual pattern above is enough — reach for the library
+when you have more than ~5 fields.
+
+<Pitfall title="Uncontrolled input surprise">
+  ```tsx
+  <TextInput defaultValue="x" onChangeText={...} />  // uncontrolled
+  ```
+  With <code>defaultValue</code> the input manages its own state — you can't clear it or
+  validate it from code. Use <code>value</code> + <code>onChangeText</code> (controlled) for
+  any input you need to read or manipulate.
+</Pitfall>
+
+<Recap points={[
+  'Controlled: value from state, onChangeText to state',
+  'Validate on submit, not per keystroke',
+  'Disable the button while submitting',
+  'KeyboardAvoidingView on iOS',
+]} />
+
+</Layout>

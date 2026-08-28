@@ -1,0 +1,110 @@
+import Layout from '../../../layouts/BlogPost.astro';
+import Tldr from '../../../components/blog/neon-native/Tldr.astro';
+import Takeaway from '../../../components/blog/neon-native/Takeaway.astro';
+import Pitfall from '../../../components/blog/neon-native/Pitfall.astro';
+import Recap from '../../../components/blog/neon-native/Recap.astro';
+
+<Layout title="State & Hooks" slug="state-hooks" series="neon-native">
+
+<h1 class="page-title">State & Hooks</h1>
+
+<Tldr tldr="useState stores data that changes the UI; setState triggers a re-render. useEffect runs side effects after render. That's the whole mental model." />
+
+<p class="lede">
+  React re-renders your component when <b>state</b> changes. Everything else is details.
+  Internalize the loop: <b>state changes → component re-renders → UI matches state.</b>
+</p>
+
+## useState: the loop
+
+```tsx
+import { useState } from 'react';
+
+function Counter() {
+  const [count, setCount] = useState(0);
+
+  return (
+    <Pressable onPress={() => setCount(count + 1)}>
+      <Text>Count: {count}</Text>
+    </Pressable>
+  );
+}
+```
+
+`count` is state. `setCount` updates it. When you call `setCount`, React re-renders the
+component and `count` has the new value. **You never change `count` directly** — always via
+the setter.
+
+<Takeaway math="setState → re-render" note="Never mutate state. Call the setter; React re-renders with the new value." />
+
+## The golden rule: don't mutate
+
+```tsx
+// ❌ wrong — mutating state directly
+user.name = 'New';          // React won't notice
+list.push(item);            // won't re-render
+
+// ✅ right — create a new value
+setUser({ ...user, name: 'New' });
+setList([...list, item]);
+```
+
+React compares references. A new object/array = "changed". Mutating in place = same reference
+= no re-render.
+
+## useEffect: after the render
+
+`useEffect` runs **after** render, for side effects: fetching, subscriptions, timers.
+
+```tsx
+useEffect(() => {
+  const id = setTimeout(() => doThing(), 1000);
+  return () => clearTimeout(id);  // cleanup when unmounted/deps change
+}, [/* deps */]);
+```
+
+The **dependency array** controls when it runs:
+
+- `[]` — run once on mount
+- `[count]` — run when `count` changes
+- no array — run every render (usually wrong)
+
+<Pitfall title="The infinite fetch loop">
+  ```tsx
+  useEffect(() => {
+    fetchData().then(setData);  // no deps array → runs EVERY render
+  });                            // setData → re-render → fetch → 💥
+  ```
+  Fix: add <code>[]</code> to run once, or <code>[id]</code> to refetch when id changes.
+</Pitfall>
+
+## useRef: values that survive renders
+
+A ref is a box that persists across renders but <b>doesn't trigger re-renders</b> when changed.
+Use it for timers, animation values, "previous value" tracking.
+
+```tsx
+const timer = useRef<number | null>(null);
+timer.current = setTimeout(...);  // change without re-render
+```
+
+## useMemo / useCallback (defer to step 19)
+
+They prevent wasted work. Don't reach for them preemptively — measure first. Step 19 has the
+full story.
+
+## The mental model, compressed
+
+1. Data that changes the UI → **state**.
+2. Anything that runs after render (fetch, timer, sub) → **effect**.
+3. Values that persist without re-rendering → **ref**.
+4. Expensive derived values → **memo** (rarely, step 19).
+
+<Recap points={[
+  'state changes → re-render → UI matches',
+  'Never mutate state; always create new objects/arrays',
+  'useEffect = side effects after render; deps array controls it',
+  'useRef persists without re-rendering',
+]} />
+
+</Layout>

@@ -1,0 +1,101 @@
+import Layout from '../../../layouts/BlogPost.astro';
+import Game from '../../../components/blog/iso/demos/Game.tsx';
+import Recap from '../../../components/blog/iso/Recap.astro';
+
+<Layout title="GRIDRUNNER" slug="game" series="neon-native" series="neon-native" series="neon-native" series="neon-native" series="neon-native" series="neon-native" series="iso-tactics">
+
+<div class="page-tag">STEP 11 — THE WHOLE GAME</div>
+<h1 class="page-title">GRIDRUNNER</h1>
+<p class="lede">
+  Everything you learned, combined into one playable game. 3 runners vs 3 drones on an iso grid
+  with terrain heights and fog of war. Move, climb, attack, kill all drones before they kill you.
+</p>
+
+## How to play
+
+1. Click a **teal** runner. Blue tiles = where it can walk.
+2. Click a blue tile to move. Pink tiles = enemies in attack range.
+3. Click a pink enemy to attack. Or "end unit" to hold position.
+4. "End turn" — the drones take their turn (dumb AI: walk at you, shoot when in range).
+
+**Ranged units** (yellow dot above the cube) shoot up to 3 tiles. Melee units hit adjacent
+only. **High ground** gives +1 damage per level you stand above your target.
+
+**Terrain:** bright cubes = raised ground. Climbing up a level costs +1 move. **Walls**
+(dark slabs) are impassable and block sight.
+
+**Fog:** you only see tiles within 4 steps of your runners. Drones hide outside your vision.
+Toggle it off with the "fog" button.
+
+**Levels:** the dropdown loads 3 maps — FLATLINE (no terrain), HIGHRISE (plateau), CANYON
+(walls + chokepoint).
+
+Win = all drones dead. Lose = all runners dead.
+
+<div class="poke">Play it. Then open the code (copy button below) and find every concept: toScreen, toTile, y-sort, A*, flood fill, state machine, dice.</div>
+
+<Game client:load />
+
+## The whole stack in one file
+
+```js
+// 1. projection       toScreen(x,y)   → (x-y)*32, (x+y)*16
+// 2. inverse          toTile(sx,sy)   → click picking
+// 3. depth sort       sort by x + y
+// 4. terrain          heights[][]     → cubes, stepCost = 1 + climb
+// 5. move range       reachable()     → flood fill, climb-aware
+// 6. fog of war       reachable()     → vision = flood fill ≤ 4 (walls block)
+// 7. ranged combat    range field     → attack if manhattan ≤ range
+// 8. high ground      +1 dmg per level above target
+// 9. enemy AI         astar()         → walk toward nearest, shoot in range
+// 10. state machine   turn: 'p' | 'e' + winner
+// 11. levels          LEVELS[]        → heights + walls + loadouts
+// 12. combat          dmg = atk + high + rand(0..2)
+```
+
+```js
+// s../../../components/blog/iso/demos/Game.tsx — every concept, labelled
+// (1) projection
+function toScreen(x, y, ox, oy) {
+  return { x: ox + (x - y) * 32, y: oy + (x + y) * 16 };
+}
+// (2) inverse — mouse to tile
+function toTile(sx, sy, ox, oy) {
+  const px = sx - ox, py = sy - oy;
+  return {
+    x: Math.floor((px / 32 + py / 16) / 2),
+    y: Math.floor((py / 16 - px / 32) / 2),
+  };
+}
+// (3) depth sort — draw back to front
+units.sort((a, b) => (a.x + a.y) - (b.x + b.y));
+// (4) terrain — climbing a level costs +1 move
+const cost = 1 + Math.max(0, heights[next.y][next.x] - heights[cur.y][cur.x]);
+// (5) move range — climb-aware flood fill
+const range = reachable(unit, unit.move, blocked, 8, 8, heights);
+// (6) fog of war — vision is the same flood fill
+const vision = reachable(unit, 4, new Set(), 8, 8, heights);
+// (7) ranged combat — attack if within range
+if (manhattan(enemy, nearest) <= enemy.range) attack();
+// (8) high ground — +1 dmg per level above target
+const bonus = Math.max(0, h[attacker.y][attacker.x] - h[target.y][target.x]);
+// (9) enemy AI — A* toward nearest, shoot in range
+const path = astar(enemy, nearest, blocked, 8, 8, heights);
+// (10) state machine
+if (turn === 'p') { /* clicks allowed */ } else { /* AI runs */ }
+// (12) combat
+const dmg = attacker.atk + bonus + Math.floor(Math.random() * 3);
+```
+
+## Where next
+
+You now own the math. Two roads from here:
+
+- **Go deeper in canvas** — fog of war (flood fill with sight range), height levels, multi-tile
+  units, an undo system, a level map.
+- **Port to React Three Fiber** — same concepts, new plumbing: `toScreen` becomes an orthographic
+  camera, y-sort becomes the depth buffer, your canvas grid becomes `<mesh>` instances.
+
+<Recap points={['projection + inverse = clickable world', 'flood fill powers range AND fog of war', 'heightmap = terrain, climb cost = tactics', 'range + high ground = combat depth', 'walls = blocked tiles + blocked sight', 'A* with climb cost = enemy brain', 'LEVELS[] = levels, state machine + dice = game loop', 'you built GRIDRUNNER from scratch']} />
+
+</Layout>

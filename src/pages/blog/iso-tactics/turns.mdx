@@ -1,0 +1,53 @@
+import Layout from '../../../layouts/BlogPost.astro';
+import DemoTurns from '../../../components/blog/iso/demos/DemoTurns.tsx';
+import Formula from '../../../components/blog/iso/Formula.astro';
+import Recap from '../../../components/blog/iso/Recap.astro';
+
+<Layout title="Turn Machine" slug="turns" series="neon-native" series="neon-native" series="neon-native" series="neon-native" series="neon-native" series="iso-tactics">
+
+<div class="page-tag">STEP 09 — STRUCTURE</div>
+<h1 class="page-title">Turn Machine</h1>
+<p class="lede">
+  A tactics game is a <b>state machine</b>. Two states — your turn, enemy turn — and rules for
+  who can act and when it flips. Everything else (graphics, input) just reads the current state.
+</p>
+
+## Two states, one loop
+
+<Formula math="state: PLAYER ⇄ ENEMY" note="PLAYER → (end turn) → ENEMY → (AI done) → PLAYER. Forever." />
+
+```js
+let state = 'PLAYER';
+let ap = 3;   // action points this turn
+
+function act(cost, name) {
+  if (state !== 'PLAYER' || ap < cost) return;  // guard
+  ap -= cost;
+}
+
+function endTurn() {
+  state = 'ENEMY';
+  aiTakeTurn();      // enemy acts...
+  state = 'PLAYER';  // ...then back to you
+  ap = 3;            // reset points
+}
+```
+
+## Why a state machine
+
+Because you can ask questions like <code>if (state !== 'PLAYER') return;</code> and suddenly
+the enemy's turn is immune to your clicks. One variable, checked everywhere, prevents a hundred
+bugs. The UI (buttons, highlights) just mirrors the state.
+
+<div class="poke">Spend AP, then end your turn. Watch it flip to ENEMY and come back with AP reset.</div>
+
+<DemoTurns client:load />
+
+## In GRIDRUNNER
+
+Same machine, plus a `winner` state on top. And "acted" flags per unit (each unit gets one go
+per turn). The AI turn is just a timed loop that runs each enemy unit one at a time.
+
+<Recap points={['game = state machine, not spaghetti', 'guard every action with the current state', 'turn flip = reset action points + switch who acts']} />
+
+</Layout>

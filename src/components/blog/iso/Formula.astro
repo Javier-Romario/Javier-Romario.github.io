@@ -1,0 +1,13 @@
+---
+interface Props {
+  math: string;
+  note?: string;
+}
+const { math, note } = Astro.props;
+---
+
+<div class="formula-card">
+  <div class="label">// the formula</div>
+  <div class="math">{math}</div>
+  {note && <div class="note">{note}</div>}
+</div>

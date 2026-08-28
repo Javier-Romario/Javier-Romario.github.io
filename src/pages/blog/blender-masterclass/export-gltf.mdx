@@ -1,0 +1,65 @@
+import Layout from '../../../layouts/BlogPost.astro';
+import Formula from '../../../components/blog/blender-masterclass/Formula.astro';
+import Recap from '../../../components/blog/blender-masterclass/Recap.astro';
+import DemoGltf from '../../../components/blog/blender-masterclass/demos/DemoGltf.tsx';
+
+<Layout title="Export to glTF" slug="export-gltf" series="blender-masterclass">
+
+<div class="page-tag">LESSON 07 — THE JPEG OF 3D</div>
+<h1 class="page-title">Export to glTF</h1>
+
+<div class="timebox">~4 min</div>
+
+<p class="lede">STL is for printers — geometry only. For games and the web you want <b>glTF</b>:
+one file that carries geometry, materials, textures, and animation. The <b>GLB</b> variant is a
+single binary blob — the "JPEG of 3D."</p>
+
+<div class="whycare">Every engine reads glTF: three.js, react-three-fiber, Unity, Godot, Unreal,
+web viewers. It's the interchange format of modern 3D.</div>
+
+## The rule
+
+<Formula math="glTF is the JPEG of 3D" note="One file, every engine reads it. Export geometry + materials + textures + animation in a single .glb." />
+
+## What glTF carries
+
+```text
+.geometry   vertices, normals, UVs, triangle indices
+.materials  PBR: base color, normal, roughness, metallic
+.textures   embedded or external images
+.animation  bones, weights, keyframes (skeletal or morph)
+```
+
+STL = geometry only. glTF = the whole asset. That's why games and the web use glTF.
+
+## Export settings that matter
+
+```text
+File → Export → glTF 2.0 (.glb)
+
+✓ Apply Modifiers     ← bake your stack, same as STL
+✓ +Y Up               ← glTF convention (three.js expects it)
+✓ Embed Textures      ← one self-contained file
+✓ Compress            ← Draco or Meshopt: 10× smaller, decoded on load
+```
+
+<div class="poke">Toggle the settings and watch the export contract change. Compress = smaller file,
++Z up = Blender's native axis (fix it here, not in code later).</div>
+
+<DemoGltf client:load />
+
+## The .glb vs .gltf question
+
+- **`.glb`** — binary, one file, everything embedded. Use this for the web.
+- **`.gltf`** — JSON + separate `.bin`/texture files. Easier to hand-edit, messier to host.
+
+For a react-three-fiber site, `.glb` is the answer: one request, drop it in `/public`.
+
+<Recap points={[
+  'glTF carries geometry + materials + textures + animation',
+  '.glb = single binary file, best for the web',
+  'Export with +Y up, modifiers applied, textures embedded',
+  'Compress with Draco/Meshopt for 10× smaller files',
+]} />
+
+</Layout>

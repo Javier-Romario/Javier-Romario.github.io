@@ -1,0 +1,49 @@
+import Layout from '../../../layouts/BlogPost.astro';
+import DemoIso from '../../../components/blog/iso/demos/DemoIso.tsx';
+import Formula from '../../../components/blog/iso/Formula.astro';
+import Recap from '../../../components/blog/iso/Recap.astro';
+
+<Layout title="Iso Projection" slug="iso" series="neon-native" series="neon-native" series="neon-native" series="neon-native" series="neon-native" series="neon-native" series="iso-tactics">
+
+<div class="page-tag">STEP 03 — THE BIG ONE</div>
+<h1 class="page-title">Iso Projection</h1>
+<p class="lede">
+  This is the magic trick. A flat grid becomes fake 3D with <b>two lines of math</b>. No engine,
+  no camera — just rotate the grid 45° and squash it to half height.
+</p>
+
+## The formula
+
+Two numbers turn a tile <code>(x, y)</code> into a screen pixel <code>(sx, sy)</code>:
+
+<Formula math="sx = (x − y) × W/2" note="W = tile width (64). This is the diagonal shift." />
+
+<Formula math="sy = (x + y) × H/2" note="H = tile height (32). W/2 = 32, H/2 = 16. A 2:1 ratio gives the classic look." />
+
+## What the ratio does
+
+- **2:1** (W=64, H=32) = the classic "tactics game" look.
+- Squash it flatter (8:1) and it looks like a top-down RPG.
+- Stretch it taller and it looks like a cheap arcade cabinet.
+
+<div class="poke">Drag the "tile height" slider. Watch the diamonds squash. Hover a tile to see its live numbers.</div>
+
+<DemoIso client:load />
+
+## Read it like this
+
+`sx` depends on `x − y`. Move a tile up-right (+x, −y) and `sx` grows fast. `sy` depends on
+`x + y`. Move down-right (+x, +y) and `sy` grows. That's the whole trick — the grid leans.
+
+```js
+function toScreen(x, y, ox, oy) {
+  return {
+    x: ox + (x - y) * 32,   // W/2 = 32
+    y: oy + (x + y) * 16,   // H/2 = 16
+  };
+}
+```
+
+<Recap points={['sx = (x−y)·W/2, sy = (x+y)·H/2', '2:1 ratio = classic tactics look', 'same function draws every tile, every unit, forever']} />
+
+</Layout>

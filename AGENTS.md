@@ -8,6 +8,22 @@ astro dev --background
 
 Manage the background server with `astro dev stop`, `astro dev status`, and `astro dev logs`.
 
+## Blog
+
+The blog lives under `src/pages/blog/` as one folder per "series" (multi-page
+guide). Metadata + ordering live in `src/data/blog.ts`; shared chrome in
+`src/layouts/BlogPost.astro`; styles in `src/styles/blog.css`.
+
+To import pages from a **full Astro site** (`.mdx` + `.astro` pages and all
+their React/astro components), use the import tool and follow the guide:
+
+```bash
+node scripts/import-blog-series.mjs --src ~/path/to/site --series my-series --dry-run
+```
+
+Full instructions + manual steps + gotchas: `docs/blog-import.md`. Read it
+before adding a new blog series.
+
 ## Documentation
 
 Full documentation: https://docs.astro.build

@@ -1,0 +1,55 @@
+import Layout from '../../../layouts/BlogPost.astro';
+import DemoRange from '../../../components/blog/iso/demos/DemoRange.tsx';
+import Formula from '../../../components/blog/iso/Formula.astro';
+import Recap from '../../../components/blog/iso/Recap.astro';
+
+<Layout title="Move Range" slug="range" series="neon-native" series="neon-native" series="neon-native" series="neon-native" series="neon-native" series="neon-native" series="iso-tactics">
+
+<div class="page-tag">STEP 08 — WHERE CAN I GO?</div>
+<h1 class="page-title">Move Range</h1>
+<p class="lede">
+  Click a unit in any tactics game and you see glowing tiles — everywhere it can walk. That's a
+  <b>flood fill</b>. Water spreads from the unit, one step at a time, until it runs out of move
+  points.
+</p>
+
+## BFS flood fill
+
+A* finds *one* path to *one* goal. Move range wants *every* reachable tile — no goal. Different
+tool: breadth-first search (BFS). It visits tiles in rings, counting steps as it goes.
+
+<Formula math="spread until steps > movePoints" note="Ring 0 = the unit. Ring 1 = neighbours. Ring 2 = their neighbours… stop at the limit." />
+
+```js
+const q = [start];
+const cost = new Map([[key(start), 0]]);
+for (let i = 0; i < q.length; i++) {
+  const cur = q[i];
+  const c = cost.get(key(cur));
+  if (c >= movePoints) continue;          // out of range
+  for (const d of [[1,0],[-1,0],[0,1],[0,-1]]) {
+    const n = { x: cur.x + d[0], y: cur.y + d[1] };
+    if (blocked(n)) continue;             // walls + occupied tiles
+    if (cost.has(key(n))) continue;       // already visited
+    cost.set(key(n), c + 1);
+    q.push(n);
+  }
+}
+```
+
+The `q` array is the trick: it grows while you read it. Each tile gets pushed once, so the
+whole thing is fast even on big grids.
+
+<div class="poke">Drag move points. Click a teal tile to move the cube. The number on each tile is its step cost.</div>
+
+<DemoRange client:load />
+
+## The same code, two jobs
+
+- **Move range** — flood fill from the unit, cap at move points.
+- **Fog of war / vision** — flood fill from the unit, cap at sight range.
+- **Danger zones** — flood fill from each enemy, overlay the results.
+
+<Recap points={['flood fill = BFS, no goal, just spread', 'stop when steps > move points', 'one algorithm powers range, vision, danger zones']} />
+
+</Layout>

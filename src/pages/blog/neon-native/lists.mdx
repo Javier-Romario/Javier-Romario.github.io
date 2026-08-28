@@ -1,0 +1,88 @@
+import Layout from '../../../layouts/BlogPost.astro';
+import Tldr from '../../../components/blog/neon-native/Tldr.astro';
+import Takeaway from '../../../components/blog/neon-native/Takeaway.astro';
+import Pitfall from '../../../components/blog/neon-native/Pitfall.astro';
+import Recap from '../../../components/blog/neon-native/Recap.astro';
+import FlatListDemo from '../../../components/blog/neon-native/demos/FlatListDemo.tsx';
+
+<Layout title="Lists & FlatList" slug="lists" series="neon-native">
+
+<h1 class="page-title">Lists & FlatList</h1>
+
+<Tldr tldr="FlatList virtualizes: it only renders rows near the viewport. Use it for anything scrollable and long. Always give items a stable key." />
+
+<p class="lede">
+  The most common performance bug in RN is rendering 10,000 rows. <b>FlatList</b> renders only
+  the rows you can see (plus a small buffer) and recycles the rest. That's **virtualization**.
+</p>
+
+## The basic shape
+
+```tsx
+import { FlatList } from 'react-native';
+
+const data = [{ id: '1', name: 'Ada' }, { id: '2', name: 'Grace' }];
+
+<FlatList
+  data={data}
+  keyExtractor={(item) => item.id}          // stable unique key
+  renderItem={({ item }) => (
+    <View style={{ padding: 16 }}>
+      <Text>{item.name}</Text>
+    </View>
+  )}
+/>
+```
+
+<Takeaway math="FlatList virtualizes; keys matter" note="Only visible rows render. A stable keyExtractor keeps React from re-mounting rows." />
+
+## Why keys matter
+
+React uses the key to know which row is which. If you use the array **index** as the key,
+deleting row 0 makes every row's identity shift — React re-renders/re-mounts the whole list
+and state gets lost. Use a **real unique id** (`item.id`).
+
+<Pitfall title="key = index breaks on delete/reorder">
+  ```tsx
+  keyExtractor={(item, index) => String(index)}  // ❌ identity shifts
+  keyExtractor={(item) => item.id}               // ✅ stable
+  ```
+  If items can be deleted, inserted, or reordered, index keys cause wrong data to show in
+  wrong rows and lost component state.
+</Pitfall>
+
+<div class="poke">Scroll this fake list. Notice only a small window of rows is "mounted" at any time. That's what FlatList does for real.</div>
+
+<FlatListDemo client:load />
+
+## The perf props (know these)
+
+| Prop | What it does | Typical value |
+|---|---|---|
+| `initialNumToRender` | rows rendered on first mount | 10 |
+| `windowSize` | how far beyond viewport to render (in viewport-heights) | 5 (default 21, often too high) |
+| `maxToRenderPerBatch` | rows rendered per scroll batch | 10 |
+| `removeClippedSubviews` | unload offscreen rows (Android) | `true` |
+| `getItemLayout` | skip measurement if fixed row height | `{ length: 48, offset: 48*index, index }` |
+
+If every row has a **fixed height**, always pass `getItemLayout` — it removes a whole layout
+pass.
+
+## When NOT to use FlatList
+
+- A form, a settings screen, a few cards → **ScrollView**.
+- A list inside another scrollable → avoid; nesting vertical lists breaks virtualization.
+
+## SectionList (grouped)
+
+When you have headers (A-Z contacts, date groups), use `SectionList` — same API, plus
+`sections` and `renderSectionHeader`.
+
+<Recap points={[
+  'FlatList virtualizes — only visible rows render',
+  'Stable keys (item.id), never array index',
+  'getItemLayout when rows have fixed height',
+  'ScrollView for short content, FlatList for long',
+]} />
+
+</Layout>

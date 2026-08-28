@@ -1,0 +1,100 @@
+import Layout from '../../../layouts/BlogPost.astro';
+import Tldr from '../../../components/blog/neon-native/Tldr.astro';
+import Takeaway from '../../../components/blog/neon-native/Takeaway.astro';
+import Pitfall from '../../../components/blog/neon-native/Pitfall.astro';
+import Recap from '../../../components/blog/neon-native/Recap.astro';
+
+<Layout title="Monetization" slug="monetization" series="neon-native">
+
+<h1 class="page-title">Monetization</h1>
+
+<Tldr tldr="Three models: paid app, ads, or in-app purchases. IAP (subscriptions/consumables) is the most lucrative and complex — use RevenueCat to avoid store-specific code." />
+
+<p class="lede">
+  You shipped the app. Now it pays rent. Three ways to make money, in order of complexity:
+  **paid up-front**, **ads**, **in-app purchases (IAP)**. Most serious apps use IAP.
+</p>
+
+## The three models
+
+| Model | How it works | Complexity | Best for |
+|---|---|---|---|
+| Paid app | one-time price in the store | low | niche tools, premium |
+| Ads | ad SDK pays per impression | low | free, high-engagement |
+| IAP | subscriptions / consumables | high | most consumer apps |
+
+## IAP: the basics
+
+Apple and Google both take a cut (15–30%) of IAP and require you to use **their** payment
+systems for digital goods (not physical goods, not services — those use Stripe).
+
+- **Subscription** — recurring (monthly/yearly), needs a free trial and a cancel path.
+- **Consumable** — buy repeatedly (coins, gems).
+- **Non-consumable** — buy once (unlock pro, remove ads).
+
+## Use RevenueCat
+
+Store IAP APIs are wildly different (StoreKit vs Play Billing) and the edge cases (restore
+purchases, refunds, sandbox testing) are painful. **RevenueCat** wraps both in one API:
+
+```bash
+npx expo install react-native-purchases
+```
+
+```tsx
+import Purchases from 'react-native-purchases';
+
+// init once, with your RevenueCat API keys
+Purchases.configure({ apiKey: 'appl_...' });
+
+// fetch what's for sale
+const offerings = await Purchases.getOfferings();
+const pkg = offerings.current?.availablePackages[0];
+
+// buy
+const { customerInfo } = await Purchases.purchasePackage(pkg);
+const isPro = customerInfo.entitlements.active['pro'] !== undefined;
+
+// restore on a new device
+await Purchases.restorePurchases();
+```
+
+The `entitlements` object is the thing that matters: "is this user Pro?" — read it everywhere
+you gate features.
+
+<Takeaway math="RevenueCat for cross-store IAP" note="One API for StoreKit + Play Billing. Entitlements = 'does this user have X'." />
+
+## The paywall pattern
+
+Gate premium features behind a paywall screen. Check entitlement, show paywall if not Pro:
+
+```tsx
+function ProFeature({ children }) {
+  const isPro = useProStatus();
+  if (!isPro) return <Paywall />;
+  return children;
+}
+```
+
+Free trial → value demo → paywall → purchase → unlock. In that order.
+
+## Ads
+
+If you go the ads route, use **react-native-google-mobile-ads** (AdMob). Start with banners
+and interstitials, respect frequency caps, and never show an ad during a user's first 30
+seconds — you'll tank retention.
+
+<Pitfall title="IAP in Expo Go doesn't work">
+  In-app purchases require a real build (dev build or store build) with the proper signing and
+  bundle ID. Test against RevenueCat's **sandbox** environment. Also: the App Store rejects
+  apps whose IAP flow is broken or whose paywall hides the "restore purchases" button.
+</Pitfall>
+
+<Recap points={[
+  'Paid, ads, or IAP — IAP is the serious money',
+  'Apple/Google require their payment systems for digital goods',
+  'RevenueCat unifies StoreKit + Play Billing',
+  'Check entitlements everywhere; sandbox-test purchases',
+]} />
+
+</Layout>

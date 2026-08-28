@@ -1,0 +1,68 @@
+import Layout from '../../../layouts/BlogPost.astro';
+import Formula from '../../../components/blog/blender-masterclass/Formula.astro';
+import Recap from '../../../components/blog/blender-masterclass/Recap.astro';
+import DemoManifold from '../../../components/blog/blender-masterclass/demos/DemoManifold.tsx';
+
+<Layout title="Print-Ready Meshes" slug="print-ready" series="blender-masterclass">
+
+<div class="page-tag">LESSON 03 — WATERTIGHT OR IT WON'T PRINT</div>
+<h1 class="page-title">Print-Ready Meshes</h1>
+
+<div class="timebox">~4 min</div>
+
+<p class="lede">A 3D printer reads your mesh literally. If it's not <b>manifold</b> — a closed,
+watertight volume with zero holes, zero floating edges — the slicer will reject it or print
+garbage. This lesson is the checkpoint every print lives or dies on.</p>
+
+<div class="whycare">The #1 reason beginner prints fail isn't the printer. It's a mesh that was
+never actually a solid object.</div>
+
+## The rule
+
+<Formula math="Manifold = watertight, zero holes" note="Every edge is shared by exactly two faces. No holes, no interior faces, no loose geometry." />
+
+## What "manifold" means
+
+Think of your mesh as a balloon. Manifold = you could fill it with water and nothing leaks.
+Blender has a built-in detector:
+
+```text
+Edit Mode  →  Select  →  Select All by Trait  →  Non Manifold
+```
+
+Anything it highlights is a leak. Fix with `F` (fill a hole), `M` (merge doubles), or
+`Ctrl+N` (recalculate normals so all faces point outward).
+
+<div class="poke">Toggle CUT A HOLE. Watch the readout flip from ✓ MANIFOLD to ✗ NON-MANIFOLD —
+that's the exact check a slicer does. In Blender, you'd select that missing face and hit <code>F</code>.</div>
+
+<DemoManifold client:load />
+
+## Wall thickness: the number that matters
+
+- **FDM (filament):** walls ≥ **0.8 mm** (about 2 nozzle widths). Thin details snap.
+- **SLA (resin):** walls ≥ **1–2 mm**. Resin flexes when thin.
+- Use the **Solidify** modifier to guarantee thickness instead of eyeballing it.
+
+## Overhangs & the 45° rule
+
+FDM prints layer on layer. Any surface steeper than **45° from vertical** needs support
+material or it sags. Design self-supporting where you can — fillet the undersides.
+
+## Export the STL
+
+```text
+File → Export → STL
+  ✓ Selection Only (if you have one object)
+  ✓ Apply Modifiers      ← non-negotiable, the slicer needs real geometry
+  ✓ Scene Unit → Millimeter (or scale 1000 if you modeled in meters)
+```
+
+<Recap points={[
+  'Manifold = every edge shared by exactly two faces',
+  'Detect holes: Select → All by Trait → Non Manifold',
+  'FDM walls ≥ 0.8mm, avoid overhangs past 45°',
+  'Export STL with Apply Modifiers + mm units',
+]} />
+
+</Layout>

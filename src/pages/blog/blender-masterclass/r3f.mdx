@@ -1,0 +1,75 @@
+import Layout from '../../../layouts/BlogPost.astro';
+import Formula from '../../../components/blog/blender-masterclass/Formula.astro';
+import Recap from '../../../components/blog/blender-masterclass/Recap.astro';
+import DemoR3F from '../../../components/blog/blender-masterclass/demos/DemoR3F.tsx';
+
+<Layout title="Into react-three-fiber" slug="r3f" series="blender-masterclass">
+
+<div class="page-tag">LESSON 08 — YOUR MODEL, IN REACT</div>
+<h1 class="page-title">Into react-three-fiber</h1>
+
+<div class="timebox">~5 min</div>
+
+<p class="lede">The payoff. You take the `.glb` you exported from Blender, drop it in an Astro
+project, and load it into a <b>react-three-fiber</b> scene — three.js wrapped in React components.
+A 3D scene becomes just another island on the page.</p>
+
+<div class="whycare">You already know React and you now know Blender. react-three-fiber is the
+bridge: `<Canvas>` is a component, your model is a component, done.</div>
+
+## The rule
+
+<Formula math="useGLTF + &lt;primitive&gt; = your model in React" note="useGLTF loads the .glb, <primitive> mounts its scene graph. Everything else is just JSX." />
+
+## The whole thing, in one breath
+
+```tsx
+import { Canvas } from '@react-three/fiber';
+import { useGLTF, OrbitControls } from '@react-three/drei';
+
+function MyModel() {
+  const { scene } = useGLTF('/my-model.glb'); // one request
+  return <primitive object={scene} />;
+}
+
+export default function Demo() {
+  return (
+    <Canvas camera={{ position: [0, 0, 6], fov: 45 }} dpr={[1, 2]}>
+      <ambientLight intensity={0.4} />
+      <pointLight position={[6, 6, 6]} intensity={40} />
+      <MyModel />
+      <OrbitControls autoRotate enableZoom={false} />
+    </Canvas>
+  );
+}
+```
+
+Put the `.glb` in `/public`, import the component into Astro, and hydrate it with
+`client:visible` so three.js only loads when the user scrolls to it.
+
+<div class="poke">Drag the knot. Swap its color. This is exactly what your exported GLB will do —
+<code>useGLTF</code> just swaps the procedural knot for <i>your</i> Blender mesh.</div>
+
+<DemoR3F client:visible />
+
+## Lights, materials, animation
+
+- **Lights** — `ambientLight` (fill) + `pointLight` or `directionalLight` (key). Your Blender
+  materials come through the glTF's PBR maps automatically.
+- **Materials** — tweak in JSX with `meshStandardMaterial`, or let the baked PBR maps do the work.
+- **Animation** — glTF stores keyframes. Load them with `useAnimations`, or drive rotation with
+  `useFrame((state, delta) => …)`.
+
+## The performance rule
+
+three.js is huge — that's the point of Astro islands. Hydrate with `client:visible`, keep the
+`.glb` compressed, and your 3D scene costs nothing until it's actually on screen.
+
+<Recap points={[
+  'useGLTF loads the .glb, <primitive> mounts it',
+  'Drop the .glb in /public, hydrate with client:visible',
+  'Lights are JSX; PBR materials come through automatically',
+  'Your whole Blender pipeline ends in one React component',
+]} />
+
+</Layout>

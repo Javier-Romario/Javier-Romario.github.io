@@ -1,0 +1,90 @@
+import Layout from '../../../layouts/BlogPost.astro';
+import Tldr from '../../../components/blog/neon-native/Tldr.astro';
+import Takeaway from '../../../components/blog/neon-native/Takeaway.astro';
+import Pitfall from '../../../components/blog/neon-native/Pitfall.astro';
+import Recap from '../../../components/blog/neon-native/Recap.astro';
+
+<Layout title="Publishing" slug="publishing" series="neon-native">
+
+<h1 class="page-title">Publishing</h1>
+
+<Tldr tldr="EAS Submit pushes your build to both stores. Before that: a unique bundle ID, app icons, splash screen, and store listings. Then survive review." />
+
+<p class="lede">
+  The moment of truth. You've built the app; now you need a **bundle ID**, the **store assets**,
+  and a **submission** to each store. EAS Submit automates the last mile.
+</p>
+
+## The pre-flight checklist
+
+- **Bundle ID** — `com.yourcompany.appname`, set in `app.json`, unique forever. Can't change after first publish.
+- **App icon** — 1024×1024 PNG, no transparency (Apple rejects transparent icons).
+- **Splash screen** — via `expo-splash-screen` config.
+- **Version** — `1.0.0` in `app.json`.
+- **Privacy policy URL** — required if you collect any data.
+- **App Store Connect** account ($99/yr) + **Play Console** account ($25 one-time).
+
+## Icons and splash
+
+Put a 1024×1024 `icon.png` in `assets/`, reference it in `app.json`, and Expo generates every
+size for both platforms:
+
+```json
+{
+  "expo": {
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#04070b"
+    }
+  }
+}
+```
+
+<Takeaway math="EAS Submit pushes to both stores" note="eas submit → App Store + Play Console. One command per store, credentials handled for you." />
+
+## Submit with EAS
+
+```bash
+eas submit --platform ios
+eas submit --platform android
+```
+
+EAS asks for (or remembers) your store credentials, uploads the build, and starts the review.
+For Android you'll also need a **service account key** from Play Console the first time
+(`eas credentials` walks you through it).
+
+## Store listing
+
+Write it once, adapt per store:
+
+- **Name** — short, memorable, searchable.
+- **Subtitle** — the one-line pitch.
+- **Description** — benefits first, features second.
+- **Screenshots** — required, specific sizes per device. Show the app doing its best thing in the first 2.
+- **Keywords** (iOS) — 100 chars, comma-separated, no spaces wasted.
+
+## Surviving review
+
+- **Don't** request permissions you don't use (camera permission but no camera feature = rejection).
+- **Do** provide a demo account if your app needs login — reviewers can't test otherwise.
+- **Do** make your privacy policy match what you actually collect.
+- **Do** handle the "no network" case — reviewers test offline.
+
+The first review is slowest (often days). Subsequent updates are faster. Plan for it.
+
+<Pitfall title="Bundle ID is permanent">
+  <code>com.example.app</code> is the identity of your app forever. Changing it later = a brand
+  new app (loses ratings, installs, deep links). Choose it carefully: reverse-DNS, your real
+  domain if you have one, lowercase, no dashes/underscores.
+</Pitfall>
+
+<Recap points={[
+  'Unique bundle ID first — it is permanent',
+  '1024×1024 icon, no transparency',
+  'eas submit handles both stores',
+  'Write store listings benefits-first; provide a demo account',
+]} />
+
+</Layout>

@@ -1,0 +1,94 @@
+import Layout from '../../../layouts/BlogPost.astro';
+import Tldr from '../../../components/blog/neon-native/Tldr.astro';
+import Takeaway from '../../../components/blog/neon-native/Takeaway.astro';
+import Pitfall from '../../../components/blog/neon-native/Pitfall.astro';
+import Recap from '../../../components/blog/neon-native/Recap.astro';
+import FlexboxPlayground from '../../../components/blog/neon-native/demos/FlexboxPlayground.tsx';
+
+<Layout title="Flexbox" slug="flexbox" series="neon-native">
+
+<h1 class="page-title">Flexbox</h1>
+
+<Tldr tldr="RN layout is Flexbox only. One gotcha: the default direction is column, not row like the web. justifyContent + alignItems do the rest." />
+
+<p class="lede">
+  There's no float, no grid, no absolute chaos. React Native layout is <b>pure Flexbox</b> —
+  the same flexbox as CSS, with a couple of differences. Master these three props and you can
+  build any screen.
+</p>
+
+## The three props that do 90%
+
+- **`flexDirection`** — the main axis: `row` or `column`. **Default is `column`** (the big difference from web).
+- **`justifyContent`** — position along the main axis.
+- **`alignItems`** — position along the cross axis (perpendicular).
+
+<Takeaway math="flexDirection + justifyContent + alignItems" note="Main axis from flexDirection; justifyContent moves along it, alignItems across it." />
+
+## The mental trick
+
+Pick `flexDirection` first — that's the **main axis**. Then:
+
+- `justifyContent` = spacing **along** that axis
+- `alignItems` = spacing **across** that axis
+
+For a vertical stack (the default), main axis is vertical: `justifyContent` spaces things
+top-to-bottom, `alignItems` aligns them left/right/center.
+
+<div class="poke">Flip flexDirection to row, then play with justify/align/gap. Watch the boxes move. This is the entire layout language.</div>
+
+<FlexboxPlayground client:load />
+
+## The flex property
+
+`flex: 1` means "take all remaining space". Give two children `flex: 1` each and they split
+the space 50/50. `flex: 2` vs `flex: 1` = 2/3 vs 1/3.
+
+```tsx
+<View style={{ flex: 1 }}>
+  <View style={{ flex: 1, backgroundColor: '#00ffd1' }} />  {/* fills top half */}
+  <View style={{ flex: 2, backgroundColor: '#ff2d78' }} />  {/* fills bottom 2/3 */}
+</View>
+```
+
+## Centering something
+
+```tsx
+<View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+  <Text>Perfectly centered</Text>
+</View>
+```
+
+## Spacing: gap vs margin
+
+Use `gap` to space children inside a flex container (supported in RN 0.71+). Use
+`padding` on the container, `margin` on the child. Don't sprinkle `marginTop` everywhere —
+`gap` is cleaner.
+
+## Absolute positioning
+
+For overlays, badges, and modals:
+
+```tsx
+<View style={{ position: 'relative' }}>
+  <Image style={{ width: 48, height: 48 }} source={...} />
+  <View style={{ position: 'absolute', top: -4, right: -4, width: 14, height: 14,
+                  borderRadius: 7, backgroundColor: '#ff4d5e' }} />
+</View>
+```
+
+<Pitfall title="flex: 1 vs flexGrow">
+  On web, <code>flex: 1</code> means "grow to fill". In RN it means <b>"take the whole
+  available space"</b> — <code>flex: 1</code> sets <code>flexGrow: 1, flexShrink: 1,
+  flexBasis: 0</code>. That's why a child with <code>flex: 1</code> can force siblings to
+  shrink to nothing. Use <code>flexGrow: 1</code> when you want "grow if there's room".
+</Pitfall>
+
+<Recap points={[
+  'Flexbox only — no CSS grid, no float',
+  'flexDirection default is column (not row!)',
+  'justifyContent = main axis, alignItems = cross axis',
+  'flex: 1 = fill remaining space; gap for spacing',
+]} />
+
+</Layout>

@@ -1,0 +1,14 @@
+---
+interface Props {
+  math: string;
+  note?: string;
+  label?: string;
+}
+const { math, note, label = '// the takeaway' } = Astro.props;
+---
+
+<div class="takeaway">
+  <div class="label">{label}</div>
+  <div class="math">{math}</div>
+  {note && <div class="note">{note}</div>}
+</div>

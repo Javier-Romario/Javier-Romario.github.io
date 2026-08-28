@@ -1,0 +1,48 @@
+---
+import Layout from './Layout.astro';
+import { postsInSeries, seriesById, neighbors } from '../data/blog';
+
+interface Props {
+  title: string;
+  slug?: string;
+  series?: string;
+}
+
+const { title, slug = '', series = '' } = Astro.props;
+const s = seriesById(series);
+const list = postsInSeries(series);
+const { prev, next, index } = neighbors(series, slug);
+const posPct = list.length ? Math.round(((index + 1) / list.length) * 100) : 0;
+const base = import.meta.env.BASE_URL;
+---
+
+<Layout title={`${title} — ${s?.title ?? 'Blog'}`} description={s?.blurb}>
+  <article class="blog-post">
+    <nav class="blog-crumb">
+      <a href={`${base}blog/`}>← BLOG</a>
+      {s && <span class="blog-crumb__series">/ {s.title}</span>}
+    </nav>
+
+    <header class="blog-series">
+      {s && <div class="blog-series__title">{s.title}</div>}
+      {slug && list.length > 0 && (
+        <div class="blog-progress" title={`${index + 1} / ${list.length}`}>
+          <div class="blog-progress__bar" style={`width: ${posPct}%`}></div>
+        </div>
+      )}
+    </header>
+
+    <div class="blog-body">
+      <slot />
+    </div>
+
+    <nav class="blog-pager">
+      {prev
+        ? <a class="blog-pager__prev" href={`${base}blog/${series}/${prev.slug}/`}>← {prev.title}</a>
+        : <span></span>}
+      {next
+        ? <a class="blog-pager__next" href={`${base}blog/${series}/${next.slug}/`}>{next.title} →</a>
+        : <span></span>}
+    </nav>
+  </article>
+</Layout>

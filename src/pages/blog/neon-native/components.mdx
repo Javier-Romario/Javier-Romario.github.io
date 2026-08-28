@@ -1,0 +1,114 @@
+import Layout from '../../../layouts/BlogPost.astro';
+import Tldr from '../../../components/blog/neon-native/Tldr.astro';
+import Takeaway from '../../../components/blog/neon-native/Takeaway.astro';
+import Pitfall from '../../../components/blog/neon-native/Pitfall.astro';
+import Recap from '../../../components/blog/neon-native/Recap.astro';
+
+<Layout title="Components & JSX" slug="components" series="neon-native">
+
+<h1 class="page-title">Components & JSX</h1>
+
+<Tldr tldr="Everything is a component. Use View for boxes, Text for words, Pressable for taps. No <div>, no <p>, no CSS." />
+
+<p class="lede">
+  React Native replaces HTML with a small set of primitives. You compose them into components.
+  That's the whole UI model.
+</p>
+
+## The core primitives
+
+| Component | Replaces | What it does |
+|---|---|---|
+| `<View>` | `<div>` | a box, layout container |
+| `<Text>` | `<p>`/`<span>` | text (the ONLY thing that renders text) |
+| `<Pressable>` | `<button>` | any tappable thing |
+| `<Image>` | `<img>` | images |
+| `<ScrollView>` | scroll container | scrollable content |
+| `<TextInput>` | `<input>` | text fields |
+
+There's no `<h1>` — headings are just `<Text>` with bigger fonts. No `<section>` — that's a
+`<View>`.
+
+## Your first component
+
+```tsx
+import { View, Text, Pressable, StyleSheet } from 'react-native';
+
+export default function Greeting({ name }: { name: string }) {
+  return (
+    <View style={styles.box}>
+      <Text style={styles.title}>Hello, {name}</Text>
+      <Pressable style={styles.btn} onPress={() => alert('hi')}>
+        <Text style={styles.btnText}>Tap me</Text>
+      </Pressable>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  box: { padding: 16 },
+  title: { fontSize: 24, fontWeight: '700' },
+  btn: { backgroundColor: '#00ffd1', padding: 12, borderRadius: 8 },
+  btnText: { color: '#04070b', textAlign: 'center' },
+});
+```
+
+<Takeaway math="everything is a component" note="Props in, UI out. Compose small components like Lego." />
+
+## Rules of RN JSX
+
+1. **Text must live inside `<Text>`** — a bare string in a `<View>` crashes.
+2. **Styles are objects**, not classes — `style={{ padding: 16 }}` (or `StyleSheet.create`).
+3. **One root element** — return a single parent, same as React on web.
+4. **Events are props** — `onPress`, `onChangeText`, not `onClick`/`onChange`.
+
+## Pressable vs TouchableOpacity
+
+`TouchableOpacity` is the legacy tappable. **`Pressable`** is the modern one — it gives you
+pressed/hover states and works the same everywhere. Use `Pressable`.
+
+```tsx
+<Pressable
+  onPress={submit}
+  style={({ pressed }) => [{ opacity: pressed ? 0.6 : 1 }, styles.btn]}
+>
+  <Text>Submit</Text>
+</Pressable>
+```
+
+<Pitfall title="The bare-string crash">
+  ```tsx
+  <View>hello</View>   // ❌ crash: text must be inside <Text>
+  <View><Text>hello</Text></View>  // ✅
+  ```
+  This is the #1 beginner error. RN doesn't auto-wrap text.
+</Pitfall>
+
+## Images
+
+```tsx
+import { Image } from 'expo-image'; // better than RN's Image
+
+<Image
+  source={{ uri: 'https://example.com/avatar.png' }}
+  style={{ width: 48, height: 48, borderRadius: 24 }}
+  contentFit="cover"
+/>
+```
+
+Use `expo-image` — it handles caching, transitions, and placeholders. Core RN `Image` is fine
+for static `require('./logo.png')` assets.
+
+## ScrollView vs lists
+
+`ScrollView` renders **all** children immediately — fine for a form, terrible for 1000 rows.
+For long lists, use `FlatList` (step 08).
+
+<Recap points={[
+  'View = box, Text = words, Pressable = tap',
+  'Text must wrap every string',
+  'Styles are JS objects, events are props',
+  'Pressable over TouchableOpacity; expo-image over Image',
+]} />
+
+</Layout>

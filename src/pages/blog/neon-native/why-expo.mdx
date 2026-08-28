@@ -1,0 +1,61 @@
+import Layout from '../../../layouts/BlogPost.astro';
+import Tldr from '../../../components/blog/neon-native/Tldr.astro';
+import Takeaway from '../../../components/blog/neon-native/Takeaway.astro';
+import Pitfall from '../../../components/blog/neon-native/Pitfall.astro';
+import Recap from '../../../components/blog/neon-native/Recap.astro';
+
+<Layout title="Why Expo?" slug="why-expo" series="neon-native">
+
+<h1 class="page-title">Why Expo?</h1>
+
+<Tldr tldr="Expo is React Native plus the toolchain: dev builds, native modules, OTA updates, and cloud builds. You skip years of native config pain." />
+
+<p class="lede">
+  Bare React Native works, but you'll spend weeks wiring up Xcode, Gradle, native modules,
+  and certificates. <b>Expo</b> is the same React Native, with all that machinery pre-built
+  and one CLI on top.
+</p>
+
+## What Expo gives you
+
+- **Expo Go** — an app on your phone that runs your code instantly over Wi-Fi. No Xcode, no Android Studio, no compile.
+- **Dev builds** — a custom app with your native modules baked in (for when Expo Go isn't enough).
+- **expo-router** — file-based navigation (step 09).
+- **EAS** — Expo Application Services: cloud builds, submissions, OTA updates.
+- **A vetted library ecosystem** — camera, location, notifications, secure store, all tested to work together.
+
+<Takeaway math="Expo = React Native − the yak-shave" note="Same RN under the hood. Expo adds toolchain, modules, and cloud services." />
+
+## Expo Go vs dev build
+
+| | Expo Go | Dev build |
+|---|---|---|
+| Setup | install app, scan QR | `eas build` once |
+| Native modules | only Expo SDK ones | any, including custom |
+| Rebuild needed | never | when native deps change |
+| Good for | learning, quick demos | real apps |
+
+Start with **Expo Go**. The moment you add a native module that isn't in the Expo SDK, you
+graduate to a **dev build**.
+
+<Pitfall title="Managed workflow ≠ no native code">
+  "Managed" doesn't mean "you can't touch native". It means Expo manages the native project
+  for you. You can still <code>expo prebuild</code> to generate the iOS/Android folders and
+  write your own Swift/Kotlin. You just don't have to.
+</Pitfall>
+
+## The trade-off
+
+- **Pro:** speed to first app, one config file, cloud builds, OTA updates.
+- **Con:** you're in Expo's ecosystem; some bleeding-edge native libs need a custom dev build.
+
+For 95% of apps — and 100% of this guide — Expo is strictly the right call.
+
+<Recap points={[
+  'Expo = RN + toolchain + native modules + cloud services',
+  'Expo Go = instant preview; dev build = custom native modules',
+  'EAS = cloud builds, submits, OTA updates',
+  'You can always eject to raw native with prebuild',
+]} />
+
+</Layout>

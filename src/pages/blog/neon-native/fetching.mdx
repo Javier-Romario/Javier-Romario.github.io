@@ -1,0 +1,109 @@
+import Layout from '../../../layouts/BlogPost.astro';
+import Tldr from '../../../components/blog/neon-native/Tldr.astro';
+import Takeaway from '../../../components/blog/neon-native/Takeaway.astro';
+import Pitfall from '../../../components/blog/neon-native/Pitfall.astro';
+import Recap from '../../../components/blog/neon-native/Recap.astro';
+import StateDemo from '../../../components/blog/neon-native/demos/StateDemo.tsx';
+
+<Layout title="Fetching Data" slug="fetching" series="neon-native">
+
+<h1 class="page-title">Fetching Data</h1>
+
+<Tldr tldr="Every fetch is one of four states: idle, loading, success, error. Model it as a union type and render exactly one branch. Never track 'loading' and 'error' as separate booleans." />
+
+<p class="lede">
+  The #1 source of buggy UI is boolean spaghetti: <code>isLoading</code> AND <code>!error</code>
+  AND <code>data</code>. Replace it with a <b>single status</b> — one of four states, and only
+  one at a time.
+</p>
+
+## The four-state union
+
+```ts
+type Status = 'idle' | 'loading' | 'success' | 'error';
+```
+
+A screen is **always** exactly one of these. Render one branch:
+
+```tsx
+const [status, setStatus] = useState<Status>('idle');
+const [data, setData] = useState<User | null>(null);
+
+async function load() {
+  setStatus('loading');
+  try {
+    const res = await fetch('https://api.example.com/user');
+    setData(await res.json());
+    setStatus('success');
+  } catch {
+    setStatus('error');
+  }
+}
+
+if (status === 'loading') return <Spinner />;
+if (status === 'error') return <ErrorView onRetry={load} />;
+if (status === 'idle') return <StartButton onPress={load} />;
+return <UserView user={data!} />;
+```
+
+<Takeaway math="loading | error | data — pick one" note="One status, not three booleans. Impossible states become unrepresentable." />
+
+<div class="poke">Hit "fetch user" and watch the state machine flip through idle → loading → success/error. One state at a time.</div>
+
+<StateDemo client:load />
+
+## The race condition trap
+
+User searches "cat", then "dog". The "cat" response arrives **after** "dog" — now the UI shows
+the wrong result. Fix: ignore stale responses.
+
+```tsx
+useEffect(() => {
+  let cancelled = false;
+  fetch(`/search?q=${q}`)
+    .then((r) => r.json())
+    .then((d) => { if (!cancelled) setData(d); });
+  return () => { cancelled = true; };  // cancel on next query
+}, [q]);
+```
+
+## Use a data library for anything real
+
+Hand-rolling fetch + cache + retry + invalidation gets painful fast. Use **TanStack Query**
+(`@tanstack/react-query`) — it gives you the state machine, caching, and retries for free:
+
+```tsx
+const { data, isLoading, error, refetch } = useQuery({
+  queryKey: ['user', id],
+  queryFn: () => fetch(`/user/${id}`).then((r) => r.json()),
+});
+```
+
+Same four states, but with caching, background refetch, and stale-time handling built in.
+
+<Pitfall title="res.ok is not automatic">
+  ```tsx
+  const res = await fetch(url);
+  const data = await res.json();  // ❌ throws on 500, but NOT on 404
+  ```
+  <code>fetch</code> only rejects on network failure. A 404/500 resolves fine. Check
+  <code>if (!res.ok) throw new Error(...)</code> to route errors into your error state.
+</Pitfall>
+
+## Aborting with a timeout
+
+```tsx
+const ctrl = new AbortController();
+const timer = setTimeout(() => ctrl.abort(), 8000);  // 8s timeout
+const res = await fetch(url, { signal: ctrl.signal });
+clearTimeout(timer);
+```
+
+<Recap points={[
+  'One status: idle | loading | success | error',
+  'Render exactly one branch per status',
+  'Guard against stale responses (cancelled flag / AbortController)',
+  'TanStack Query for caching, retry, and invalidation',
+]} />
+
+</Layout>

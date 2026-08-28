@@ -1,0 +1,12 @@
+---
+// A gotcha / pitfall callout.
+interface Props {
+  title: string;
+}
+const { title } = Astro.props;
+---
+
+<div class="pitfall">
+  <div class="head">{title}</div>
+  <slot />
+</div>

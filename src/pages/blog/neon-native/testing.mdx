@@ -1,0 +1,101 @@
+import Layout from '../../../layouts/BlogPost.astro';
+import Tldr from '../../../components/blog/neon-native/Tldr.astro';
+import Takeaway from '../../../components/blog/neon-native/Takeaway.astro';
+import Pitfall from '../../../components/blog/neon-native/Pitfall.astro';
+import Recap from '../../../components/blog/neon-native/Recap.astro';
+
+<Layout title="Testing" slug="testing" series="neon-native">
+
+<h1 class="page-title">Testing</h1>
+
+<Tldr tldr="Unit-test pure logic with Jest, test components by behavior with React Native Testing Library, and cover the critical user path with a Maestro E2E test." />
+
+<p class="lede">
+  Tests are the difference between "works on my machine" and "works in the store". Three
+  layers, each cheap and each catching different bugs.
+</p>
+
+## Layer 1: Jest for pure logic
+
+Any function with no React in it — validation, formatting, reducers, API transforms — is
+trivially testable:
+
+```ts
+// lib/format.ts
+export function formatPrice(cents: number) {
+  return `$${(cents / 100).toFixed(2)}`;
+}
+```
+
+```ts
+// lib/format.test.ts
+import { formatPrice } from './format';
+
+test('formats cents as dollars', () => {
+  expect(formatPrice(1999)).toBe('$19.99');
+});
+```
+
+Keep your business logic in pure functions (in `lib/`), and you get 80% test coverage for
+free. This is why the `lib/` vs `components/` split matters.
+
+<Takeaway math="test behavior, not implementation" note="Assert what the user sees, not internal state. Tests survive refactors." />
+
+## Layer 2: React Native Testing Library (RNTL)
+
+Test components the way a user interacts with them — find by text/role, fire events, assert
+what's on screen:
+
+```tsx
+// __tests__/Login.test.tsx
+import { render, fireEvent } from '@testing-library/react-native';
+import Login from '../components/Login';
+
+test('shows error on empty email', () => {
+  const { getByText, getByPlaceholderText } = render(<Login />);
+  fireEvent.press(getByText('Sign in'));
+  expect(getByText('Enter a valid email')).toBeTruthy();
+});
+```
+
+The key: query by **what the user sees** (`getByText`, `getByPlaceholderText`), not by testID
+or component internals. Behavior tests don't break when you refactor.
+
+## Layer 3: E2E with Maestro
+
+Maestro drives the real app on a simulator, tapping through the critical path:
+
+```yaml
+# .maestro/login.yaml
+appId: com.example.myapp
+---
+- launchApp
+- tapOn: "Sign in"
+- assertVisible: "Enter a valid email"
+```
+
+One E2E test for your **happy path** (install → login → core action) catches integration bugs
+no unit test will: broken navigation, missing native module, wrong deep link.
+
+## What to test (the 20% that matters)
+
+- **Pure logic** — validation, money math, date handling (Jest).
+- **Critical components** — the login form, the checkout button (RNTL).
+- **The golden path** — one E2E flow (Maestro).
+
+Don't test styling. Don't test that a `<View>` renders. Test behavior.
+
+<Pitfall title="Snapshot tests rot">
+  Jest snapshots (rendered output to JSON) break on every tiny change and provide little
+  value. Prefer explicit assertions of visible text/behavior. If you must snapshot, snapshot
+  pure data (API responses), not component trees.
+</Pitfall>
+
+<Recap points={[
+  'Jest for pure functions — keep logic in lib/',
+  'RNTL for component behavior, query by visible text',
+  'Maestro E2E for the golden path',
+  'Test behavior, skip snapshots and styling',
+]} />
+
+</Layout>
