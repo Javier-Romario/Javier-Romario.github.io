@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import Badge from '../neondeck/Badge';
-import Checkbox from '../neondeck/Checkbox';
+import { Badge } from '@javierromario/neondeck';
+import { Checkbox } from '@javierromario/neondeck';
 
 interface Opt {
   key: string;

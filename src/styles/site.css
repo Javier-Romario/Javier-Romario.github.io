@@ -1,7 +1,7 @@
 /* ============================================================
    Portfolio site chrome.
    Component theming (neon + neumorphic --neo-* tokens, light/dark)
-   lives in src/neondeck/global.css. This file only handles layout,
+   lives in @javierromario/neondeck global.css. This file only handles layout,
    spacing, the hex backdrop, and a few presentation tweaks.
    ============================================================ */
 
@@ -114,7 +114,7 @@ body {
 }
 
 /* Fonts: JetBrains Mono (UI/body) + Berkeley Mono (code) are defined in
-   src/neondeck/global.css + global-fonts.css. */
+   @javierromario/neondeck/global.css + global-fonts.css. */
 
 /* ---- neutralize the cyberpunk page backdrop (grid + aurora + scanlines) ----
    the hex canvas below replaces it as the site's background motif */

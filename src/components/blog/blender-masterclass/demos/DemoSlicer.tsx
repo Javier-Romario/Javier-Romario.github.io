@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import Badge from '../neondeck/Badge';
-import BarLoader from '../neondeck/BarLoader';
-import Select from '../neondeck/Select';
+import { Badge } from '@javierromario/neondeck';
+import { BarLoader } from '@javierromario/neondeck';
+import { Select } from '@javierromario/neondeck';
 
 export default function DemoSlicer() {
   const [layer, setLayer] = useState(0.2);
