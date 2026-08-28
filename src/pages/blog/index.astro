@@ -1,7 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import Grid from '@components/Grid';
-import SeriesCover from '../../components/SeriesCover.astro';
+import BlogGrid from '../../components/BlogGrid';
 import { SERIES, postsInSeries } from '../../data/blog';
 
 const base = import.meta.env.BASE_URL;
@@ -12,6 +11,31 @@ const GLYPHS: Record<string, { glyph: string; label: string }> = {
   'blender-masterclass': { glyph: '3D', label: 'FORGE' },
   'neon-canvas': { glyph: 'AI', label: 'GRAPH' },
 };
+
+const seriesList = SERIES.map((series) => {
+  const posts = postsInSeries(series.id);
+  const latest = posts.reduce((m, p) => (p.updated > m ? p.updated : m), '');
+  const art = GLYPHS[series.id] ?? { glyph: series.title.slice(0, 2), label: '' };
+  return {
+    id: series.id,
+    title: series.title,
+    blurb: series.blurb,
+    tone: series.tone,
+    tag: series.tag,
+    glyph: art.glyph,
+    label: art.label,
+    meta: `${series.tag} · ${posts.length} part${posts.length === 1 ? '' : 's'} · updated ${latest}`,
+    parts: posts.length,
+    href: posts.length === 1 ? `${base}blog/${series.id}/${posts[0].slug}/` : null,
+    posts: posts.map((p) => ({
+      slug: p.slug,
+      title: p.title,
+      tag: p.tag,
+      updated: p.updated,
+      href: `${base}blog/${series.id}/${p.slug}/`,
+    })),
+  };
+});
 ---
 
 <Layout
@@ -38,63 +62,6 @@ const GLYPHS: Record<string, { glyph: string; label: string }> = {
       </div>
     </header>
 
-    <Grid>
-      {SERIES.map((series) => {
-        const posts = postsInSeries(series.id);
-        const latest = posts.reduce((m, p) => (p.updated > m ? p.updated : m), '');
-        const parts = posts.length;
-        const meta = `${series.tag} · ${parts} part${parts === 1 ? '' : 's'} · updated ${latest}`;
-        const art = GLYPHS[series.id] ?? { glyph: series.title.slice(0, 2), label: '' };
-
-        // Multi-page article → collapsible at the page level.
-        if (parts > 1) {
-          return (
-            <details class="article-card" data-tone={series.tone}>
-              <summary class="article-card__summary">
-                <SeriesCover glyph={art.glyph} label={art.label} />
-                <div class="article-card__text">
-                  <h2 class="article-card__title">{series.title}</h2>
-                  <p class="article-card__desc">{series.blurb}</p>
-                  <div class="article-card__meta">
-                    <span>{meta}</span>
-                    <span class="article-card__chevron" aria-hidden="true">▸</span>
-                  </div>
-                </div>
-              </summary>
-              <div class="article-card__body">
-                <ol class="article-pages">
-                  {posts.map((post) => (
-                    <li>
-                      <a href={`${base}blog/${series.id}/${post.slug}/`}>
-                        <span class="article-pages__tag">{post.tag}</span>
-                        <span class="article-pages__title">{post.title}</span>
-                        <time class="article-pages__date">{post.updated}</time>
-                      </a>
-                    </li>
-                  ))}
-                </ol>
-              </div>
-            </details>
-          );
-        }
-
-        // Single-page article → plain card.
-        return (
-          <article class="article-card" data-tone={series.tone}>
-            <SeriesCover glyph={art.glyph} label={art.label} />
-            <div class="article-card__text">
-              <h2 class="article-card__title">{series.title}</h2>
-              <p class="article-card__desc">{series.blurb}</p>
-              <div class="article-card__meta">
-                <span>{meta}</span>
-              </div>
-              <a class="article-card__link" href={`${base}blog/${series.id}/${posts[0].slug}/`}>
-                Read →
-              </a>
-            </div>
-          </article>
-        );
-      })}
-    </Grid>
+    <BlogGrid client:load seriesList={seriesList} />
   </section>
 </Layout>
