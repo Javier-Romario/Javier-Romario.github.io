@@ -218,7 +218,7 @@ const education = [
     <NeoCard title="TOOLKIT" tone="blue">
       <div class="stack" style="gap: 8px">
         {skillGroups.map((group) => (
-          <NeoAccordion client:load title={group.name} tone={group.tone} defaultValue={group.name === 'Frontend'}>
+          <NeoAccordion client:idle title={group.name} tone={group.tone} defaultValue={group.name === 'Frontend'}>
             <div class="job__stack">
               {group.items.map((skill) => (
                 <span class="pill">{skill}</span>
