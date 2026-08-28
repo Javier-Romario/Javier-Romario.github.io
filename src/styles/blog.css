@@ -431,9 +431,28 @@
   border: 0;
   background: transparent;
   box-shadow: none;
-  color: var(--theme-text);
   font-size: 13.5px;
   font-family: inherit;
+}
+
+/* Shiki dual theme: resolve --shiki-* vars to the active theme. Default is dark
+   (neondeck's base palette); light applies via data-theme='light' or an OS
+   light scheme when no explicit dark override is set — mirrors global.css. */
+.astro-code,
+.astro-code span {
+  color: var(--shiki-dark);
+}
+
+html[data-theme='light'] .astro-code,
+html[data-theme='light'] .astro-code span {
+  color: var(--shiki-light);
+}
+
+@media (prefers-color-scheme: light) {
+  html:not([data-theme='dark']) .astro-code,
+  html:not([data-theme='dark']) .astro-code span {
+    color: var(--shiki-light);
+  }
 }
 
 .blog-body blockquote {

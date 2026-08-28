@@ -12,6 +12,18 @@ export default defineConfig({
   site: SITE,
   base: BASE,
   integrations: [react(), mdx()],
+  markdown: {
+    shikiConfig: {
+      // Dual theme so code blocks follow the user's light/dark setting.
+      // defaultColor: false emits --shiki-light / --shiki-dark CSS vars instead
+      // of hardcoded colors; blog.css maps them to neondeck's theme selectors.
+      themes: {
+        light: 'github-light',
+        dark: 'github-dark',
+      },
+      defaultColor: false,
+    },
+  },
   vite: {
     resolve: {
       noExternal: ['@javierromario/neondeck'],
