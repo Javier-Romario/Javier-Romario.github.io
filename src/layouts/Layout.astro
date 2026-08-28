@@ -2,13 +2,14 @@
 import '../neondeck/global-fonts.css';
 import '../neondeck/global.css';
 import '../styles/site.css';
+import HexBackground from '../components/HexBackground';
 
 interface Props {
   title: string;
   description?: string;
 }
 
-const { title, description = 'Deploy an Astro site styled with NEONDECK to GitHub Pages.' } = Astro.props;
+const { title, description = 'Portfolio of Javier Harford, software engineer.' } = Astro.props;
 const base = import.meta.env.BASE_URL;
 ---
 
@@ -22,6 +23,8 @@ const base = import.meta.env.BASE_URL;
     <title>{title}</title>
   </head>
   <body>
+    <HexBackground client:load />
+
     <header class="site-header">
       <a class="site-header__brand" href={base}>JAVIER<b>//</b>HARFORD</a>
       <nav class="site-header__links">
@@ -39,9 +42,8 @@ const base = import.meta.env.BASE_URL;
     <footer class="site-footer site-shell">
       <p>
         Built with <a href="https://astro.build">Astro</a> +{' '}
-        <a href="https://github.com/Javier-Romario/neondeck">NEONDECK</a> — a cyberpunk React
-        component library. © {new Date().getFullYear()} Javier Harford.{' '}
-        <a href="mailto:javierharford@gmail.com">javierharford@gmail.com</a>
+        <a href="https://github.com/Javier-Romario/neondeck">NEONDECK</a>. © {new Date().getFullYear()}{' '}
+        Javier Harford · <a href="mailto:javierharford@gmail.com">javierharford@gmail.com</a>
       </p>
     </footer>
   </body>

@@ -1,16 +1,10 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import MatrixRain from '@components/MatrixRain';
-import TickerBoard from '@components/TickerBoard';
-import Card from '@components/Card';
-import Window from '@components/Window';
-import Badge from '@components/Badge';
-import Text from '@components/Text';
-import Divider from '@components/Divider';
-import Table from '@components/Table';
-import TableRow from '@components/TableRow';
-import TableColumn from '@components/TableColumn';
-import GlitchText from '@components/GlitchText';
+import NeoCard from '@components/NeoCard';
+import NeoAccordion from '@components/NeoAccordion';
+import NeoTable from '@components/NeoTable';
+import NeoTableRow from '@components/NeoTableRow';
+import NeoTableColumn from '@components/NeoTableColumn';
 
 const skills = [
   'TypeScript',
@@ -40,6 +34,24 @@ const skills = [
   'Testing',
   'NPM',
   'Astro',
+];
+
+const skillGroups = [
+  {
+    name: 'Frontend',
+    tone: 'teal',
+    items: ['TypeScript', 'JavaScript', 'Vue', 'Nuxt', 'React', 'Next.js', 'Pinia', 'Tailwind CSS', 'HTML Canvas', 'Web Workers'],
+  },
+  {
+    name: 'Backend',
+    tone: 'blue',
+    items: ['Node.js', 'Express', 'Laravel', 'GraphQL', 'OpenAPI', 'JWT', 'Postgres', 'PHP', 'WordPress', 'DatoCMS'],
+  },
+  {
+    name: 'Tooling',
+    tone: 'violet',
+    items: ['Jest', 'Cypress', 'Testing', 'Docker', 'Sentry', 'Git', 'NPM', 'Astro'],
+  },
 ];
 
 const experience = [
@@ -126,156 +138,122 @@ const education = [
   description="Portfolio of Javier Harford, a software engineer specialising in TypeScript, Vue, Nuxt, Next.js and Node.js."
 >
   <!-- ============ HERO ============ -->
-  <section id="top" class="hero">
-    <div class="hero__bg">
-      <MatrixRain client:load height={440} color="#00ffd1" density={0.5} />
-    </div>
-    <div class="hero__inner">
-      <GlitchText
-        client:load
-        text="JAVIER HARFORD"
-        color="#00ffd1"
-        accentA="#ff2d78"
-        accentB="#2de2ff"
-        fontSize={52}
-        height={140}
-      />
-      <p class="hero__role">SOFTWARE ENGINEER</p>
-      <p class="hero__location">LEICESTERSHIRE, UK</p>
-      <p class="hero__lede">
-        Driven and ambitious engineer working across the modern JavaScript ecosystem — with
-        particular depth in <strong>TypeScript</strong>, <strong>Vue</strong>, <strong>Nuxt</strong>,
-        <strong>Next.js</strong> and <strong>Node.js</strong>. Passionate about crafting
-        high-quality software and staying at the forefront of emerging technologies.
-      </p>
-      <div class="hero__links">
-        <a class="hero__cta" href="mailto:javierharford@gmail.com">EMAIL ME</a>
-        <a class="hero__cta hero__cta--ghost" href="https://github.com/Javier-Romario" target="_blank" rel="noopener">GITHUB ↗</a>
-        <a class="hero__cta hero__cta--ghost" href="https://www.linkedin.com/in/javier-romario-0a64727b" target="_blank" rel="noopener">LINKEDIN ↗</a>
+  <section class="hero">
+    <NeoCard title="SOFTWARE ENGINEER" tone="teal" ticker tickerLabel="STACK" tickerItems={skills} tickerSpeed={30}>
+      <div class="hero__inner">
+        <h1 class="hero__name">Javier Harford</h1>
+        <p class="hero__eyebrow">Leicestershire, UK</p>
+        <p class="hero__lede">
+          Driven and ambitious engineer working across the modern JavaScript ecosystem — with
+          particular depth in <strong>TypeScript</strong>, <strong>Vue</strong>, <strong>Nuxt</strong>,
+          <strong>Next.js</strong> and <strong>Node.js</strong>. Passionate about crafting
+          high-quality software and staying at the forefront of emerging technologies.
+        </p>
+        <div class="hero__actions">
+          <a href="mailto:javierharford@gmail.com">Email me</a>
+          <a href="https://github.com/Javier-Romario" target="_blank" rel="noopener">GitHub</a>
+          <a href="https://www.linkedin.com/in/javier-romario-0a64727b" target="_blank" rel="noopener">LinkedIn</a>
+        </div>
       </div>
-    </div>
+    </NeoCard>
   </section>
-
-  <TickerBoard
-    message="SYS.UPLINK // NODE 0x1F"
-    messageTone="magenta"
-    tickerLabel="STACK"
-    tickerItems={skills}
-    tickerSpeed={34}
-    showTopTicker
-    showBottomTicker
-  >
-    <div class="ticker-inner">
-      <Text><strong>Primary stack</strong> — TypeScript · Vue · Nuxt · Next.js · React · Node.js</Text>
-    </div>
-  </TickerBoard>
 
   <!-- ============ EXPERIENCE ============ -->
   <section class="step" id="experience">
     <div class="step__head">
-      <span class="step__num">EXPERIENCE</span>
+      <span class="step__num">Experience</span>
       <h2 class="step__title">Where I've built</h2>
     </div>
 
-    {experience.map((job) => (
-      <Card title={job.company} mode="left" style={{ marginBottom: 20 }}>
-        <Window>
+    <div class="stack">
+      {experience.map((job) => (
+        <NeoCard title={job.company} tone={job.tone}>
           <div class="job">
-            <div class="job__meta">
-              <span class="job__role">{job.role}</span>
-              <span class="job__period">{job.period}</span>
-              <span class="job__location">{job.location}</span>
-              <a class="job__url" href={job.url} target="_blank" rel="noopener">{job.url.replace(/^https?:\/\//, '')}</a>
-            </div>
+            <NeoTable tone={job.tone}>
+              <NeoTableRow>
+                <NeoTableColumn>ROLE</NeoTableColumn>
+                <NeoTableColumn>{job.role}</NeoTableColumn>
+              </NeoTableRow>
+              <NeoTableRow>
+                <NeoTableColumn>PERIOD</NeoTableColumn>
+                <NeoTableColumn>{job.period}</NeoTableColumn>
+              </NeoTableRow>
+              <NeoTableRow>
+                <NeoTableColumn>LOCATION</NeoTableColumn>
+                <NeoTableColumn>{job.location}</NeoTableColumn>
+              </NeoTableRow>
+            </NeoTable>
 
-            <Text>{job.summary}</Text>
-
-            <Divider />
+            <p class="job__summary">{job.summary}</p>
 
             <ul class="job__bullets">
               {job.bullets.map((bullet) => (
-                <li><span class="job__dot" data-tone={job.tone}>◈</span>{bullet}</li>
+                <li>{bullet}</li>
               ))}
             </ul>
 
-            <Divider />
-
             <div class="job__stack">
               {job.stack.map((tech) => (
-                <Badge>{tech}</Badge>
+                <span class="pill">{tech}</span>
               ))}
             </div>
           </div>
-        </Window>
-      </Card>
-    ))}
+        </NeoCard>
+      ))}
+    </div>
   </section>
 
   <!-- ============ SKILLS ============ -->
   <section class="step" id="skills">
     <div class="step__head">
-      <span class="step__num">CAPABILITIES</span>
+      <span class="step__num">Capabilities</span>
       <h2 class="step__title">Skills &amp; technologies</h2>
     </div>
-    <Card title="TOOLKIT">
-      <Window>
-        <div class="skills">
-          {skills.map((skill) => (
-            <Badge>{skill}</Badge>
-          ))}
-        </div>
-      </Window>
-    </Card>
 
-    <div class="flow flow--2" style="margin-top: 20px">
-      <Window>
-        <div class="pane">
-          <Text><strong>Frontend</strong></Text>
-          <Divider />
-          <p class="prose">
-            Vue · Nuxt · React · Next.js · TypeScript · Pinia · Tailwind CSS · HTML Canvas ·
-            Web Workers · Astro
-          </p>
-        </div>
-      </Window>
-      <Window>
-        <div class="pane">
-          <Text><strong>Backend &amp; tooling</strong></Text>
-          <Divider />
-          <p class="prose">
-            Node.js · Express · Laravel · GraphQL · OpenAPI · Sentry · JWT · Docker · Postgres ·
-            PHP · DatoCMS · Jest · Cypress · Testing · NPM
-          </p>
-        </div>
-      </Window>
-    </div>
+    <NeoCard title="TOOLKIT" tone="blue">
+      <div class="stack" style="gap: 8px">
+        {skillGroups.map((group) => (
+          <NeoAccordion client:load title={group.name} tone={group.tone} defaultValue={group.name === 'Frontend'}>
+            <div class="job__stack">
+              {group.items.map((skill) => (
+                <span class="pill">{skill}</span>
+              ))}
+            </div>
+          </NeoAccordion>
+        ))}
+      </div>
+    </NeoCard>
   </section>
 
   <!-- ============ EDUCATION ============ -->
   <section class="step" id="education">
     <div class="step__head">
-      <span class="step__num">EDUCATION</span>
+      <span class="step__num">Education</span>
       <h2 class="step__title">Formal training</h2>
     </div>
 
     <div class="flow flow--2">
       {education.map((ed) => (
-        <Card title={ed.school} mode="left">
-          <Window>
-            <div class="job">
-              <div class="job__meta">
-                <span class="job__role">{ed.qualification}</span>
-                <span class="job__period">{ed.period}</span>
-              </div>
-              <Divider />
-              <ul class="job__bullets">
-                {ed.modules.map((m) => (
-                  <li><span class="job__dot">◈</span>{m}</li>
-                ))}
-              </ul>
-            </div>
-          </Window>
-        </Card>
+        <NeoCard title={ed.school} tone="teal">
+          <div class="job">
+            <NeoTable tone="teal">
+              <NeoTableRow>
+                <NeoTableColumn>QUALIFICATION</NeoTableColumn>
+                <NeoTableColumn>{ed.qualification}</NeoTableColumn>
+              </NeoTableRow>
+              <NeoTableRow>
+                <NeoTableColumn>PERIOD</NeoTableColumn>
+                <NeoTableColumn>{ed.period}</NeoTableColumn>
+              </NeoTableRow>
+            </NeoTable>
+
+            <ul class="edu__modules">
+              {ed.modules.map((m) => (
+                <li>{m}</li>
+              ))}
+            </ul>
+          </div>
+        </NeoCard>
       ))}
     </div>
   </section>
@@ -283,45 +261,41 @@ const education = [
   <!-- ============ ABOUT ============ -->
   <section class="step" id="about">
     <div class="step__head">
-      <span class="step__num">ABOUT</span>
+      <span class="step__num">About</span>
       <h2 class="step__title">Off the clock</h2>
     </div>
-    <Card title="HUMAN SIDE">
-      <Window>
-        <div class="pane">
-          <Text>
-            Developer based in Leicestershire. In my spare time I enjoy{' '}
-            <strong>skateboarding</strong>, <strong>breakdancing</strong> and playing{' '}
-            <strong>chess</strong>.
-          </Text>
-        </div>
-      </Window>
-    </Card>
+
+    <NeoCard title="HUMAN SIDE" tone="green">
+      <p class="about-text">
+        Developer based in Leicestershire. In my spare time I enjoy{' '}
+        <strong>skateboarding</strong>, <strong>breakdancing</strong> and playing{' '}
+        <strong>chess</strong>.
+      </p>
+    </NeoCard>
   </section>
 
   <!-- ============ CONTACT ============ -->
   <section class="step" id="contact">
     <div class="step__head">
-      <span class="step__num">CONTACT</span>
+      <span class="step__num">Contact</span>
       <h2 class="step__title">Get in touch</h2>
     </div>
-    <Window>
-      <div class="pane">
-        <Table>
-          <TableRow>
-            <TableColumn><Badge>EMAIL</Badge></TableColumn>
-            <TableColumn><a class="contact-link" href="mailto:javierharford@gmail.com">javierharford@gmail.com</a></TableColumn>
-          </TableRow>
-          <TableRow>
-            <TableColumn><Badge>GITHUB</Badge></TableColumn>
-            <TableColumn><a class="contact-link" href="https://github.com/Javier-Romario" target="_blank" rel="noopener">github.com/Javier-Romario</a></TableColumn>
-          </TableRow>
-          <TableRow>
-            <TableColumn><Badge>LINKEDIN</Badge></TableColumn>
-            <TableColumn><a class="contact-link" href="https://www.linkedin.com/in/javier-romario-0a64727b" target="_blank" rel="noopener">linkedin.com/in/javier-romario-0a64727b</a></TableColumn>
-          </TableRow>
-        </Table>
-      </div>
-    </Window>
+
+    <NeoCard title="REACH ME" tone="magenta">
+      <NeoTable tone="magenta">
+        <NeoTableRow>
+          <NeoTableColumn>EMAIL</NeoTableColumn>
+          <NeoTableColumn><a class="contact-link" href="mailto:javierharford@gmail.com">javierharford@gmail.com</a></NeoTableColumn>
+        </NeoTableRow>
+        <NeoTableRow>
+          <NeoTableColumn>GITHUB</NeoTableColumn>
+          <NeoTableColumn><a class="contact-link" href="https://github.com/Javier-Romario" target="_blank" rel="noopener">github.com/Javier-Romario</a></NeoTableColumn>
+        </NeoTableRow>
+        <NeoTableRow>
+          <NeoTableColumn>LINKEDIN</NeoTableColumn>
+          <NeoTableColumn><a class="contact-link" href="https://www.linkedin.com/in/javier-romario-0a64727b" target="_blank" rel="noopener">linkedin.com/in/javier-romario-0a64727b</a></NeoTableColumn>
+        </NeoTableRow>
+      </NeoTable>
+    </NeoCard>
   </section>
 </Layout>

@@ -1,8 +1,7 @@
 import styles from '@components/TickerBoard.module.css';
 
 import * as React from 'react';
-import Ticker from '@components/Ticker';
-import type { NeonTone } from '@components/Ticker';
+import Ticker, { NeonTone } from '@components/Ticker';
 
 interface TickerBoardProps extends React.HTMLAttributes<HTMLDivElement> {
   message?: string; // small message box rendered right above the component
