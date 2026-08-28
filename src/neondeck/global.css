@@ -40,19 +40,19 @@ section {
   --neon-violet: #b78bff;
   --neon-blue: #2de2ff;
 
-  /* ---- cyberpunk surfaces (semi-transparent) ---- */
-  --cp-bg: #04070b;
-  --cp-bg-2: #070c13;
-  --cp-panel: rgba(10, 17, 28, 0.55);
-  --cp-panel-2: rgba(14, 22, 36, 0.62);
-  --cp-border: #12313a;
-  --cp-border-bright: #1d5a63;
+  /* ---- greyscale surfaces (light, desaturated dark) ---- */
+  --cp-bg: #1b1e22;
+  --cp-bg-2: #22262b;
+  --cp-panel: rgba(31, 35, 41, 0.6);
+  --cp-panel-2: rgba(40, 45, 52, 0.65);
+  --cp-border: #383f47;
+  --cp-border-bright: #4a525c;
 
-  --cp-text: #d7fff6;
-  --cp-muted: #5f8f88;
+  --cp-text: #e8eaed;
+  --cp-muted: #9aa1a9;
 
-  --cp-glow-teal: 0 0 8px rgba(0, 255, 209, 0.55), 0 0 24px rgba(0, 255, 209, 0.22);
-  --cp-glow-magenta: 0 0 8px rgba(255, 45, 120, 0.55), 0 0 24px rgba(255, 45, 120, 0.22);
+  --cp-glow-teal: 0 0 6px rgba(0, 255, 209, 0.3), 0 0 18px rgba(0, 255, 209, 0.12);
+  --cp-glow-magenta: 0 0 6px rgba(255, 45, 120, 0.3), 0 0 18px rgba(255, 45, 120, 0.12);
 
   --font-family-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --font-family-code: 'Berkeley Mono', var(--font-family-mono);
@@ -85,13 +85,13 @@ html {
 
 /* ---- body theme (default cyberpunk: teal on glass) ---- */
 body {
-  --theme-background: rgba(4, 7, 11, 0.78);
+  --theme-background: rgba(27, 30, 34, 0.85);
   --theme-background-solid: var(--cp-bg);
   --theme-panel: var(--cp-panel);
   --theme-panel-2: var(--cp-panel-2);
   --theme-border: var(--cp-border);
   --theme-border-bright: var(--cp-border-bright);
-  --theme-border-subdued: rgba(29, 90, 99, 0.45);
+  --theme-border-subdued: rgba(74, 82, 91, 0.45);
 
   --theme-text: var(--cp-text);
   --theme-muted: var(--cp-muted);
@@ -99,7 +99,7 @@ body {
   --theme-button: var(--neon-teal);
   --theme-button-text: #03110d;
   --theme-button-background: rgba(0, 255, 209, 0.08);
-  --theme-button-foreground: rgba(215, 255, 246, 0.72);
+  --theme-button-foreground: rgba(232, 234, 237, 0.78);
 
   --theme-focused-foreground: var(--neon-teal);
   --theme-focused-foreground-subdued: rgba(0, 255, 209, 0.5);
@@ -107,20 +107,20 @@ body {
   --theme-glow: var(--cp-glow-teal);
   --theme-glow-accent: var(--cp-glow-magenta);
 
-  --theme-overlay: rgba(4, 7, 11, 0.6);
-  --theme-background-modal: rgba(10, 17, 28, 0.82);
-  --theme-background-modal-footer: rgba(14, 22, 36, 0.85);
-  --theme-background-input: rgba(4, 7, 11, 0.6);
+  --theme-overlay: rgba(27, 30, 34, 0.6);
+  --theme-background-modal: rgba(31, 35, 41, 0.88);
+  --theme-background-modal-footer: rgba(40, 45, 52, 0.9);
+  --theme-background-input: rgba(27, 30, 34, 0.7);
 
-  --theme-window-background: rgba(10, 17, 28, 0.5);
-  --theme-window-shadow: rgba(0, 255, 209, 0.16);
+  --theme-window-background: rgba(31, 35, 41, 0.6);
+  --theme-window-shadow: rgba(0, 0, 0, 0.3);
 
   /* ---- neumorphic tokens (experimental) ---- */
-  --neo-surface: rgba(10, 17, 28, 0.55);
-  --neo-raised: 6px 6px 14px rgba(0, 0, 0, 0.55), -6px -6px 14px rgba(255, 255, 255, 0.04);
-  --neo-pressed: inset 4px 4px 10px rgba(0, 0, 0, 0.6), inset -4px -4px 10px rgba(255, 255, 255, 0.035);
-  --neo-well: inset 6px 6px 12px rgba(0, 0, 0, 0.55), inset -6px -6px 12px rgba(255, 255, 255, 0.04);
-  --neo-drop: drop-shadow(7px 7px 16px rgba(0, 0, 0, 0.5))
+  --neo-surface: rgba(31, 35, 41, 0.6);
+  --neo-raised: 6px 6px 14px rgba(0, 0, 0, 0.4), -6px -6px 14px rgba(255, 255, 255, 0.05);
+  --neo-pressed: inset 4px 4px 10px rgba(0, 0, 0, 0.45), inset -4px -4px 10px rgba(255, 255, 255, 0.04);
+  --neo-well: inset 6px 6px 12px rgba(0, 0, 0, 0.45), inset -6px -6px 12px rgba(255, 255, 255, 0.04);
+  --neo-drop: drop-shadow(7px 7px 16px rgba(0, 0, 0, 0.4))
     drop-shadow(-7px -7px 16px rgba(255, 255, 255, 0.05));
 }
 

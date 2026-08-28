@@ -13,6 +13,36 @@ body {
   min-height: 100vh;
 }
 
+/* ---- page (view) transitions ---- */
+::view-transition-old(root) {
+  animation: 160ms ease both nd-vt-out;
+}
+
+::view-transition-new(root) {
+  animation: 220ms ease both nd-vt-in;
+}
+
+@keyframes nd-vt-out {
+  to {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes nd-vt-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}
+
 /* Fonts: JetBrains Mono (UI/body) + Berkeley Mono (code) are defined in
    src/neondeck/global.css + global-fonts.css. */
 
