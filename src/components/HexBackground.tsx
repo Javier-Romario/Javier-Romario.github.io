@@ -72,6 +72,7 @@ const HexBackground: React.FC = () => {
   const sessionRef = React.useRef<Session | null>(null);
   const edgesRef = React.useRef<{ key: string; edges: Edge[] }>({ key: '', edges: [] });
   const drawnRef = React.useRef('');
+  const reducedRef = React.useRef(false);
 
   // Track the pointer at window level so hovering over content (which sits
   // above the fixed canvas) still drives the pulse near the cursor.
@@ -88,6 +89,17 @@ const HexBackground: React.FC = () => {
       window.removeEventListener('pointermove', onMove);
       document.removeEventListener('pointerleave', onLeave);
     };
+  }, []);
+
+  // Respect prefers-reduced-motion: no pulse when reduced motion is requested.
+  React.useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    reducedRef.current = mq.matches;
+    const onChange = () => {
+      reducedRef.current = mq.matches;
+    };
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
   }, []);
 
   const draw = React.useCallback(
@@ -136,7 +148,7 @@ const HexBackground: React.FC = () => {
       };
 
       // ---- determine whether a pulse is currently active ----
-      const p = pointerRef.current;
+      const p = reducedRef.current ? null : pointerRef.current;
       let session = sessionRef.current;
       let active = false;
 

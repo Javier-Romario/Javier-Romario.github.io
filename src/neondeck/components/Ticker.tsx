@@ -41,6 +41,10 @@ const Ticker: React.FC<TickerProps> = ({
           <span className={styles.item}>{item}</span>
         </span>
       ))}
+      {/* trailing separator keeps the loop seam spaced (last item → next label) */}
+      <span className={styles.sep} data-tone={tone} aria-hidden="true">
+        ◈
+      </span>
     </div>
   );
 
