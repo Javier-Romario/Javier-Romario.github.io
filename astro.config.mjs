@@ -11,6 +11,11 @@ const BASE = '/';
 export default defineConfig({
   site: SITE,
   base: BASE,
+  // ClientRouter enables sitewide hover-prefetch by default unless this is
+  // explicitly false. Left on, hovering a link fires a fetch that then races
+  // (and gets cancelled by) the real navigation fetch on click — shows up as
+  // a scary but harmless NS_BINDING_ABORTED in devtools. Never opted into it.
+  prefetch: false,
   integrations: [react(), mdx()],
   markdown: {
     shikiConfig: {
