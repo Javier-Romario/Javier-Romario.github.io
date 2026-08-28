@@ -237,6 +237,15 @@ body::after {
   padding: 8px 0 4px;
 }
 
+.hero__portrait {
+  width: 132px;
+  height: auto;
+  border-radius: 16px;
+  border: 2px solid var(--theme-border-bright);
+  box-shadow: var(--neo-raised), 0 0 22px -8px var(--theme-focused-foreground);
+  object-fit: cover;
+}
+
 .hero__eyebrow {
   margin: 0 0 12px;
   color: var(--theme-muted);

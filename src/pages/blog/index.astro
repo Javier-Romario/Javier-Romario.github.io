@@ -1,44 +1,65 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { SERIES, POSTS, postsInSeries } from '../../data/blog';
+import NeoCard from '@components/NeoCard';
+import NeoAccordion from '@components/NeoAccordion';
+import Grid from '@components/Grid';
+import Badge from '@components/Badge';
+import Text from '@components/Text';
+import { SERIES, postsInSeries } from '../../data/blog';
 
 const base = import.meta.env.BASE_URL;
 ---
 
-<Layout title="Blog — Javier Harford" description="Write-ups: isometric tactics games, React Native + Expo, and an AI mindmapping canvas.">
+<Layout
+  title="Blog — Javier Harford"
+  description="Write-ups: isometric tactics games, React Native + Expo, Blender, and an AI mindmapping canvas."
+>
   <section class="blog-index">
-    <header class="blog-index__head">
-      <span class="step__num">Writings</span>
-      <h1 class="blog-index__title">Blog</h1>
-      <p class="blog-index__lede">
-        Multi-page guides and project write-ups — built with MDX, Astro, and live React demos.
-      </p>
+    <header class="blog-hero">
+      <svg class="blog-hero__img" viewBox="0 0 220 160" role="img" aria-label="Terminal prompt">
+        <rect class="blog-hero__frame" x="10" y="10" width="200" height="140" rx="14" />
+        <circle class="blog-hero__dot blog-hero__dot--a" cx="34" cy="30" r="5" />
+        <circle class="blog-hero__dot blog-hero__dot--b" cx="50" cy="30" r="5" />
+        <circle class="blog-hero__dot blog-hero__dot--c" cx="66" cy="30" r="5" />
+        <text class="blog-hero__prompt" x="30" y="102">&gt;_</text>
+        <rect class="blog-hero__cursor" x="96" y="78" width="16" height="28" rx="3" />
+        <line class="blog-hero__scan" x1="0" y1="70" x2="220" y2="70" />
+      </svg>
+      <div class="blog-hero__text">
+        <span class="step__num">Writings</span>
+        <h1 class="blog-hero__title">Blog</h1>
+        <p class="blog-hero__lede">
+          Multi-page guides and project write-ups — built with MDX, Astro, and live React demos.
+        </p>
+      </div>
     </header>
 
-    {SERIES.map((series) => {
-      const posts = postsInSeries(series.id);
-      return (
-        <section class={`blog-series-card blog-series-card--${series.tone}`}>
-          <div class="blog-series-card__head">
-            <div>
-              <span class="blog-series-card__tag">{series.tag}</span>
-              <h2 class="blog-series-card__title">{series.title}</h2>
+    <div class="stack">
+      {SERIES.map((series) => (
+        <NeoCard title={series.title} tone={series.tone}>
+          <div class="blog-series">
+            <div class="blog-series__head">
+              <Badge>{series.tag}</Badge>
+              <Text>{series.blurb}</Text>
             </div>
+            <Grid>
+              {postsInSeries(series.id).map((post) => (
+                <NeoAccordion
+                  client:load
+                  title={post.title}
+                  tone={series.tone}
+                  meta={`#${post.tag} · updated ${post.updated}`}
+                >
+                  <p class="blog-post__blurb">{post.blurb}</p>
+                  <a class="blog-post__link" href={`${base}blog/${series.id}/${post.slug}/`}>
+                    Read →
+                  </a>
+                </NeoAccordion>
+              ))}
+            </Grid>
           </div>
-          <p class="blog-series-card__blurb">{series.blurb}</p>
-          <ol class="blog-post-list">
-            {posts.map((post) => (
-              <li>
-                <a href={`${base}blog/${series.id}/${post.slug}/`}>
-                  <span class="blog-post-list__tag">{post.tag}</span>
-                  <span class="blog-post-list__title">{post.title}</span>
-                  <span class="blog-post-list__blurb">{post.blurb}</span>
-                </a>
-              </li>
-            ))}
-          </ol>
-        </section>
-      );
-    })}
+        </NeoCard>
+      ))}
+    </div>
   </section>
 </Layout>

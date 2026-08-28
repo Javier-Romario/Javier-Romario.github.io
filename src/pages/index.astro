@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import me from '../assets/me.jpg';
 import NeoCard from '@components/NeoCard';
 import NeoAccordion from '@components/NeoAccordion';
 import Badge from '@components/Badge';
@@ -142,6 +143,13 @@ const education = [
   <section class="hero">
     <NeoCard title="SOFTWARE ENGINEER" tone="teal" ticker tickerLabel="STACK" tickerItems={skills} tickerSpeed={30}>
       <div class="hero__inner">
+        <img
+          class="hero__portrait"
+          src={me.src}
+          width={me.width}
+          height={me.height}
+          alt="Javier Harford"
+        />
         <h1 class="hero__name">Javier Harford</h1>
         <p class="hero__eyebrow">Leicestershire, UK</p>
         <p class="hero__lede">

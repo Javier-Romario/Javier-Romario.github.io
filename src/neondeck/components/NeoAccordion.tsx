@@ -8,6 +8,7 @@ import type { NeonTone } from '@components/Ticker';
 interface NeoAccordionProps {
   defaultValue?: boolean;
   title: string;
+  meta?: string;
   children?: React.ReactNode;
   tone?: NeonTone;
 }
@@ -15,6 +16,7 @@ interface NeoAccordionProps {
 const NeoAccordion: React.FC<NeoAccordionProps> = ({
   defaultValue = false,
   title,
+  meta,
   children,
   tone = 'teal',
 }) => {
@@ -31,6 +33,7 @@ const NeoAccordion: React.FC<NeoAccordionProps> = ({
           {isExpanded ? '▾' : '▸'}
         </span>
         <span className={styles.title}>{title}</span>
+        {meta ? <span className={styles.meta}>{meta}</span> : null}
         <span className={styles.state} aria-hidden="true">
           {isExpanded ? 'OPEN' : 'CLOSED'}
         </span>

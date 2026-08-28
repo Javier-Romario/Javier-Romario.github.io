@@ -44,6 +44,16 @@
   font-weight: 700;
 }
 
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: var(--theme-muted);
+  white-space: nowrap;
+}
+
 .state {
   font-size: 10px;
   letter-spacing: 1.5px;
