@@ -13,26 +13,84 @@ body {
   min-height: 100vh;
 }
 
-/* ---- page (view) transitions ---- */
+/* ---- page (view) transitions: cyberpunk glitch-teleport ---- */
 ::view-transition-old(root) {
-  animation: 160ms ease both nd-vt-out;
+  animation: 280ms cubic-bezier(0.7, 0, 0.3, 1) both nd-glitch-out;
 }
 
 ::view-transition-new(root) {
-  animation: 220ms ease both nd-vt-in;
+  animation: 380ms cubic-bezier(0.7, 0, 0.3, 1) both nd-glitch-in;
 }
 
-@keyframes nd-vt-out {
-  to {
+@keyframes nd-glitch-out {
+  0% {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
+  12% {
+    clip-path: inset(8% 0 62% 0);
+    transform: translateX(-8px);
+    filter: drop-shadow(3px 0 0 #ff2d78) drop-shadow(-3px 0 0 #2de2ff);
+  }
+  24% {
+    clip-path: inset(48% 0 22% 0);
+    transform: translateX(8px);
+    filter: drop-shadow(-3px 0 0 #ff2d78) drop-shadow(3px 0 0 #2de2ff);
+  }
+  38% {
+    clip-path: inset(26% 0 44% 0);
+    transform: translateX(-4px);
+    filter: drop-shadow(2px 0 0 #ff2d78) drop-shadow(-2px 0 0 #2de2ff);
+  }
+  55% {
+    clip-path: inset(0 0 0 0);
+    transform: none;
+    filter: contrast(2) saturate(0) brightness(1.4);
+    opacity: 1;
+  }
+  100% {
+    clip-path: inset(50% 0 50% 0);
+    transform: scaleY(0.04);
+    filter: brightness(3) saturate(0);
     opacity: 0;
-    transform: translateY(-6px);
   }
 }
 
-@keyframes nd-vt-in {
-  from {
+@keyframes nd-glitch-in {
+  0% {
+    clip-path: inset(50% 0 50% 0);
+    transform: scaleY(0.04);
+    filter: brightness(3) saturate(0);
     opacity: 0;
-    transform: translateY(6px);
+  }
+  18% {
+    clip-path: inset(44% 0 44% 0);
+    transform: translateX(-6px) scaleY(1);
+    filter: drop-shadow(3px 0 0 #2de2ff) drop-shadow(-3px 0 0 #ff2d78) brightness(1.6);
+    opacity: 1;
+  }
+  36% {
+    clip-path: inset(22% 0 32% 0);
+    transform: translateX(6px);
+    filter: drop-shadow(-3px 0 0 #2de2ff) drop-shadow(3px 0 0 #ff2d78);
+  }
+  55% {
+    clip-path: inset(8% 0 12% 0);
+    transform: translateX(-3px);
+    filter: drop-shadow(2px 0 0 #2de2ff) drop-shadow(-2px 0 0 #ff2d78);
+  }
+  78% {
+    clip-path: inset(0 0 0 0);
+    transform: none;
+    filter: contrast(1.2) saturate(1.4);
+  }
+  100% {
+    clip-path: inset(0 0 0 0);
+    transform: none;
+    filter: none;
+    opacity: 1;
   }
 }
 
