@@ -507,7 +507,7 @@ export default function Game() {
 
   return (
     <div className="demo-box">
-      <canvas ref={canvasRef} onMouseMove={pick} onMouseLeave={() => setHover(null)} onClick={clickCanvas} />
+      <canvas ref={canvasRef} width={CANVAS_W} height={CANVAS_H} onMouseMove={pick} onMouseLeave={() => setHover(null)} onClick={clickCanvas} />
       <div className="hud">
         <span className={`pill ${turn === 'e' ? 'enemy' : ''}`}>
           {winner ? 'OVER' : turn === 'p' ? '▲ YOUR TURN' : '▼ ENEMY TURN'}
