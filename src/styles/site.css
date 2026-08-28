@@ -26,23 +26,23 @@ body {
   0% {
     clip-path: inset(0 0 0 0);
     opacity: 1;
-    filter: none;
     transform: none;
+    filter: none;
   }
   12% {
-    clip-path: inset(8% 0 62% 0);
-    transform: translateX(-8px);
-    filter: drop-shadow(3px 0 0 #ff2d78) drop-shadow(-3px 0 0 #2de2ff);
+    clip-path: inset(var(--glitch-cut-a, 8%) 0 var(--glitch-cut-b, 20%) 0);
+    transform: translateX(calc(var(--glitch-shift, 8px) * -1));
+    filter: hue-rotate(var(--glitch-hue, 0deg)) saturate(2) drop-shadow(3px 0 0 #ff2d78) drop-shadow(-3px 0 0 #2de2ff);
   }
   24% {
-    clip-path: inset(48% 0 22% 0);
-    transform: translateX(8px);
-    filter: drop-shadow(-3px 0 0 #ff2d78) drop-shadow(3px 0 0 #2de2ff);
+    clip-path: inset(var(--glitch-cut-b, 20%) 0 var(--glitch-cut-c, 12%) 0);
+    transform: translateX(var(--glitch-shift, 8px));
+    filter: hue-rotate(calc(var(--glitch-hue, 0deg) + 90deg)) saturate(2) drop-shadow(-4px 0 0 #ffe66d) drop-shadow(4px 0 0 #00ff9d);
   }
   38% {
-    clip-path: inset(26% 0 44% 0);
-    transform: translateX(-4px);
-    filter: drop-shadow(2px 0 0 #ff2d78) drop-shadow(-2px 0 0 #2de2ff);
+    clip-path: inset(var(--glitch-cut-c, 12%) 0 var(--glitch-cut-a, 8%) 0);
+    transform: translateX(calc(var(--glitch-shift, 8px) * -0.5));
+    filter: hue-rotate(calc(var(--glitch-hue, 0deg) + 180deg)) saturate(1.6) drop-shadow(3px 0 0 #2de2ff) drop-shadow(-3px 0 0 #ff2d78);
   }
   55% {
     clip-path: inset(0 0 0 0);
@@ -66,20 +66,20 @@ body {
     opacity: 0;
   }
   18% {
-    clip-path: inset(44% 0 44% 0);
-    transform: translateX(-6px) scaleY(1);
-    filter: drop-shadow(3px 0 0 #2de2ff) drop-shadow(-3px 0 0 #ff2d78) brightness(1.6);
+    clip-path: inset(var(--glitch-cut-b, 20%) 0 var(--glitch-cut-a, 8%) 0);
+    transform: translateX(var(--glitch-shift, 8px)) scaleY(1);
+    filter: hue-rotate(var(--glitch-hue, 0deg)) saturate(2) drop-shadow(3px 0 0 #2de2ff) drop-shadow(-3px 0 0 #ff2d78) brightness(1.5);
     opacity: 1;
   }
   36% {
-    clip-path: inset(22% 0 32% 0);
-    transform: translateX(6px);
-    filter: drop-shadow(-3px 0 0 #2de2ff) drop-shadow(3px 0 0 #ff2d78);
+    clip-path: inset(var(--glitch-cut-c, 12%) 0 var(--glitch-cut-b, 20%) 0);
+    transform: translateX(calc(var(--glitch-shift, 8px) * -1));
+    filter: hue-rotate(calc(var(--glitch-hue, 0deg) + 120deg)) saturate(1.8) drop-shadow(-3px 0 0 #ffe66d) drop-shadow(3px 0 0 #00ff9d);
   }
   55% {
-    clip-path: inset(8% 0 12% 0);
-    transform: translateX(-3px);
-    filter: drop-shadow(2px 0 0 #2de2ff) drop-shadow(-2px 0 0 #ff2d78);
+    clip-path: inset(var(--glitch-cut-a, 8%) 0 var(--glitch-cut-c, 12%) 0);
+    transform: translateX(calc(var(--glitch-shift, 8px) * 0.5));
+    filter: hue-rotate(calc(var(--glitch-hue, 0deg) + 240deg)) saturate(1.4) drop-shadow(2px 0 0 #2de2ff) drop-shadow(-2px 0 0 #ff2d78);
   }
   78% {
     clip-path: inset(0 0 0 0);
