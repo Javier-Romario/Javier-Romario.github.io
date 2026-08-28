@@ -220,8 +220,8 @@ console.log(`\nDone. ${copied} files copied, ${rewritten} files rewritten (${dry
 
 console.log(`\nMANUAL STEPS REMAINING:`);
 console.log(`  1. Install any new npm deps the source site uses (check its package.json).`);
-console.log(`  2. src/data/blog.ts — add SERIES entry:`);
-console.log(`     { id: '${series}', title: '...', blurb: '...', tone: 'teal|magenta|violet|blue|green', tag: 'N STEPS' }`);
-console.log(`  3. src/data/blog.ts — add POSTS entries (title/blurb/tag from the source site's nav.ts or data file).`);
+console.log(`  2. src/content/series.json — add a series entry:`);
+console.log(`     { "id": "${series}", "title": "...", "blurb": "...", "tone": "teal|magenta|violet|blue|green", "tag": "N STEPS" }`);
+console.log(`  3. src/content/posts.json — add a post entry per page (title/blurb/tag from the source site's nav.ts or data file). "id" must be "<series>/<slug>" and "series" must match the id above — both are schema-validated at build time.`);
 console.log(`  4. Run: npx astro build   (must pass — it catches any missed import)`);
 console.log(`  5. Optional: add a header link in src/layouts/Layout.astro for top-level sections.\n`);

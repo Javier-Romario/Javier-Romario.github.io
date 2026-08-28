@@ -9,9 +9,9 @@ interface Props {
 }
 
 const { title, slug = '', series = '' } = Astro.props;
-const s = seriesById(series);
-const list = postsInSeries(series);
-const { prev, next, index } = neighbors(series, slug);
+const s = await seriesById(series);
+const list = await postsInSeries(series);
+const { prev, next, index } = await neighbors(series, slug);
 const posPct = index >= 0 && list.length ? Math.round(((index + 1) / list.length) * 100) : 0;
 const base = import.meta.env.BASE_URL;
 ---

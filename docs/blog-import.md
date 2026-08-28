@@ -17,7 +17,10 @@ src/pages/blog/
   <series>/
     page.mdx | page.astro         # one route per file: /blog/<series>/<slug>/
 src/layouts/BlogPost.astro        # shared post chrome (crumb, progress, prev/next)
-src/data/blog.ts                  # SERIES[] + POSTS[] — metadata + ordering
+src/content.config.ts             # zod schema for the series/posts collections
+src/content/series.json           # series metadata (schema-validated at build)
+src/content/posts.json            # post metadata + ordering (schema-validated at build)
+src/data/blog.ts                  # thin accessors over the collections above
 src/components/blog/<series>/     # ported components, demos, lib (whole tree)
 src/styles/blog.css               # blog + content styles (uses NEONDECK tokens)
 ```
@@ -28,7 +31,7 @@ src/styles/blog.css               # blog + content styles (uses NEONDECK tokens)
   `src/layouts/BlogPost.astro` (imported as `../../../layouts/BlogPost.astro`
   from `src/pages/blog/<series>/`).
 - `<Layout>` requires: `title="..."`, `slug="..."` (must match the slug in
-  `src/data/blog.ts`), and `series="<series-id>"`.
+  `src/content/posts.json`), and `series="<series-id>"`.
 - The body is raw markdown (`.mdx`) or HTML (`.astro`). Both can use React
   components / islands directly.
 - Styling classes (`page-title`, `lede`, `poke`, `formula-card`, `recap`,
@@ -38,7 +41,7 @@ src/styles/blog.css               # blog + content styles (uses NEONDECK tokens)
 **Both `.astro` and `.mdx` pages are supported.** `.astro` pages write HTML +
 import React components; `.mdx` pages write markdown + import React components.
 **Multi-page within a post** = a series. Order + prev/next come from
-`src/data/blog.ts`, not the filesystem.
+`src/content/posts.json` (sorted by `tag`), not the filesystem.
 
 ---
 
@@ -84,35 +87,42 @@ that). Check its `package.json` — e.g. `blender-masterclass` needed
 ## 3. Manual steps (always do these after the tool)
 
 The tool can't know each site's post metadata, so register the series + posts
-in `src/data/blog.ts`:
+in `src/content/series.json` and `src/content/posts.json`. Both are validated
+against the zod schema in `src/content.config.ts` at build time — a missing
+field, wrong type, or bad `tone` fails the build instead of silently breaking
+a page at runtime. A `series` id in `posts.json` that doesn't match any
+`series.json` entry is caught too (`reference('series')`), but only as a
+logged `[content] Invalid content reference` error — it doesn't fail the
+build exit code, so still check the build log, not just "did it build."
 
-```ts
-// SERIES entry
+```jsonc
+// src/content/series.json — one entry
 {
-  id: 'my-series',
-  title: 'My Guide',
-  blurb: 'One-line description.',
-  tone: 'teal',            // teal | magenta | violet | blue | green
-  tag: '12 STEPS',         // shown on the blog card
-},
+  "id": "my-series",
+  "title": "My Guide",
+  "blurb": "One-line description.",
+  "tone": "teal",            // teal | magenta | violet | blue | green
+  "tag": "12 STEPS"          // shown on the blog card
+}
 
-// POSTS entries — one per imported page
+// src/content/posts.json — one entry per imported page
 {
-  series: 'my-series',
-  slug: 'setup',           // must match the file's slug + the mdx slug
-  title: 'Setup',
-  tag: '01',
-  blurb: 'One-line summary.',
-  formula: 'x = y',          // optional — iso-style "formula" line
-  takeaway: 'the ONE thing', // optional — neon-native-style takeaway
-  time: 8,                   // optional
-  phase: 'core',             // optional — grouping label
-},
+  "id": "my-series/setup",    // "<series>/<slug>" — must be unique across all posts
+  "series": "my-series",      // must match a series.json id (schema-checked)
+  "slug": "setup",            // must match the file's slug + the mdx slug
+  "title": "Setup",
+  "tag": "01",
+  "blurb": "One-line summary.",
+  "formula": "x = y",          // optional — iso-style "formula" line
+  "takeaway": "the ONE thing", // optional — neon-native-style takeaway
+  "time": 8,                   // optional
+  "phase": "core"               // optional — grouping label
+}
 ```
 
-Order of `POSTS` entries within a series == prev/next order. Tag numbers must
-ascend. Copy `title` / `blurb` / `tag` from the source site's own nav
-(`src/data/nav.ts` or similar).
+Posts within a series are sorted by `tag` (zero-padded, ascending) for
+prev/next order — array order in the JSON doesn't matter. Copy `title` /
+`blurb` / `tag` from the source site's own nav (`src/data/nav.ts` or similar).
 
 Then:
 
@@ -142,8 +152,10 @@ If a page is a top-level section you want in the site header, add a link in
   guards with `(?![^>]*series=)`. If you ever end up with
   `series="x" series="x" series="x"`, collapse it:
   `sd '( series="<id>"){2,}' ' series="<id>"' <files>`.
-- **Layout contract:** a page's `slug` prop must exactly match its `POSTS`
-  entry slug, or prev/next + progress bars will be wrong (no hard error).
+- **Layout contract:** a page's `slug` prop must exactly match its
+  `posts.json` entry slug, or prev/next + progress bars will be wrong (no
+  hard error — this cross-check is between the `.mdx`/`.astro` file and the
+  content collection, not something the schema can catch).
 - **`.astro` posts:** write plain HTML with the blog classes; use JS template
   literals (`{`...`}`) for code blocks to avoid escaping `<`/`>`/`&`.
 - **Non-Astro projects** (e.g. a Rust app) are NOT handled by this tool. Write
@@ -156,7 +168,9 @@ If a page is a top-level section you want in the site header, add a link in
 - [ ] Confirm the source is an **Astro site** (`src/pages/` with `.mdx`/`.astro`).
 - [ ] `node scripts/import-blog-series.mjs --dry-run --src ... --series ...`
 - [ ] Run it for real.
-- [ ] Add `SERIES` entry + all `POSTS` entries in `src/data/blog.ts`.
-- [ ] Confirm every file's `<Layout ... slug="..." series="...">` matches `POSTS`.
+- [ ] Add a series entry to `src/content/series.json` + all post entries to
+      `src/content/posts.json`.
+- [ ] Confirm every file's `<Layout ... slug="..." series="...">` matches its
+      `posts.json` entry.
 - [ ] `npx astro build` passes.
 - [ ] Open `/blog/` locally, click through the series, check prev/next + demos.

@@ -1,0 +1,30 @@
+[
+  {
+    "id": "iso-tactics",
+    "title": "ISO Tactics",
+    "blurb": "Isometric tactics games from zero to GRIDRUNNER — grid math, iso projection, depth sort, A*, combat.",
+    "tone": "teal",
+    "tag": "11 STEPS"
+  },
+  {
+    "id": "neon-native",
+    "title": "NEON_NATIVE",
+    "blurb": "React Native + Expo masterclass — 23 steps from zero to a published app on both stores.",
+    "tone": "magenta",
+    "tag": "23 STEPS"
+  },
+  {
+    "id": "neon-canvas",
+    "title": "Neon Canvas",
+    "blurb": "AI mindmapping canvas — a spatial knowledge graph that grows itself.",
+    "tone": "violet",
+    "tag": "1 POST"
+  },
+  {
+    "id": "blender-masterclass",
+    "title": "Blender Masterclass",
+    "blurb": "Blender from first modifier to a shipped asset — hard-surface, 3D-print, game-ready, and react-three-fiber lanes.",
+    "tone": "blue",
+    "tag": "9 STEPS"
+  }
+]
