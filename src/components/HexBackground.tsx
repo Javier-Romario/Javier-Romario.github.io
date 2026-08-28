@@ -42,8 +42,8 @@ function hash(i: number, salt: number): number {
 /**
  * Full-viewport hexagon backdrop.
  * Individual hexagon EDGES animate: a small orange ring spreads outward from
- * the pointer, each edge lighting on its own with jagged/glitchy noise, and
- * brightness tapering off as the ring nears its (short) outer radius.
+ * the pointer a couple of times then stops. Idle frames are skipped entirely
+ * (the static grid is drawn once and the canvas left alone) to keep CPU low.
  */
 const HexBackground: React.FC = () => {
   const [dark, setDark] = React.useState<boolean>(resolveDark);
@@ -71,6 +71,7 @@ const HexBackground: React.FC = () => {
   const pointerRef = React.useRef<{ x: number; y: number } | null>(null);
   const sessionRef = React.useRef<Session | null>(null);
   const edgesRef = React.useRef<{ key: string; edges: Edge[] }>({ key: '', edges: [] });
+  const drawnRef = React.useRef('');
 
   // Track the pointer at window level so hovering over content (which sits
   // above the fixed canvas) still drives the pulse near the cursor.
@@ -91,17 +92,15 @@ const HexBackground: React.FC = () => {
 
   const draw = React.useCallback(
     (ctx: CanvasRenderingContext2D, w: number, h: number, t: number) => {
-      ctx.clearRect(0, 0, w, h);
-
-      const rowH = Math.sqrt(3) * size;
-      const colW = 1.5 * size;
-      const cols = Math.ceil(w / colW) + 2;
-      const rows = Math.ceil(h / rowH) + 2;
+      const key = `${w}x${h}x${size}`;
 
       // Build the edge list once per size/geometry (memoised across frames).
-      const key = `${w}x${h}x${size}`;
       let edges = edgesRef.current.edges;
       if (edgesRef.current.key !== key) {
+        const rowH = Math.sqrt(3) * size;
+        const colW = 1.5 * size;
+        const cols = Math.ceil(w / colW) + 2;
+        const rows = Math.ceil(h / rowH) + 2;
         edges = [];
         for (let r = 0; r < rows; r++) {
           for (let c = 0; c < cols; c++) {
@@ -119,6 +118,7 @@ const HexBackground: React.FC = () => {
           }
         }
         edgesRef.current = { key, edges };
+        drawnRef.current = '';
       }
 
       const line = (e: Edge, color: string, alpha: number, width = 1) => {
@@ -130,64 +130,69 @@ const HexBackground: React.FC = () => {
         ctx.stroke();
       };
 
-      // ---- base grid (static, subtle) ----
-      ctx.lineWidth = 1;
-      for (const e of edges) {
-        line(e, baseColor, 0.3);
+      const drawBase = () => {
+        ctx.lineWidth = 1;
+        for (const e of edges) line(e, baseColor, 0.3);
+      };
+
+      // ---- determine whether a pulse is currently active ----
+      const p = pointerRef.current;
+      let session = sessionRef.current;
+      let active = false;
+
+      if (p) {
+        if (!session || Math.hypot(p.x - session.ox, p.y - session.oy) > size * 5) {
+          session = { ox: p.x, oy: p.y, count: 0, max: 2 + Math.floor(Math.random() * 2), start: t };
+          sessionRef.current = session;
+        }
+        const maxR = Math.min(w, h) * 0.18;
+        const speed = maxR / 1.6;
+        let R = (t - session.start) * speed;
+        while (R >= maxR && session.count < session.max) {
+          session.count += 1;
+          session.start += maxR / speed;
+          R = (t - session.start) * speed;
+        }
+        active = session.count < session.max && R >= 0;
+      } else {
+        sessionRef.current = null;
       }
 
-      // ---- expanding pulse following the pointer (fires 2–3 times, then stops) ----
-      const p = pointerRef.current;
-      if (!p) {
-        sessionRef.current = null;
-      } else {
-        let s = sessionRef.current;
-        // fresh burst when pointer (re)enters or moves well away from origin
-        if (!s || Math.hypot(p.x - s.ox, p.y - s.oy) > size * 5) {
-          s = { ox: p.x, oy: p.y, count: 0, max: 2 + Math.floor(Math.random() * 2), start: t };
-          sessionRef.current = s;
-        }
+      // ---- idle: draw the static grid once, then skip frames ----
+      if (!active) {
+        if (drawnRef.current === key) return;
+        ctx.clearRect(0, 0, w, h);
+        drawBase();
+        drawnRef.current = key;
+        return;
+      }
 
-        const maxR = Math.min(w, h) * 0.18; // short spread, dies well before page edge
-        const speed = maxR / 1.6; // one full spread ≈ 1.6s
-        let R = (t - s.start) * speed;
+      // ---- active: full redraw with the pulse ----
+      ctx.clearRect(0, 0, w, h);
+      drawBase();
+      drawnRef.current = '';
 
-        // advance past any completed pulses
-        while (R >= maxR && s.count < s.max) {
-          s.count += 1;
-          s.start += maxR / speed;
-          R = (t - s.start) * speed;
-        }
+      const maxR = Math.min(w, h) * 0.18;
+      const speed = maxR / 1.6;
+      const R = Math.min((t - session.start) * speed, maxR);
+      const band = size * 1.5;
+      const taper = Math.pow(1 - R / maxR, 1.3);
+      const salt = Math.floor(t * 9);
 
-        // only draw while a pulse is still active
-        if (s.count < s.max && R >= 0) {
-          const r = Math.min(R, maxR);
-          const band = size * 1.5;
-          // brightness tapers toward the outer edge of the spread
-          const taper = Math.pow(1 - r / maxR, 1.3);
-          const salt = Math.floor(t * 9);
+      for (let i = 0; i < edges.length; i++) {
+        const e = edges[i];
+        const d = Math.hypot(e.mx - session.ox, e.my - session.oy);
+        const noise = hash(i, salt);
+        const dd = d * (1 + 0.16 * (noise - 0.5) * 2);
+        const ring = Math.abs(dd - R);
 
-          for (let i = 0; i < edges.length; i++) {
-            const e = edges[i];
-            const d = Math.hypot(e.mx - s.ox, e.my - s.oy);
-
-            // per-edge viral distortion
-            const noise = hash(i, salt);
-            const dd = d * (1 + 0.16 * (noise - 0.5) * 2);
-            const ring = Math.abs(dd - r);
-
-            if (ring < band) {
-              const flicker = 0.5 + 0.5 * hash(i, salt + 7);
-              const a = Math.max(0, 1 - ring / band) * taper * (0.5 + 0.5 * flicker);
-              line(e, ORANGE, a, 1.4);
-            } else if (d < r) {
-              // faint residue trailing the wave
-              const trail = Math.max(0, 1 - (r - d) / (band * 2));
-              if (trail > 0.03) {
-                line(e, ORANGE, trail * 0.12 * taper, 1);
-              }
-            }
-          }
+        if (ring < band) {
+          const flicker = 0.5 + 0.5 * hash(i, salt + 7);
+          const a = Math.max(0, 1 - ring / band) * taper * (0.5 + 0.5 * flicker);
+          line(e, ORANGE, a, 1.4);
+        } else if (d < R) {
+          const trail = Math.max(0, 1 - (R - d) / (band * 2));
+          if (trail > 0.03) line(e, ORANGE, trail * 0.12 * taper, 1);
         }
       }
 
