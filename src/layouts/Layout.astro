@@ -68,10 +68,10 @@ const base = import.meta.env.BASE_URL;
       <a class="site-header__brand" href={base}>JAVIER<b>//</b>HARFORD</a>
       <div class="site-header__right">
         <nav class="site-header__links">
-          <a href={`${base}#experience`}>EXPERIENCE</a>
-          <a href={`${base}#skills`}>SKILLS</a>
-          <a href={`${base}blog/`}>BLOG</a>
-          <a href={`${base}#contact`}>CONTACT</a>
+          <a href={`${base}#experience`} data-nav="experience">EXPERIENCE</a>
+          <a href={`${base}#skills`} data-nav="skills">SKILLS</a>
+          <a href={`${base}blog/`} data-nav="blog">BLOG</a>
+          <a href={`${base}#contact`} data-nav="contact">CONTACT</a>
         </nav>
         <div class="theme-switch" role="group" aria-label="Colour theme">
           <button type="button" class="theme-switch__btn" data-theme="auto" title="Follow system">AUTO</button>
@@ -142,6 +142,42 @@ const base = import.meta.env.BASE_URL;
           document.addEventListener('astro:page-load', reapply);
         }
         paint();
+      })();
+    </script>
+
+    <script is:inline>
+      // Subtle active-tab indication in the header (route + scrollspy).
+      (function () {
+        function setActive(id) {
+          document.querySelectorAll('.site-header__links a[data-nav]').forEach(function (a) {
+            a.classList.toggle('is-active', a.getAttribute('data-nav') === id);
+          });
+        }
+        function isBlog() {
+          return /^\/blog\/?/.test(location.pathname);
+        }
+        function detect() {
+          if (isBlog()) {
+            setActive('blog');
+            return;
+          }
+          var marker = window.innerHeight * 0.3;
+          var active = null;
+          ['experience', 'skills', 'contact'].forEach(function (id) {
+            if (active) return;
+            var sec = document.getElementById(id);
+            if (!sec) return;
+            var r = sec.getBoundingClientRect();
+            if (r.top <= marker && r.bottom > marker) active = id;
+          });
+          setActive(active);
+        }
+        if (!window.__ndNavBound) {
+          window.__ndNavBound = true;
+          window.addEventListener('scroll', function () { if (!isBlog()) detect(); }, { passive: true });
+          document.addEventListener('astro:page-load', detect);
+        }
+        detect();
       })();
     </script>
   </body>

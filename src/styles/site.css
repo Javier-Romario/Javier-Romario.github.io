@@ -223,6 +223,11 @@ body::after {
   color: var(--theme-focused-foreground);
 }
 
+.site-header__links a.is-active {
+  color: var(--theme-focused-foreground);
+  box-shadow: var(--neo-pressed);
+}
+
 /* ---- hero ---- */
 .hero {
   margin: 32px 0 40px;
