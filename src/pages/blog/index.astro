@@ -1,13 +1,17 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import NeoCard from '@components/NeoCard';
-import NeoAccordion from '@components/NeoAccordion';
 import Grid from '@components/Grid';
-import Badge from '@components/Badge';
-import Text from '@components/Text';
+import SeriesCover from '../../components/SeriesCover.astro';
 import { SERIES, postsInSeries } from '../../data/blog';
 
 const base = import.meta.env.BASE_URL;
+
+const GLYPHS: Record<string, { glyph: string; label: string }> = {
+  'iso-tactics': { glyph: 'ISO', label: 'TACTICS' },
+  'neon-native': { glyph: 'RN', label: 'EXPO' },
+  'blender-masterclass': { glyph: '3D', label: 'FORGE' },
+  'neon-canvas': { glyph: 'AI', label: 'GRAPH' },
+};
 ---
 
 <Layout
@@ -34,32 +38,63 @@ const base = import.meta.env.BASE_URL;
       </div>
     </header>
 
-    <div class="stack">
-      {SERIES.map((series) => (
-        <NeoCard title={series.title} tone={series.tone}>
-          <div class="blog-series">
-            <div class="blog-series__head">
-              <Badge>{series.tag}</Badge>
-              <Text>{series.blurb}</Text>
+    <Grid>
+      {SERIES.map((series) => {
+        const posts = postsInSeries(series.id);
+        const latest = posts.reduce((m, p) => (p.updated > m ? p.updated : m), '');
+        const parts = posts.length;
+        const meta = `${series.tag} · ${parts} part${parts === 1 ? '' : 's'} · updated ${latest}`;
+        const art = GLYPHS[series.id] ?? { glyph: series.title.slice(0, 2), label: '' };
+
+        // Multi-page article → collapsible at the page level.
+        if (parts > 1) {
+          return (
+            <details class="article-card" data-tone={series.tone}>
+              <summary class="article-card__summary">
+                <SeriesCover glyph={art.glyph} label={art.label} />
+                <div class="article-card__text">
+                  <h2 class="article-card__title">{series.title}</h2>
+                  <p class="article-card__desc">{series.blurb}</p>
+                  <div class="article-card__meta">
+                    <span>{meta}</span>
+                    <span class="article-card__chevron" aria-hidden="true">▸</span>
+                  </div>
+                </div>
+              </summary>
+              <div class="article-card__body">
+                <ol class="article-pages">
+                  {posts.map((post) => (
+                    <li>
+                      <a href={`${base}blog/${series.id}/${post.slug}/`}>
+                        <span class="article-pages__tag">{post.tag}</span>
+                        <span class="article-pages__title">{post.title}</span>
+                        <time class="article-pages__date">{post.updated}</time>
+                      </a>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            </details>
+          );
+        }
+
+        // Single-page article → plain card.
+        return (
+          <article class="article-card" data-tone={series.tone}>
+            <SeriesCover glyph={art.glyph} label={art.label} />
+            <div class="article-card__text">
+              <h2 class="article-card__title">{series.title}</h2>
+              <p class="article-card__desc">{series.blurb}</p>
+              <div class="article-card__meta">
+                <span>{meta}</span>
+              </div>
+              <a class="article-card__link" href={`${base}blog/${series.id}/${posts[0].slug}/`}>
+                Read →
+              </a>
             </div>
-            <Grid>
-              {postsInSeries(series.id).map((post) => (
-                <NeoAccordion
-                  client:load
-                  title={post.title}
-                  tone={series.tone}
-                  meta={`#${post.tag} · updated ${post.updated}`}
-                >
-                  <p class="blog-post__blurb">{post.blurb}</p>
-                  <a class="blog-post__link" href={`${base}blog/${series.id}/${post.slug}/`}>
-                    Read →
-                  </a>
-                </NeoAccordion>
-              ))}
-            </Grid>
-          </div>
-        </NeoCard>
-      ))}
-    </div>
+          </article>
+        );
+      })}
+    </Grid>
   </section>
 </Layout>

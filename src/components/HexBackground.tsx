@@ -21,11 +21,17 @@ interface Pt {
   y: number;
 }
 
+/** deterministic 0..1 hash — used for per-hex glitch noise */
+function hash(i: number, salt: number): number {
+  const x = Math.sin(i * 127.1 + salt * 311.7) * 43758.5453;
+  return x - Math.floor(x);
+}
+
 /**
  * Full-viewport hexagon backdrop.
- * Static grey grid; on hover, an orange pulse walks a glitchy chain of
- * hexagon lines — each lit line is followed by the next hexagon's line plus
- * the connecting edge — with small random jitter/flicker for a glitch feel.
+ * A subtle orange pulse follows the pointer: an expanding ring of lit hexagon
+ * lines spreads outward from the cursor with a jagged, glitchy "viral" edge
+ * (per-hex noise + flicker) and dies out before reaching the page edge.
  */
 const HexBackground: React.FC = () => {
   const [dark, setDark] = React.useState<boolean>(resolveDark);
@@ -51,12 +57,9 @@ const HexBackground: React.FC = () => {
   const baseColor = dark ? DARK.color : LIGHT.color;
 
   const pointerRef = React.useRef<Pt | null>(null);
-  const chainRef = React.useRef<Pt[]>([]);
-  const chainKeyRef = React.useRef<string>('');
-  const chainUntilRef = React.useRef(0);
 
   // Track the pointer at window level so hovering over content (which sits
-  // above the fixed canvas) still drives the hex pulse near the cursor.
+  // above the fixed canvas) still drives the pulse near the cursor.
   React.useEffect(() => {
     const onMove = (e: PointerEvent) => {
       pointerRef.current = { x: e.clientX, y: e.clientY };
@@ -113,85 +116,36 @@ const HexBackground: React.FC = () => {
         strokeHex(c.x, c.y, baseColor, 0.3);
       }
 
-      // ---- hover chain ----
-      const pointer = pointerRef.current;
-      if (pointer) {
-        // nearest hex to the pointer
-        let nearest: Pt | null = null;
-        let bd = Infinity;
-        for (const c of centers) {
-          const d = Math.hypot(c.x - pointer.x, c.y - pointer.y);
-          if (d < bd) {
-            bd = d;
-            nearest = c;
-          }
-        }
+      // ---- expanding pulse following the pointer ----
+      const p = pointerRef.current;
+      if (p) {
+        const maxR = Math.min(w, h) * 0.42; // die out before the page edge
+        const speed = maxR / 2; // one full spread ≈ 2s
+        const R = (t * speed) % maxR;
+        const band = size * 2.1; // ring thickness
+        const salt = Math.floor(t * 9); // glitchy flicker time-bucket
 
-        if (nearest && bd < size * 1.6) {
-          const key = `${Math.round(nearest.x)},${Math.round(nearest.y)}`;
-          if (chainKeyRef.current !== key || t > chainUntilRef.current) {
-            chainKeyRef.current = key;
-            chainUntilRef.current = t + 1.6 + Math.random() * 2.2;
+        for (let i = 0; i < centers.length; i++) {
+          const c = centers[i];
+          const d = Math.hypot(c.x - p.x, c.y - p.y);
 
-            // random walk over nearby hexes (≈ neighbours)
-            const chain: Pt[] = [nearest];
-            let cur = nearest;
-            const steps = 5 + Math.floor(Math.random() * 5);
-            for (let i = 0; i < steps; i++) {
-              const candidates = centers
-                .filter((c) => c !== cur && !chain.includes(c))
-                .map((c) => ({ c, d: Math.hypot(c.x - cur.x, c.y - cur.y) }))
-                .sort((a, b) => a.d - b.d)
-                .slice(0, 6);
-              if (!candidates.length) break;
-              const pick = candidates[Math.floor(Math.random() * Math.min(3, candidates.length))];
-              chain.push(pick.c);
-              cur = pick.c;
-            }
-            chainRef.current = chain;
-          }
+          // viral distortion: per-hex jaggedness on the wavefront
+          const noise = hash(i, salt);
+          const dd = d * (1 + 0.14 * (noise - 0.5) * 2);
+          const ring = Math.abs(dd - R);
 
-          const chain = chainRef.current;
-          const n = chain.length;
-          if (n > 1) {
-            // wavefront position along the chain (hexes per second)
-            const pos = (t * 2.4) % (n + 1);
-            let idx = Math.floor(pos);
-            const frac = pos - idx;
-
-            // glitch: random ±1/±2 jump, occasional flicker
-            const g = Math.random();
-            let jitter = 0;
-            if (g < 0.07) jitter = Math.random() < 0.5 ? -1 : 1;
-            else if (g < 0.13) jitter = Math.random() < 0.5 ? -2 : 2;
-            const flicker = Math.random() < 0.05 ? Math.random() * 0.5 + 0.3 : 1;
-
-            const gi = Math.max(0, Math.min(n - 1, idx + jitter));
-            const aCur = Math.max(0, 1 - frac) * flicker;
-            const aNext = Math.min(1, frac) * flicker;
-
-            const cur = chain[gi];
-            const next = chain[Math.min(gi + 1, n - 1)];
-
-            // connecting edge ("additional connected line")
-            if (cur && next && next !== cur) {
-              ctx.beginPath();
-              ctx.moveTo(cur.x, cur.y);
-              ctx.lineTo(next.x, next.y);
-              ctx.strokeStyle = hexToRgba(ORANGE, Math.max(aCur, aNext));
-              ctx.lineWidth = 1.5;
-              ctx.stroke();
-            }
-
-            // lit hex lines + faint fill
-            if (cur) {
-              strokeHex(cur.x, cur.y, ORANGE, Math.max(0.3, aCur), 1.5);
-              trace(cur.x, cur.y);
-              ctx.fillStyle = hexToRgba(ORANGE, 0.06 * aCur);
-              ctx.fill();
-            }
-            if (next && next !== cur) {
-              strokeHex(next.x, next.y, ORANGE, Math.max(0.3, aNext), 1.5);
+          if (ring < band) {
+            const flicker = 0.5 + 0.5 * hash(i, salt + 7);
+            const a = Math.max(0, 1 - ring / band) * (0.45 + 0.55 * flicker);
+            strokeHex(c.x, c.y, ORANGE, a, 1.4);
+            trace(c.x, c.y);
+            ctx.fillStyle = hexToRgba(ORANGE, 0.05 * a);
+            ctx.fill();
+          } else if (d < R) {
+            // faint viral residue trailing the wave
+            const trail = Math.max(0, 1 - (R - d) / (band * 2.4));
+            if (trail > 0.04) {
+              strokeHex(c.x, c.y, ORANGE, trail * 0.16, 1);
             }
           }
         }
