@@ -106,9 +106,25 @@ body {
   }
 }
 
+/* Browsers without the native View Transitions API (Firefox; Safari, since
+   the inline script in Layout.astro disables its broken startViewTransition)
+   use ClientRouter's fallback="animate" path instead: it swaps the DOM then
+   toggles this attribute on <html> directly rather than creating
+   ::view-transition-old/new(root) pseudo-elements. Same keyframes, different
+   target, so the fallback path gets the glitch too instead of a silent swap. */
+html[data-astro-transition-fallback='old'] {
+  animation: 240ms cubic-bezier(0.7, 0, 0.3, 1) both nd-glitch-out;
+}
+
+html[data-astro-transition-fallback='new'] {
+  animation: 320ms cubic-bezier(0.7, 0, 0.3, 1) both nd-glitch-in;
+}
+
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-old(root),
-  ::view-transition-new(root) {
+  ::view-transition-new(root),
+  html[data-astro-transition-fallback='old'],
+  html[data-astro-transition-fallback='new'] {
     animation: none;
   }
 }
