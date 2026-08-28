@@ -53,7 +53,6 @@ const base = import.meta.env.BASE_URL;
         // Randomise the glitch page transition on each load.
         var s = document.documentElement.style;
         var n = function (min, max) { return (Math.random() * (max - min) + min).toFixed(1); };
-        s.setProperty('--glitch-hue', Math.floor(Math.random() * 360) + 'deg');
         s.setProperty('--glitch-cut-a', n(6, 30) + '%');
         s.setProperty('--glitch-cut-b', n(8, 34) + '%');
         s.setProperty('--glitch-cut-c', n(4, 26) + '%');
