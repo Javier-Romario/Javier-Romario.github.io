@@ -146,7 +146,7 @@ const education = [
         <p class="hero__lede">
           Driven and ambitious engineer working across the modern JavaScript ecosystem — with
           particular depth in <strong>TypeScript</strong>, <strong>Vue</strong>, <strong>Nuxt</strong>,
-          <strong>Next.js</strong> and <strong>Node.js</strong>. Passionate about crafting
+          <strong>React</strong>, <strong>Next.js</strong> and <strong>Node.js</strong>. Passionate about crafting
           high-quality software and staying at the forefront of emerging technologies.
         </p>
         <div class="hero__actions">
@@ -169,20 +169,20 @@ const education = [
       {experience.map((job) => (
         <NeoCard title={job.company} tone={job.tone}>
           <div class="job">
-            <NeoTable tone={job.tone}>
-              <NeoTableRow>
-                <NeoTableColumn>ROLE</NeoTableColumn>
-                <NeoTableColumn>{job.role}</NeoTableColumn>
-              </NeoTableRow>
-              <NeoTableRow>
-                <NeoTableColumn>PERIOD</NeoTableColumn>
-                <NeoTableColumn>{job.period}</NeoTableColumn>
-              </NeoTableRow>
-              <NeoTableRow>
-                <NeoTableColumn>LOCATION</NeoTableColumn>
-                <NeoTableColumn>{job.location}</NeoTableColumn>
-              </NeoTableRow>
-            </NeoTable>
+            <dl class="job__meta">
+              <div class="job__meta-row">
+                <dt>Role</dt>
+                <dd>{job.role}</dd>
+              </div>
+              <div class="job__meta-row">
+                <dt>Period</dt>
+                <dd>{job.period}</dd>
+              </div>
+              <div class="job__meta-row">
+                <dt>Location</dt>
+                <dd>{job.location}</dd>
+              </div>
+            </dl>
 
             <p class="job__summary">{job.summary}</p>
 

@@ -212,6 +212,37 @@ body::after {
   gap: 16px;
 }
 
+.job__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--neo-surface);
+}
+
+.job__meta-row {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+}
+
+.job__meta-row dt {
+  min-width: 84px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--theme-muted);
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+.job__meta-row dd {
+  margin: 0;
+  color: var(--theme-text);
+  font-size: 15px;
+  font-weight: 500;
+}
+
 .job__summary {
   color: var(--theme-text);
   font-size: 15px;
