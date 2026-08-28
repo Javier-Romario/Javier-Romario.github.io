@@ -78,7 +78,10 @@ const BlogGrid: React.FC<{ seriesList: SeriesCard[] }> = ({ seriesList }) => {
       {ordered.map((s) => {
         const expanded = expandedId === s.id && s.parts > 1;
         const multi = s.parts > 1;
-        const cardStyle = namesOn ? { viewTransitionName: `blog-card-${s.id}` } : undefined;
+        const cardStyle = {
+          ...(namesOn ? { viewTransitionName: `blog-card-${s.id}` } : {}),
+          ...(expanded ? { gridColumn: '1 / -1' } : {}),
+        };
 
         const cover = <Cover glyph={s.glyph} label={s.label} />;
         const text = (
