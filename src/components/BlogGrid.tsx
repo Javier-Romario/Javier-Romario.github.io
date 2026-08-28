@@ -41,6 +41,7 @@ const BlogGrid: React.FC<{ seriesList: SeriesCard[] }> = ({ seriesList }) => {
   const [focusedId, setFocusedId] = React.useState<string | null>(null);
   const [expandedId, setExpandedId] = React.useState<string | null>(null);
   const [namesOn, setNamesOn] = React.useState(false);
+  const activeTransitionRef = React.useRef<ReturnType<typeof document.startViewTransition> | null>(null);
 
   // Focused article jumps to the top of the grid.
   const ordered = React.useMemo(() => {
@@ -68,13 +69,27 @@ const BlogGrid: React.FC<{ seriesList: SeriesCard[] }> = ({ seriesList }) => {
     // leak into cross-page transitions.
     flushSync(() => setNamesOn(true));
     const vt = document.startViewTransition(apply);
-    vt.finished.finally(() => {
-      flushSync(() => setNamesOn(false));
-    });
+    activeTransitionRef.current = vt;
+    vt.finished
+      .catch(() => {})
+      .finally(() => {
+        if (activeTransitionRef.current === vt) activeTransitionRef.current = null;
+        flushSync(() => setNamesOn(false));
+      });
+  };
+
+  // A post link inside a just-expanded card can be clicked while this
+  // in-page transition is still animating. Skip it immediately so it can't
+  // still be active when ClientRouter starts its own document.startViewTransition
+  // for the page navigation (two native transitions racing on one document).
+  const settleBeforeNavigate = (e: React.PointerEvent) => {
+    if ((e.target as HTMLElement).closest('a')) {
+      activeTransitionRef.current?.skipTransition();
+    }
   };
 
   return (
-    <div className="blog-grid">
+    <div className="blog-grid" onPointerDown={settleBeforeNavigate}>
       {ordered.map((s) => {
         const expanded = expandedId === s.id && s.parts > 1;
         const multi = s.parts > 1;
