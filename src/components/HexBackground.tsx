@@ -216,6 +216,7 @@ const HexBackground: React.FC = () => {
     <div className="bg-hex" aria-hidden="true">
       <CanvasShell
         draw={draw}
+        fps={30}
         height="100%"
         style={{ background: 'transparent', border: 'none', boxShadow: 'none' }}
       />
