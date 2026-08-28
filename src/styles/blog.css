@@ -81,6 +81,12 @@
   padding: 0;
   display: flex;
   flex-direction: column;
+  text-indent: 0;
+}
+
+/* kill the global ol counter — the number lives in __tag */
+.blog-post-list li::before {
+  content: none;
 }
 
 .blog-post-list li + li {
