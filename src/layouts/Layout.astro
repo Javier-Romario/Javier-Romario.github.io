@@ -22,18 +22,36 @@ const base = import.meta.env.BASE_URL;
     <meta name="generator" content={Astro.generator} />
     <meta name="description" content={description} />
     <title>{title}</title>
+    <script is:inline>
+      // Apply saved theme before first paint. No attribute = follow system.
+      (function () {
+        try {
+          var t = localStorage.getItem('theme');
+          if (t === 'light' || t === 'dark') {
+            document.documentElement.dataset.theme = t;
+          }
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <HexBackground client:load />
 
     <header class="site-header">
       <a class="site-header__brand" href={base}>JAVIER<b>//</b>HARFORD</a>
-      <nav class="site-header__links">
-        <a href="#experience">EXPERIENCE</a>
-        <a href="#skills">SKILLS</a>
-        <a href={`${base}blog/`}>BLOG</a>
-        <a href="#contact">CONTACT</a>
-      </nav>
+      <div class="site-header__right">
+        <nav class="site-header__links">
+          <a href="#experience">EXPERIENCE</a>
+          <a href="#skills">SKILLS</a>
+          <a href={`${base}blog/`}>BLOG</a>
+          <a href="#contact">CONTACT</a>
+        </nav>
+        <div class="theme-switch" role="group" aria-label="Colour theme">
+          <button type="button" class="theme-switch__btn" data-theme="auto" title="Follow system">AUTO</button>
+          <button type="button" class="theme-switch__btn" data-theme="light" title="Light">LIGHT</button>
+          <button type="button" class="theme-switch__btn" data-theme="dark" title="Dark">DARK</button>
+        </div>
+      </div>
     </header>
 
     <div class="site-shell">
@@ -47,5 +65,39 @@ const base = import.meta.env.BASE_URL;
         Javier Harford · <a href="mailto:javierharford@gmail.com">javierharford@gmail.com</a>
       </p>
     </footer>
+
+    <script is:inline>
+      // Theme switcher: auto (system) | light | dark.
+      (function () {
+        var btns = Array.prototype.slice.call(document.querySelectorAll('.theme-switch__btn'));
+        function current() {
+          var t = document.documentElement.dataset.theme;
+          return t === 'light' || t === 'dark' ? t : 'auto';
+        }
+        function paint() {
+          var c = current();
+          btns.forEach(function (b) {
+            b.classList.toggle('is-active', b.dataset.theme === c);
+            b.setAttribute('aria-pressed', String(b.dataset.theme === c));
+          });
+        }
+        btns.forEach(function (b) {
+          b.addEventListener('click', function () {
+            var t = b.dataset.theme;
+            try {
+              if (t === 'auto') {
+                delete document.documentElement.dataset.theme;
+                localStorage.removeItem('theme');
+              } else {
+                document.documentElement.dataset.theme = t;
+                localStorage.setItem('theme', t);
+              }
+            } catch (e) {}
+            paint();
+          });
+        });
+        paint();
+      })();
+    </script>
   </body>
 </html>
