@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import { flushSync } from 'react-dom';
 
 interface PostLink {
   slug: string;
@@ -40,8 +39,6 @@ function Cover({ glyph, label }: { glyph: string; label: string }) {
 const BlogGrid: React.FC<{ seriesList: SeriesCard[] }> = ({ seriesList }) => {
   const [focusedId, setFocusedId] = React.useState<string | null>(null);
   const [expandedId, setExpandedId] = React.useState<string | null>(null);
-  const [namesOn, setNamesOn] = React.useState(false);
-  const activeTransitionRef = React.useRef<ReturnType<typeof document.startViewTransition> | null>(null);
 
   // Focused article jumps to the top of the grid.
   const ordered = React.useMemo(() => {
@@ -51,52 +48,16 @@ const BlogGrid: React.FC<{ seriesList: SeriesCard[] }> = ({ seriesList }) => {
 
   const toggle = (id: string) => {
     const willExpand = expandedId !== id;
-
-    const apply = () => {
-      flushSync(() => {
-        setFocusedId(willExpand ? id : null);
-        setExpandedId(willExpand ? id : null);
-      });
-    };
-
-    if (typeof document.startViewTransition !== 'function') {
-      apply();
-      return;
-    }
-
-    // Give cards view-transition-name just for this in-page transition so the
-    // browser morphs reorder + expand + reflow. Clear after so it doesn't
-    // leak into cross-page transitions.
-    flushSync(() => setNamesOn(true));
-    const vt = document.startViewTransition(apply);
-    activeTransitionRef.current = vt;
-    vt.finished
-      .catch(() => {})
-      .finally(() => {
-        if (activeTransitionRef.current === vt) activeTransitionRef.current = null;
-        flushSync(() => setNamesOn(false));
-      });
-  };
-
-  // A post link inside a just-expanded card can be clicked while this
-  // in-page transition is still animating. Skip it immediately so it can't
-  // still be active when the browser starts its cross-document view transition
-  // for the full page navigation (two transitions racing on one document).
-  const settleBeforeNavigate = (e: React.PointerEvent) => {
-    if ((e.target as HTMLElement).closest('a')) {
-      activeTransitionRef.current?.skipTransition();
-    }
+    setFocusedId(willExpand ? id : null);
+    setExpandedId(willExpand ? id : null);
   };
 
   return (
-    <div className="blog-grid" onPointerDown={settleBeforeNavigate}>
+    <div className="blog-grid">
       {ordered.map((s) => {
         const expanded = expandedId === s.id && s.parts > 1;
         const multi = s.parts > 1;
-        const cardStyle = {
-          ...(namesOn ? { viewTransitionName: `blog-card-${s.id}` } : {}),
-          ...(expanded ? { gridColumn: '1 / -1' } : {}),
-        };
+        const cardStyle = expanded ? { gridColumn: '1 / -1' } : {};
 
         const cover = <Cover glyph={s.glyph} label={s.label} />;
         const text = (

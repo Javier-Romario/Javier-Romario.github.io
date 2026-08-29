@@ -215,6 +215,9 @@
 /* ---- sub-page list (expanded) ---- */
 .article-card__body {
   border-top: 1px solid var(--theme-border-subdued);
+  /* Glitch-teleport the post list in when a card expands (in-page reveal).
+     Runs once on mount; keyframes live in site.css (global). */
+  animation: nd-glitch-in 320ms cubic-bezier(0.7, 0, 0.3, 1) both;
 }
 
 .article-pages {

@@ -1,5 +1,4 @@
 ---
-import { ClientRouter } from 'astro:transitions';
 import '@javierromario/neondeck/global-fonts.css';
 import '@javierromario/neondeck/global.css';
 import '@fontsource/jetbrains-mono/400.css';
@@ -27,27 +26,6 @@ const base = import.meta.env.BASE_URL;
     <meta name="description" content={description} />
     <title>{title}</title>
     <script is:inline>
-      // Native document.startViewTransition() is broken across several
-      // browsers (Safari, WebKit forks, and Firefox forks like Zen) — it
-      // throws "Security Error: Content at ... may not load or link to
-      // file:///" on http(s) pages. Disable it everywhere and let
-      // ClientRouter's fallback="animate" CSS path (the
-      // data-astro-transition-fallback attribute) drive the glitch instead.
-      // One code path, no UA sniffing, no per-browser bugs.
-      (function () {
-        try { delete Document.prototype.startViewTransition; } catch (e) {}
-        try { document.startViewTransition = undefined; } catch (e) {}
-        try {
-          Object.defineProperty(document, 'startViewTransition', {
-            value: undefined,
-            configurable: true,
-            writable: true,
-          });
-        } catch (e) {}
-      })();
-    </script>
-    <ClientRouter fallback="animate" />
-    <script is:inline>
       // Apply saved theme before first paint. No attribute = follow system.
       (function () {
         try {
@@ -68,7 +46,7 @@ const base = import.meta.env.BASE_URL;
     </script>
   </head>
   <body>
-    <HexBackground client:idle transition:persist />
+    <HexBackground client:idle />
 
     <header class="site-header">
       <a class="site-header__brand" href={base}>JAVIER<b>//</b>HARFORD</a>
@@ -131,21 +109,6 @@ const base = import.meta.env.BASE_URL;
             } catch (err) {}
             paint();
           });
-          // SPA swap wipes <html> attributes (incl. data-theme), so re-apply
-          // the saved preference after each client-side navigation.
-          var reapply = function () {
-            try {
-              var t = localStorage.getItem('theme');
-              if (t === 'light' || t === 'dark') {
-                document.documentElement.dataset.theme = t;
-              } else {
-                delete document.documentElement.dataset.theme;
-              }
-            } catch (err) {}
-            paint();
-          };
-          document.addEventListener('astro:after-swap', reapply);
-          document.addEventListener('astro:page-load', reapply);
         }
         paint();
       })();
@@ -206,8 +169,6 @@ const base = import.meta.env.BASE_URL;
             },
             { passive: true },
           );
-          // Re-run on client-side navigation so the active tab follows the route.
-          document.addEventListener('astro:page-load', detect);
         }
         detect();
       })();
