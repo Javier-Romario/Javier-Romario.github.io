@@ -25,7 +25,7 @@ const seriesList = await Promise.all(
       tag: series.tag,
       glyph: art.glyph,
       label: art.label,
-      meta: `${series.tag} · ${posts.length} part${posts.length === 1 ? '' : 's'} · updated ${latest}`,
+      updated: latest,
       parts: posts.length,
       href: posts.length === 1 ? `${base}blog/${series.id}/${posts[0].slug}/` : null,
       posts: posts.map((p) => ({

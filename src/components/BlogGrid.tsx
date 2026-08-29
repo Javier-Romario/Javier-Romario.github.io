@@ -19,7 +19,7 @@ interface SeriesCard {
   tag: string;
   glyph: string;
   label: string;
-  meta: string;
+  updated: string;
   parts: number;
   href: string | null;
   posts: PostLink[];
@@ -104,7 +104,10 @@ const BlogGrid: React.FC<{ seriesList: SeriesCard[] }> = ({ seriesList }) => {
             <h2 className="article-card__title">{s.title}</h2>
             <p className="article-card__desc">{s.blurb}</p>
             <div className="article-card__meta">
-              <span>{s.meta}</span>
+              <span className="article-card__updated">
+                <span className="article-card__updated-label">Last updated</span>
+                <time className="article-card__updated-date">{s.updated}</time>
+              </span>
               {multi && <span className="article-card__chevron" aria-hidden="true">▸</span>}
             </div>
           </div>
@@ -159,7 +162,10 @@ const BlogGrid: React.FC<{ seriesList: SeriesCard[] }> = ({ seriesList }) => {
                   <h2 className="article-card__title">{s.title}</h2>
                   <p className="article-card__desc">{s.blurb}</p>
                   <div className="article-card__meta">
-                    <span>{s.meta}</span>
+                    <span className="article-card__updated">
+                      <span className="article-card__updated-label">Last updated</span>
+                      <time className="article-card__updated-date">{s.updated}</time>
+                    </span>
                   </div>
                   <span className="article-card__link">Read →</span>
                 </div>
