@@ -104,6 +104,8 @@ const BlogGrid: React.FC<{ seriesList: SeriesCard[] }> = ({ seriesList }) => {
             <h2 className="article-card__title">{s.title}</h2>
             <p className="article-card__desc">{s.blurb}</p>
             <div className="article-card__meta">
+              <span className="badge">{s.tag}</span>
+              <span className="badge">{s.parts} part{s.parts === 1 ? '' : 's'}</span>
               <span className="article-card__updated">
                 <span className="article-card__updated-label">Last updated</span>
                 <time className="article-card__updated-date">{s.updated}</time>
@@ -162,6 +164,7 @@ const BlogGrid: React.FC<{ seriesList: SeriesCard[] }> = ({ seriesList }) => {
                   <h2 className="article-card__title">{s.title}</h2>
                   <p className="article-card__desc">{s.blurb}</p>
                   <div className="article-card__meta">
+                    <span className="badge">{s.tag}</span>
                     <span className="article-card__updated">
                       <span className="article-card__updated-label">Last updated</span>
                       <time className="article-card__updated-date">{s.updated}</time>
