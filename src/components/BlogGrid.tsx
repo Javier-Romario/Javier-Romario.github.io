@@ -80,8 +80,8 @@ const BlogGrid: React.FC<{ seriesList: SeriesCard[] }> = ({ seriesList }) => {
 
   // A post link inside a just-expanded card can be clicked while this
   // in-page transition is still animating. Skip it immediately so it can't
-  // still be active when ClientRouter starts its own document.startViewTransition
-  // for the page navigation (two native transitions racing on one document).
+  // still be active when the browser starts its cross-document view transition
+  // for the full page navigation (two transitions racing on one document).
   const settleBeforeNavigate = (e: React.PointerEvent) => {
     if ((e.target as HTMLElement).closest('a')) {
       activeTransitionRef.current?.skipTransition();

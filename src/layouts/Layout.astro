@@ -1,5 +1,4 @@
 ---
-import { ClientRouter } from 'astro:transitions';
 import '@javierromario/neondeck/global-fonts.css';
 import '@javierromario/neondeck/global.css';
 import '@fontsource/jetbrains-mono/400.css';
@@ -27,21 +26,6 @@ const base = import.meta.env.BASE_URL;
     <meta name="description" content={description} />
     <title>{title}</title>
     <script is:inline>
-      // Safari's native View Transitions throw a SecurityError
-      // ("Content at ... may not load or link to file:///") on GitHub Pages.
-      // Disable the API on Safari so ClientRouter falls back to its CSS
-      // animation instead of the broken native path.
-      (function () {
-        var ua = navigator.userAgent;
-        var isSafari = /Safari/.test(ua) && !/(Chrome|Chromium|CriOS|Edg|OPR|Firefox)/.test(ua);
-        if (isSafari) {
-          try { delete Document.prototype.startViewTransition; } catch (e) {}
-          try { document.startViewTransition = undefined; } catch (e) {}
-        }
-      })();
-    </script>
-    <ClientRouter fallback="animate" />
-    <script is:inline>
       // Apply saved theme before first paint. No attribute = follow system.
       (function () {
         try {
@@ -62,7 +46,7 @@ const base = import.meta.env.BASE_URL;
     </script>
   </head>
   <body>
-    <HexBackground client:idle transition:persist />
+    <HexBackground client:idle />
 
     <header class="site-header">
       <a class="site-header__brand" href={base}>JAVIER<b>//</b>HARFORD</a>

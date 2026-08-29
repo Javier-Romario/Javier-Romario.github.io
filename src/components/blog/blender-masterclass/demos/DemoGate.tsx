@@ -38,8 +38,8 @@ export function DemoLoading({ label = 'Loading three.js…' }: { label?: string 
 /**
  * Catches a failed lazy import (the classic "error loading dynamically
  * imported module" from Vite). That happens when a chunk 404s — usually a
- * stale ClientRouter session whose cached hashes no longer match the freshly
- * deployed files, or a transient network blip on the ~850 kB three.js chunk.
+ * stale cache whose hashed chunk names no longer match the freshly deployed
+ * files, or a transient network blip on the ~850 kB three.js chunk.
  * A rejected dynamic import is cached by the browser for the life of the
  * session, so the only reliable recovery is a full reload (fresh hashes).
  */

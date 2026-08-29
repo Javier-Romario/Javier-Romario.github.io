@@ -26,6 +26,15 @@ body {
 }
 
 /* ---- page (view) transitions: cyberpunk glitch-teleport ---- */
+/* Native cross-document View Transitions: real full-page loads (MPA — no
+   SPA router), but the browser still animates between old/new snapshots using
+   the ::view-transition-* keyframes below. Browsers without the API just do a
+   plain full reload (graceful, no animation). Same-origin only, which is fine
+   here. */
+@view-transition {
+  navigation: auto;
+}
+
 ::view-transition-old(root) {
   animation: 240ms cubic-bezier(0.7, 0, 0.3, 1) both nd-glitch-out;
 }
@@ -106,34 +115,14 @@ body {
   }
 }
 
-/* Browsers without the native View Transitions API (Firefox; Safari, since
-   the inline script in Layout.astro disables its broken startViewTransition)
-   use ClientRouter's fallback="animate" path instead: it swaps the DOM then
-   toggles this attribute on <html> directly rather than creating
-   ::view-transition-old/new(root) pseudo-elements. Same keyframes, different
-   target, so the fallback path gets the glitch too instead of a silent swap. */
-html[data-astro-transition-fallback='old'] {
-  animation: 240ms cubic-bezier(0.7, 0, 0.3, 1) both nd-glitch-out;
-}
-
-html[data-astro-transition-fallback='new'] {
-  animation: 320ms cubic-bezier(0.7, 0, 0.3, 1) both nd-glitch-in;
-}
-
-/* A hash-target nav (e.g. blog -> /#experience) makes Astro's fallback path
-   reassign location.href to force a scroll-to-fragment while this attribute
-   is still set — that scroll would otherwise inherit html's scroll-behavior:
-   smooth and animate at the same time as the transform/clip-path above,
-   fighting over the same element and freezing the page on Firefox. */
-html[data-astro-transition-fallback] {
-  scroll-behavior: auto;
-}
 
 @media (prefers-reduced-motion: reduce) {
+  @view-transition {
+    navigation: none;
+  }
+
   ::view-transition-old(root),
-  ::view-transition-new(root),
-  html[data-astro-transition-fallback='old'],
-  html[data-astro-transition-fallback='new'] {
+  ::view-transition-new(root) {
     animation: none;
   }
 }
