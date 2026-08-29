@@ -26,14 +26,10 @@ body {
 }
 
 /* ---- page (view) transitions: cyberpunk glitch-teleport ---- */
-/* Native cross-document View Transitions (MPA — no SPA router). The browser
-   does a full page load but animates between old/new snapshots using the
-   ::view-transition-* keyframes below. Browsers without the API just do a
-   plain full reload (graceful, no animation). */
-@view-transition {
-  navigation: auto;
-}
-
+/* Cross-document view transitions (MPA — no SPA router). The opt-in
+   (@view-transition { navigation: auto }) lives inline in Layout.astro's
+   <head> because Chrome checks for it before external CSS loads. These
+   keyframes animate the old/new snapshots once the transition starts. */
 ::view-transition-old(root) {
   animation: 240ms cubic-bezier(0.7, 0, 0.3, 1) both nd-glitch-out;
 }
@@ -118,10 +114,6 @@ body {
    reload (no fallback attribute — no SPA router). */
 
 @media (prefers-reduced-motion: reduce) {
-  @view-transition {
-    navigation: none;
-  }
-
   ::view-transition-old(root),
   ::view-transition-new(root) {
     animation: none;

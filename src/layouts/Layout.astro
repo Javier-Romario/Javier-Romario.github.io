@@ -25,6 +25,20 @@ const base = import.meta.env.BASE_URL;
     <meta name="generator" content={Astro.generator} />
     <meta name="description" content={description} />
     <title>{title}</title>
+    <style is:inline>
+      /* Cross-document view transitions opt-in. Inline + early in <head>:
+         Chrome checks for this rule without waiting for external stylesheets,
+         so keeping it in the bundled CSS makes detection unreliable and can
+         skip the transition ("AbortError: Transition was skipped"). */
+      @view-transition {
+        navigation: auto;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        @view-transition {
+          navigation: none;
+        }
+      }
+    </style>
     <script is:inline>
       // Apply saved theme before first paint. No attribute = follow system.
       (function () {
