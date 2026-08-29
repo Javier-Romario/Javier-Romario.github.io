@@ -27,17 +27,23 @@ const base = import.meta.env.BASE_URL;
     <meta name="description" content={description} />
     <title>{title}</title>
     <script is:inline>
-      // Safari's native View Transitions throw a SecurityError on GitHub Pages
-      // when the document is served without a proper origin context. Disable
-      // the API there so ClientRouter falls back to its CSS animation
-      // (fallback="animate") instead of the broken native path.
+      // Native document.startViewTransition() is broken across several
+      // browsers (Safari, WebKit forks, and Firefox forks like Zen) — it
+      // throws "Security Error: Content at ... may not load or link to
+      // file:///" on http(s) pages. Disable it everywhere and let
+      // ClientRouter's fallback="animate" CSS path (the
+      // data-astro-transition-fallback attribute) drive the glitch instead.
+      // One code path, no UA sniffing, no per-browser bugs.
       (function () {
-        var ua = navigator.userAgent;
-        var isSafari = /Safari/.test(ua) && !/(Chrome|Chromium|CriOS|Edg|OPR|Firefox)/.test(ua);
-        if (isSafari) {
-          try { delete Document.prototype.startViewTransition; } catch (e) {}
-          try { document.startViewTransition = undefined; } catch (e) {}
-        }
+        try { delete Document.prototype.startViewTransition; } catch (e) {}
+        try { document.startViewTransition = undefined; } catch (e) {}
+        try {
+          Object.defineProperty(document, 'startViewTransition', {
+            value: undefined,
+            configurable: true,
+            writable: true,
+          });
+        } catch (e) {}
       })();
     </script>
     <ClientRouter fallback="animate" />
