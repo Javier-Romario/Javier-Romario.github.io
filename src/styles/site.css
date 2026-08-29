@@ -113,6 +113,13 @@ body {
 /* Browsers without the native View Transitions API just do a plain full
    reload (no fallback attribute — no SPA router). */
 
+/* In-page section navigation (header #experience / #skills / #contact):
+   glitch-reveal the targeted section as the browser scrolls to it. Pure CSS
+   (:target), so no JS View Transitions API and no SecurityError on Zen/Safari. */
+.step:target {
+  animation: nd-glitch-in 320ms cubic-bezier(0.7, 0, 0.3, 1) both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-old(root),
   ::view-transition-new(root) {
