@@ -1,5 +1,5 @@
 import { Suspense, lazy, useState } from 'react';
-import { DemoActivate, DemoLoading } from './DemoGate';
+import { DemoActivate, DemoLoading, DemoErrorBoundary } from './DemoGate';
 
 const Scene = lazy(() => import('./DemoR3FScene'));
 
@@ -8,7 +8,9 @@ export default function DemoR3F() {
   if (!active) return <DemoActivate onClick={() => setActive(true)} />;
   return (
     <Suspense fallback={<DemoLoading />}>
-      <Scene />
+      <DemoErrorBoundary>
+        <Scene />
+      </DemoErrorBoundary>
     </Suspense>
   );
 }

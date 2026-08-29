@@ -1,5 +1,5 @@
 import { Suspense, lazy, useState } from 'react';
-import { DemoActivate, DemoLoading } from './DemoGate';
+import { DemoActivate, DemoLoading, DemoErrorBoundary } from './DemoGate';
 
 const Scene = lazy(() => import('./DemoBevelScene'));
 
@@ -8,7 +8,9 @@ export default function DemoBevel() {
   if (!active) return <DemoActivate onClick={() => setActive(true)} label="Load bevel demo" />;
   return (
     <Suspense fallback={<DemoLoading />}>
-      <Scene />
+      <DemoErrorBoundary>
+        <Scene />
+      </DemoErrorBoundary>
     </Suspense>
   );
 }
