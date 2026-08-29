@@ -39,6 +39,7 @@ function Cover({ glyph, label }: { glyph: string; label: string }) {
 const BlogGrid: React.FC<{ seriesList: SeriesCard[] }> = ({ seriesList }) => {
   const [focusedId, setFocusedId] = React.useState<string | null>(null);
   const [expandedId, setExpandedId] = React.useState<string | null>(null);
+  const [closingId, setClosingId] = React.useState<string | null>(null);
 
   // Focused article jumps to the top of the grid.
   const ordered = React.useMemo(() => {
@@ -47,9 +48,20 @@ const BlogGrid: React.FC<{ seriesList: SeriesCard[] }> = ({ seriesList }) => {
   }, [seriesList, focusedId]);
 
   const toggle = (id: string) => {
-    const willExpand = expandedId !== id;
-    setFocusedId(willExpand ? id : null);
-    setExpandedId(willExpand ? id : null);
+    if (closingId === id) return; // already animating out
+    if (expandedId === id) {
+      // Collapse: play the glitch-out, then unmount the list.
+      setClosingId(id);
+      window.setTimeout(() => {
+        setExpandedId(null);
+        setFocusedId(null);
+        setClosingId(null);
+      }, 240);
+    } else {
+      // Expand (or switch cards): reveal the new list with the glitch-in.
+      setExpandedId(id);
+      setFocusedId(id);
+    }
   };
 
   return (
@@ -103,7 +115,7 @@ const BlogGrid: React.FC<{ seriesList: SeriesCard[] }> = ({ seriesList }) => {
                   {text}
                 </div>
                 {expanded && (
-                  <div className="article-card__body">
+                  <div className={`article-card__body${closingId === s.id ? ' article-card__body--closing' : ''}`}>
                     <ol className="article-pages">
                       {s.posts.map((p) => (
                         <li key={p.slug}>
