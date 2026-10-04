@@ -35,6 +35,21 @@ body {
   min-height: 100vh;
 }
 
+/* ---- accessibility: fix low-contrast accents (WCAG AA 4.5:1) ----
+   Light-mode accent/tone colours were too bright against the light
+   glass/card surfaces; dark-mode muted text was too dim. */
+:root {
+  --theme-focused-foreground: light-dark(#007a66, var(--neon-teal));
+  --theme-muted: light-dark(#4a6b74, #7fb0a7);
+}
+
+/* tone keys that fell under 4.5:1 on light backgrounds */
+[data-tone='teal'] { --tone: light-dark(#007a66, var(--neon-teal)); }
+[data-tone='blue'] { --tone: light-dark(#04647f, var(--neon-blue)); }
+[data-tone='green'] { --tone: light-dark(#007343, var(--neon-green)); }
+[data-tone='yellow'] { --tone: light-dark(#7a5c00, var(--neon-yellow)); }
+[data-tone='orange'] { --tone: light-dark(#a85a00, var(--neon-orange)); }
+
 /* ---- respect reduced-motion: kill all motion ---- */
 @media (prefers-reduced-motion: reduce) {
   *,
