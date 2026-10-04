@@ -1,5 +1,6 @@
 ---
 import Layout from './Layout.astro';
+import { Breadcrumbs, BarProgress } from '@neondeck';
 import { postsInSeries, seriesById, neighbors } from '../data/blog';
 
 interface Props {
@@ -14,21 +15,19 @@ const list = await postsInSeries(series);
 const { prev, next, index } = await neighbors(series, slug);
 const posPct = index >= 0 && list.length ? Math.round(((index + 1) / list.length) * 100) : 0;
 const base = import.meta.env.BASE_URL;
+
+const crumbs = [
+  { name: 'BLOG', url: `${base}blog/` },
+  ...(s ? [{ name: s.title }] : []),
+];
 ---
 
 <Layout title={`${title} — ${s?.title ?? 'Blog'}`} description={s?.blurb}>
   <article class="blog-post">
-    <nav class="blog-crumb">
-      <a href={`${base}blog/`}>← BLOG</a>
-      {s && <span class="blog-crumb__series">/ {s.title}</span>}
-    </nav>
-
     <header class="blog-series">
-      {s && <div class="blog-series__title">{s.title}</div>}
+      <Breadcrumbs items={crumbs} />
       {slug && index >= 0 && list.length > 0 && (
-        <div class="blog-progress" title={`${index + 1} / ${list.length}`}>
-          <div class="blog-progress__bar" style={`width: ${posPct}%`}></div>
-        </div>
+        <BarProgress progress={posPct} />
       )}
     </header>
 

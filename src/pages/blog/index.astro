@@ -1,6 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import BlogGrid from '../../components/BlogGrid';
+import { TickerBoard } from '@neondeck';
 import { allSeries, postsInSeries } from '../../data/blog';
 
 const base = import.meta.env.BASE_URL;
@@ -46,22 +47,22 @@ const seriesList = await Promise.all(
 >
   <section class="blog-index">
     <header class="blog-hero">
-      <svg class="blog-hero__img" viewBox="0 0 220 160" role="img" aria-label="Terminal prompt">
-        <rect class="blog-hero__frame" x="10" y="10" width="200" height="140" rx="14" />
-        <circle class="blog-hero__dot blog-hero__dot--a" cx="34" cy="30" r="5" />
-        <circle class="blog-hero__dot blog-hero__dot--b" cx="50" cy="30" r="5" />
-        <circle class="blog-hero__dot blog-hero__dot--c" cx="66" cy="30" r="5" />
-        <text class="blog-hero__prompt" x="30" y="102">&gt;_</text>
-        <rect class="blog-hero__cursor" x="96" y="78" width="16" height="28" rx="3" />
-        <line class="blog-hero__scan" x1="0" y1="70" x2="220" y2="70" />
-      </svg>
-      <div class="blog-hero__text">
-        <span class="step__num">Writings</span>
-        <h1 class="blog-hero__title">Blog</h1>
-        <p class="blog-hero__lede">
-          Multi-page guides and project write-ups — built with MDX, Astro, and live React demos.
-        </p>
-      </div>
+      <TickerBoard
+        message="BLOG"
+        messageTone="teal"
+        tickerItems={seriesList.map((s) => s.title)}
+        tickerLabel="SERIES"
+        tickerTone="teal"
+        showTopTicker={true}
+      >
+        <div class="blog-hero__text">
+          <span class="step__num">Writings</span>
+          <h1 class="blog-hero__title">Blog</h1>
+          <p class="blog-hero__lede">
+            Multi-page guides and project write-ups — built with MDX, Astro, and live React demos.
+          </p>
+        </div>
+      </TickerBoard>
     </header>
 
     <BlogGrid client:idle seriesList={seriesList} />

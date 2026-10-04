@@ -10,49 +10,7 @@
 }
 
 .blog-hero {
-  display: flex;
-  align-items: center;
-  gap: 28px;
   margin-bottom: 36px;
-}
-
-.blog-hero__img {
-  flex: 0 0 auto;
-  width: 200px;
-  height: 146px;
-}
-
-.blog-hero__frame {
-  fill: var(--neo-surface);
-  stroke: var(--theme-border-bright);
-  stroke-width: 2;
-}
-
-.blog-hero__dot--a { fill: var(--neon-magenta); }
-.blog-hero__dot--b { fill: var(--neon-teal); }
-.blog-hero__dot--c { fill: var(--neon-yellow); }
-
-.blog-hero__prompt {
-  font-family: var(--font-family-code);
-  font-size: 52px;
-  font-weight: 700;
-  fill: var(--theme-focused-foreground);
-}
-
-.blog-hero__cursor {
-  fill: var(--neon-magenta);
-  animation: blog-cursor-blink 1s steps(2, start) infinite;
-}
-
-@keyframes blog-cursor-blink {
-  50% { opacity: 0; }
-}
-
-.blog-hero__scan {
-  stroke: var(--theme-focused-foreground);
-  stroke-width: 1;
-  opacity: 0.18;
-  stroke-dasharray: 6 10;
 }
 
 .blog-hero__text {
@@ -298,74 +256,18 @@
   fill: var(--theme-muted);
 }
 
-@media (max-width: 680px) {
-  .blog-hero {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 20px;
-  }
-
-  .blog-hero__img {
-    width: 160px;
-    height: 117px;
-  }
-}
-
 /* ---- blog post page ---- */
 .blog-post {
   margin: 32px 0 40px;
 }
 
-.blog-crumb {
-  margin-bottom: 14px;
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-}
-
-.blog-crumb a {
-  color: var(--theme-focused-foreground);
-  text-decoration: none;
-}
-
-.blog-crumb a:hover {
-  color: var(--theme-text);
-}
-
-.blog-crumb__series {
-  color: var(--theme-muted);
-}
-
 .blog-series {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
   gap: 18px;
   margin-bottom: 26px;
-}
-
-.blog-series__title {
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--theme-muted);
-}
-
-.blog-progress {
-  flex: 1;
-  max-width: 320px;
-  height: 8px;
-  border-radius: 999px;
-  background: var(--neo-surface);
-  box-shadow: var(--neo-pressed);
-  overflow: hidden;
-}
-
-.blog-progress__bar {
-  height: 100%;
-  border-radius: 999px;
-  background: var(--theme-focused-foreground);
-  transition: width 200ms ease;
 }
 
 .blog-pager {
