@@ -4,7 +4,7 @@
   gap: 6px;
   padding: 2px 8px;
   font-family: var(--font-family-mono);
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 1px;
   text-transform: uppercase;
@@ -20,5 +20,5 @@
 
 .badge::before {
   content: '◤';
-  font-size: 9px;
+  font-size: 11px;
 }

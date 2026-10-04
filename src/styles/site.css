@@ -18,9 +18,9 @@
 }
 
 :root {
-  /* 1rem = 16px by default, but follows the browser's font-size so the user's
-     preference wins over the fixed baseline. */
-  --font-size: 1rem;
+  /* 1.125rem = 18px by default, but follows the browser's font-size so the
+     user's preference wins over the fixed baseline. */
+  --font-size: 1.125rem;
   --font-family-mono: 'Agave Nerd Font', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --font-family-code: 'Monaspace Krypton', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
@@ -237,7 +237,7 @@ body::after {
   background: transparent;
   color: var(--theme-muted);
   font-family: inherit;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.08em;
   cursor: pointer;
@@ -261,7 +261,7 @@ body::after {
   box-shadow: var(--neo-raised);
   color: var(--theme-muted);
   text-decoration: none;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   letter-spacing: 0.04em;
   transition: color 120ms ease, box-shadow 120ms ease;
@@ -302,7 +302,7 @@ body::after {
 .hero__eyebrow {
   margin: 0 0 12px;
   color: var(--theme-muted);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   letter-spacing: 0.32em;
   text-transform: uppercase;
@@ -377,7 +377,7 @@ body::after {
 }
 
 .step__num {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   letter-spacing: 0.18em;
   color: var(--theme-muted);
@@ -445,7 +445,7 @@ body::after {
   background: var(--neo-surface);
   box-shadow: var(--neo-raised);
   color: var(--theme-text);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
 }
 
@@ -506,7 +506,7 @@ body::after {
   font-weight: 700;
   letter-spacing: 0.08em;
   color: var(--theme-muted);
-  font-size: 12px;
+  font-size: 13px;
   text-transform: uppercase;
 }
 
@@ -544,7 +544,7 @@ body::after {
   margin-top: 24px;
   padding: 28px 8px;
   color: var(--theme-muted);
-  font-size: 13px;
+  font-size: 14px;
   letter-spacing: 0.02em;
   line-height: 1.8;
   text-align: center;
