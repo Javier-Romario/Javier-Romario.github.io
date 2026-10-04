@@ -81,15 +81,15 @@ const base = import.meta.env.BASE_URL;
 
     <div class="site-shell">
       <slot />
-    </div>
 
-    <footer class="site-footer site-shell">
-      <p>
-        Built with <a href="https://astro.build">Astro</a> +{' '}
-        <a href="https://github.com/Javier-Romario/neondeck">NEONDECK</a>. © {new Date().getFullYear()}{' '}
-        Javier Harford · <a href="mailto:javierharford@gmail.com">javierharford@gmail.com</a>
-      </p>
-    </footer>
+      <footer class="site-footer">
+        <p>
+          Built with <a href="https://astro.build">Astro</a> +{' '}
+          <a href="https://github.com/Javier-Romario/neondeck">NEONDECK</a>. © {new Date().getFullYear()}{' '}
+          Javier Harford · <a href="mailto:javierharford@gmail.com">javierharford@gmail.com</a>
+        </p>
+      </footer>
+    </div>
 
     <script is:inline>
       // Theme switcher: auto (system) | light | dark. Event-delegated so it
