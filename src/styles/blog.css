@@ -87,7 +87,7 @@
 
 .article-card__title {
   margin: 0;
-  font-size: 19px;
+  font-size: 20px;
   font-weight: 800;
   letter-spacing: -0.01em;
   color: var(--theme-text);
@@ -366,7 +366,7 @@
 /* ---- post body typography ---- */
 .blog-body {
   color: var(--theme-text);
-  font-size: 15.5px;
+  font-size: 16px;
   line-height: 1.7;
 }
 
@@ -381,13 +381,13 @@
 
 .blog-body h2 {
   margin: 34px 0 12px;
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 700;
 }
 
 .blog-body h3 {
   margin: 24px 0 10px;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 700;
 }
 
@@ -542,7 +542,7 @@ html[data-theme='light'] .astro-code span {
 .formula-card .math,
 .takeaway .math {
   margin-top: 8px;
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 700;
   color: var(--theme-focused-foreground);
   letter-spacing: 0.01em;
@@ -642,7 +642,7 @@ html[data-theme='light'] .astro-code span {
   border: none;
   background: transparent;
   color: var(--theme-text);
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 700;
   font-family: inherit;
   cursor: pointer;

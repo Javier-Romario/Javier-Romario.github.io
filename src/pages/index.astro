@@ -1,11 +1,8 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import me from '../assets/me.jpg';
-import { NeoCard, NeoAccordion, Badge, Divider, RowSpaceBetween, Text, Panel } from '@neondeck';
+import { NeoCard, NeoAccordion, Badge, Divider, RowSpaceBetween, Text } from '@neondeck';
 import type { NeonTone } from '@neondeck';
-import type { CSSProperties } from 'react';
-
-const dividerStyle = { margin: '0 0 40px', '--panel-pad': '8px 18px' } as CSSProperties;
 
 const skills = [
   'TypeScript',
@@ -165,18 +162,6 @@ const education = [
       </div>
     </NeoCard>
   </section>
-
-  <!-- Newer NEONDECK components: Panel + PanelTrail lead lines as a HUD divider. -->
-  <Panel
-    shape="chamfer"
-    tone="teal"
-    flat
-    before={{ label: 'EXPERIENCE' }}
-    after={{ label: 'BLOG' }}
-    style={dividerStyle}
-  >
-    <span class="step__num">SECTIONS</span>
-  </Panel>
 
   <!-- ============ EXPERIENCE ============ -->
   <section class="step" id="experience">
