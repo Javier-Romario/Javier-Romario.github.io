@@ -18,11 +18,16 @@
 }
 
 :root {
+  /* 1rem = 16px by default, but follows the browser's font-size so the user's
+     preference wins over the fixed baseline. */
+  --font-size: 1rem;
   --font-family-mono: 'Agave Nerd Font', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --font-family-code: 'Monaspace Krypton', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 
 html {
+  /* Don't pin the root to a px value — 100% tracks the user's browser font size. */
+  font-size: 100%;
   scroll-behavior: smooth;
 }
 
