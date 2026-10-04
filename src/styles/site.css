@@ -5,10 +5,10 @@
    spacing, the hex backdrop, and a few presentation tweaks.
    ============================================================ */
 
-/* ---- font: Agave Nerd Font as the primary UI face ----
-   Overrides neondeck's Monaspace Krypton. Only the Regular weight is
-   bundled; bold weights are browser-synthesised (Agave Bold drops several
-   symbols: ✓ ← → — …). Code/secondary font stays JetBrains Mono. */
+/* ---- fonts: Agave Nerd Font (UI) + Monaspace Krypton (code) ----
+   Primary UI face is Agave Nerd Font (Mono, Regular-only; bold weights are
+   browser-synthesised — Agave Bold drops ✓ ← → — …). Code/secondary face is
+   Monaspace Krypton (neondeck's bundled variable font). */
 @font-face {
   font-family: 'Agave Nerd Font';
   src: url('../assets/fonts/AgaveNerdFontMono-Regular.woff2') format('woff2');
@@ -19,6 +19,7 @@
 
 :root {
   --font-family-mono: 'Agave Nerd Font', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-family-code: 'Monaspace Krypton', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 
 html {
