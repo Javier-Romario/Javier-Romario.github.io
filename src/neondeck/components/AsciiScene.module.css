@@ -1,0 +1,41 @@
+/* The scene is rendered to an offscreen target, then a full-screen shader
+   turns each cell into a glyph from a font atlas. Empty cells output alpha 0,
+   so the canvas is transparent and the glyphs sit straight on the page. */
+.root {
+  position: relative;
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  color: var(--tone, var(--theme-focused-foreground));
+  user-select: none;
+}
+
+.root canvas {
+  display: block;
+}
+
+/* glow rides the canvas alpha, so it hugs the glyphs and nothing else */
+.root[data-glow] canvas {
+  filter: drop-shadow(0 0 6px var(--tone-soft, var(--theme-focused-foreground-subdued)));
+}
+
+.probe {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  color: var(--tone);
+}
+
+.readout {
+  position: absolute;
+  top: 10px;
+  left: 12px;
+  font-family: var(--font-family-mono);
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--tone, var(--theme-focused-foreground));
+  text-shadow: 0 0 8px var(--tone-soft, var(--theme-focused-foreground-subdued));
+  pointer-events: none;
+}

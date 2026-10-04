@@ -1,0 +1,26 @@
+/* chamfers, glass, border and shadow live in Panel */
+.ticker {
+  display: block;
+  /* clear the corner chamfers + ring; strip ends are cut at 45° so it reads as a bezel slot */
+  margin: 8px 26px 0 26px;
+  clip-path: polygon(8px 0, calc(100% - 8px) 0, 100% 100%, 0 100%);
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 2ch 0 2ch;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--tone, var(--theme-focused-foreground));
+  text-shadow: 0 0 10px var(--tone-soft, var(--theme-focused-foreground-subdued));
+}
+
+.body {
+  display: block;
+  padding: 12px 2ch 18px 2ch;
+  color: var(--theme-text);
+}

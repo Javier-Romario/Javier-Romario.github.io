@@ -2,13 +2,15 @@
 
 Portfolio + blog site for Javier Harford — software engineer. Built with **Astro 7**, **React 19**,
 and **MDX**, styled with the [NEONDECK](https://github.com/Javier-Romario/neondeck) cyberpunk
-component library (the [@javierromario/neondeck](https://www.npmjs.com/package/@javierromario/neondeck)
-npm package).
+component library ([NEONDECK](https://github.com/Javier-Romario/neondeck), vendored into
+`src/neondeck/` from `main`).
 
 ## What's inside
 
 - **Astro 7 + React 19** via `@astrojs/react`, **MDX** via `@astrojs/mdx`.
-- **NEONDECK** as an npm dependency — `@javierromario/neondeck` (imports its components and CSS directly).
+- **NEONDECK** vendored into `src/neondeck/` (built from `main` — includes the newer `Panel`,
+  `PanelTrail`, `BrailleLoader`, `AsciiScene` components not yet on npm). Components import from the
+  local `@neondeck` alias; CSS from `src/neondeck/global.css` + `global-fonts.css`.
 - **Portfolio** (`src/pages/index.astro`): experience, skills, education, about, contact — rendered
   with `NeoCard`, `NeoAccordion`, `Badge`, `Divider`, `Text`, `RowSpaceBetween`.
 - **Blog** (`src/pages/blog/`): four multi-page series (ISO Tactics, NEON_NATIVE, Blender Masterclass,

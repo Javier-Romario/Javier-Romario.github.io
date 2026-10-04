@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { CanvasShell, hexToRgba } from '@javierromario/neondeck';
+import { CanvasShell, hexToRgba } from '@neondeck';
 
 const LIGHT = { color: '#b3c0d4', size: 38 };
 const DARK = { color: '#3d4757', size: 38 };
@@ -179,6 +179,7 @@ const HexBackground: React.FC = () => {
       }
 
       // ---- active: full redraw with the pulse ----
+      if (!session) return; // `active` implies a live session; narrows the type for TS
       ctx.clearRect(0, 0, w, h);
       drawBase();
       drawnRef.current = '';

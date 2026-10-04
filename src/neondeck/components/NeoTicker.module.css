@@ -1,0 +1,90 @@
+/* neumorphic well: inset shadow presses the marquee into the surface */
+.root {
+  position: relative;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  white-space: nowrap;
+  border-radius: var(--neo-corner, 10px);
+  corner-shape: bevel;
+  background: var(--neo-bg);
+  box-shadow: var(--neo-well);
+  font-family: var(--font-family-mono);
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  line-height: 1;
+  padding: 4px 6px;
+  gap: 8px;
+  user-select: none;
+}
+
+.viewport {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  padding: 4px 0;
+  mask-image: linear-gradient(90deg, transparent 0, #000 18px, #000 calc(100% - 18px), transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 18px, #000 calc(100% - 18px), transparent 100%);
+}
+
+.track {
+  display: flex;
+  width: max-content;
+  animation: neoticker-scroll var(--ticker-speed, 24s) linear infinite;
+  will-change: transform;
+}
+
+.track[data-direction='right'] {
+  animation-direction: reverse;
+}
+
+.run {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.label {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  margin: 0;
+  padding: 4px 10px;
+  border-radius: 6px;
+  corner-shape: bevel;
+  color: var(--tone, var(--theme-focused-foreground));
+  background: var(--neo-surface);
+  box-shadow: var(--neo-raised), inset 0 0 0 1px var(--tone, var(--theme-focused-foreground));
+  font-weight: 700;
+}
+
+.entry {
+  display: inline-flex;
+  align-items: center;
+}
+
+.sep {
+  margin: 0 10px;
+  color: var(--tone, var(--theme-focused-foreground));
+}
+
+.item {
+  color: var(--theme-text);
+  text-shadow: 0 1px 0 light-dark(rgba(0, 0, 0, 0.06), rgba(255, 255, 255, 0.06));
+}
+
+@keyframes neoticker-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .track {
+    animation: none;
+  }
+}

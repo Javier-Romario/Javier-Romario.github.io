@@ -1,0 +1,3 @@
+import * as React from 'react';
+declare const ListItem: React.FC<React.HTMLAttributes<HTMLLIElement>>;
+export default ListItem;

@@ -1,0 +1,26 @@
+/* chamfers, glass, border and shadow live in Panel */
+.children {
+  display: block;
+  padding-top: calc(var(--theme-line-height-base) * 0.5rem);
+  padding-left: 2ch;
+  padding-right: 2ch;
+  padding-bottom: calc(var(--theme-line-height-base) * 1rem);
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.action {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.title {
+  flex-shrink: 0;
+  padding: calc(var(--theme-line-height-base) * 0.5rem) 1ch 0 1ch;
+  font-size: var(--font-size);
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--theme-focused-foreground);
+  text-shadow: 0 0 10px var(--theme-focused-foreground-subdued);
+}

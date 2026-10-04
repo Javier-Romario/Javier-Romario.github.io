@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Badge } from '@javierromario/neondeck';
-import { Button } from '@javierromario/neondeck';
-import { BarProgress } from '@javierromario/neondeck';
+import { Badge } from '@neondeck';
+import { Button } from '@neondeck';
+import { BarProgress } from '@neondeck';
 
 interface Mod {
   name: string;

@@ -1,0 +1,91 @@
+.root {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  overflow: hidden;
+  white-space: nowrap;
+  background: var(--theme-glass-strip);
+  border-top: 1px solid var(--theme-border);
+  border-bottom: 1px solid var(--theme-border);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  font-family: var(--font-family-mono);
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  line-height: 1;
+  user-select: none;
+}
+
+/* scrolling area; fades at both ends so entries never hard-clip */
+.viewport {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  padding: 6px 0;
+  mask-image: linear-gradient(90deg, transparent 0, #000 18px, #000 calc(100% - 18px), transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 18px, #000 calc(100% - 18px), transparent 100%);
+}
+
+.track {
+  display: flex;
+  width: max-content;
+  animation: ticker-scroll var(--ticker-speed, 24s) linear infinite;
+  will-change: transform;
+}
+
+.track[data-direction='right'] {
+  animation-direction: reverse;
+}
+
+.run {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.label {
+  position: relative;
+  z-index: 1;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  margin: 0;
+  padding: 3px 10px 3px 8px;
+  /* 45° cut on the trailing edge, like a bezel tab */
+  clip-path: polygon(0 0, calc(100% - 7px) 0, 100% 100%, 0 100%);
+  color: var(--tone-ink, #03110d);
+  background: var(--tone, var(--theme-focused-foreground));
+  box-shadow: 0 0 12px -2px var(--tone, var(--theme-focused-foreground));
+  font-weight: 700;
+}
+
+.entry {
+  display: inline-flex;
+  align-items: center;
+}
+
+.sep {
+  margin: 0 10px;
+  color: var(--tone, var(--theme-focused-foreground));
+  text-shadow: 0 0 6px var(--tone, var(--theme-focused-foreground));
+}
+
+.item {
+  color: var(--theme-text);
+}
+
+@keyframes ticker-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .track {
+    animation: none;
+  }
+}

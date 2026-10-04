@@ -26,7 +26,9 @@ export default defineConfig({
   },
   vite: {
     resolve: {
-      noExternal: ['@javierromario/neondeck'],
+      alias: {
+        '@neondeck': new URL('./src/neondeck/index.js', import.meta.url).pathname,
+      },
     },
     build: {
       // three.js (~660 kB minified) powers the 5 Blender 3D demos. It's

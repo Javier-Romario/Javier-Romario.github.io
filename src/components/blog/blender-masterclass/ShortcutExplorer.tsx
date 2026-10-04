@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Input } from '@javierromario/neondeck';
-import { Badge } from '@javierromario/neondeck';
-import { Button } from '@javierromario/neondeck';
+import { Input } from '@neondeck';
+import { Badge } from '@neondeck';
+import { Button } from '@neondeck';
 import { CATEGORIES, SHORTCUTS, type Category, type Shortcut } from './data/shortcuts';
 import styles from './ShortcutExplorer.module.css';
 

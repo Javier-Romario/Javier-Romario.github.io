@@ -1,0 +1,129 @@
+.root {
+  position: relative;
+  display: block;
+}
+
+.message {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 -1px 14px;
+  padding: 4px 12px 4px 6px;
+  font-family: var(--font-family-mono);
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--theme-text);
+  background: var(--theme-background-modal);
+  border: 1px solid var(--tone, var(--theme-focused-foreground));
+  border-bottom-color: var(--tone, var(--theme-focused-foreground));
+  box-shadow: 0 0 16px -4px var(--tone, var(--theme-focused-foreground));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.messageGlyph {
+  color: var(--tone, var(--theme-focused-foreground));
+  text-shadow: 0 0 6px var(--tone, var(--theme-focused-foreground));
+}
+
+.messageText {
+  font-weight: 700;
+}
+
+/* ---- board body: fuzzy glass + chamfered gradient frame ---- */
+.body {
+  position: relative;
+  display: block;
+
+  /* chamfer size for the 45° corner cutouts */
+  --nd-cut: 18px;
+  --nd-border: 2px;
+
+  /* fuzzy glass fill */
+  --nd-glass: var(--theme-glass);
+
+  /* gradient border (top + bottom only, no side borders) */
+  --nd-border-gradient: linear-gradient(
+    90deg,
+    light-dark(#00c8a8, var(--neon-teal)) 0%,
+    light-dark(#2b9fd8, var(--neon-blue)) 50%,
+    light-dark(#e0408f, var(--neon-magenta)) 100%
+  );
+
+  /* glow carried by the borders */
+  --nd-glow: 0 0 14px -3px light-dark(rgba(0, 200, 168, 0.5), rgba(0, 255, 209, 0.75)),
+    0 0 30px -8px light-dark(rgba(43, 159, 216, 0.36), rgba(45, 226, 255, 0.55)),
+    0 0 30px -8px light-dark(transparent, rgba(255, 45, 120, 0.45));
+
+  background: var(--nd-glass);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+
+  /* 45° angular cutouts on all four corners */
+  clip-path: polygon(
+    var(--nd-cut) 0,
+    calc(100% - var(--nd-cut)) 0,
+    100% var(--nd-cut),
+    100% calc(100% - var(--nd-cut)),
+    calc(100% - var(--nd-cut)) 100%,
+    var(--nd-cut) 100%,
+    0 calc(100% - var(--nd-cut)),
+    0 var(--nd-cut)
+  );
+}
+
+/* gradient borders: top + bottom only, ends follow the corner chamfers */
+.body::before,
+.body::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: var(--nd-border);
+  background: var(--nd-border-gradient);
+  box-shadow: var(--nd-glow);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.body::before {
+  top: 0;
+}
+
+.body::after {
+  bottom: 0;
+}
+
+/* strips are inset past the corner chamfers so they always sit inside the frame;
+   ends are cut at 45° to echo the corners */
+.topTicker,
+.bottomTicker {
+  display: block;
+  margin: calc(var(--nd-border) + 6px) calc(var(--nd-cut) + 8px) 0;
+}
+
+.topTicker {
+  clip-path: polygon(8px 0, calc(100% - 8px) 0, 100% 100%, 0 100%);
+}
+
+.bottomTicker {
+  margin-top: 0;
+  margin-bottom: calc(var(--nd-border) + 6px);
+  clip-path: polygon(0 0, 100% 0, calc(100% - 8px) 100%, 8px 100%);
+}
+
+.content {
+  display: block;
+}
+
+/* ---- explicit component theme: flips every light-dark() token in the subtree ---- */
+.root[data-theme='light'] {
+  color-scheme: light;
+}
+
+.root[data-theme='dark'] {
+  color-scheme: dark;
+}
