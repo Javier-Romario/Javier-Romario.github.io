@@ -1,6 +1,7 @@
 ---
 import Layout from './Layout.astro';
-import { Breadcrumbs, BrailleLoader } from '@neondeck';
+import { Breadcrumbs } from '@neondeck';
+import BrailleProgress from '../components/BrailleProgress';
 import { postsInSeries, seriesById, neighbors } from '../data/blog';
 
 interface Props {
@@ -14,8 +15,6 @@ const s = await seriesById(series);
 const list = await postsInSeries(series);
 const { prev, next, index } = await neighbors(series, slug);
 const posPct = index >= 0 && list.length ? Math.round(((index + 1) / list.length) * 100) : 0;
-// Braille bar grows with progress (increase) and shrinks going back (decrease).
-const brailleCells = Math.max(2, Math.round((posPct / 100) * 8));
 const base = import.meta.env.BASE_URL;
 
 const crumbs = [
@@ -29,12 +28,11 @@ const crumbs = [
     <header class="blog-series">
       <Breadcrumbs items={crumbs} />
       {slug && index >= 0 && list.length > 0 && (
-        <BrailleLoader
-          variant="bar"
-          tone="teal"
-          cells={brailleCells}
+        <BrailleProgress
+          value={posPct}
+          cells={8}
+          tone={s?.tone ?? 'teal'}
           label={`${index + 1} / ${list.length}`}
-          title={`${index + 1} of ${list.length} posts (${posPct}%)`}
         />
       )}
     </header>
