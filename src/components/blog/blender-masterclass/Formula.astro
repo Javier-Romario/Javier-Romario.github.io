@@ -1,4 +1,6 @@
 ---
+import { Panel } from '@neondeck';
+
 interface Props {
   math: string;
   note?: string;
@@ -6,8 +8,8 @@ interface Props {
 const { math, note } = Astro.props;
 ---
 
-<div class="formula-card">
+<Panel shape="terminal" tone="teal" className="formula-card">
   <div class="label">// the rule</div>
   <div class="math">{math}</div>
   {note && <div class="note">{note}</div>}
-</div>
+</Panel>

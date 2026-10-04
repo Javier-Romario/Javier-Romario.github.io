@@ -1,4 +1,6 @@
 ---
+import { Panel } from '@neondeck';
+
 // A gotcha / pitfall callout.
 interface Props {
   title: string;
@@ -6,7 +8,7 @@ interface Props {
 const { title } = Astro.props;
 ---
 
-<div class="pitfall">
+<Panel shape="chamfer" tone="red" className="pitfall">
   <div class="head">{title}</div>
   <slot />
-</div>
+</Panel>

@@ -1,4 +1,6 @@
 ---
+import { Panel } from '@neondeck';
+
 interface Props {
   title?: string;
   points: string[];
@@ -6,9 +8,9 @@ interface Props {
 const { title = 'YOU GOT THIS', points } = Astro.props;
 ---
 
-<div class="recap">
+<Panel shape="wipeout" tone="green" className="recap">
   <div class="head">✓ {title}</div>
   <ul>
     {points.map((p) => <li>{p}</li>)}
   </ul>
-</div>
+</Panel>

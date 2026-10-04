@@ -561,10 +561,6 @@ html[data-theme='light'] .astro-code span {
 .tldr,
 .pitfall {
   margin: 18px 0;
-  padding: 16px 18px;
-  border-radius: 14px;
-  background: var(--neo-surface);
-  box-shadow: var(--neo-raised);
 }
 
 .formula-card .label,
@@ -612,10 +608,6 @@ html[data-theme='light'] .astro-code span {
 
 .recap {
   margin: 24px 0;
-  padding: 16px 18px;
-  border-radius: 14px;
-  background: var(--neo-surface);
-  box-shadow: var(--neo-raised);
 }
 
 .recap .head {
