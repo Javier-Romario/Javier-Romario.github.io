@@ -310,7 +310,7 @@ body::after {
 
 .hero__name {
   margin: 0 0 4px;
-  font-size: clamp(40px, 7vw, 72px);
+  font-size: clamp(30px, 5vw, 48px);
   line-height: 1.05;
   font-weight: 800;
   letter-spacing: -0.02em;
